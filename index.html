@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Sanggar - Absensi & Kas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f4f6f9; font-family: sans-serif; }
+    .card-box { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .nav-tabs .nav-link.active { font-weight: bold; }
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .month-badge {
+      padding: 12px 6px;
+      border-radius: 8px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .badge-lunas { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
+    .badge-belum { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+  </style>
+</head>
+<body>
+
+<div class="container py-4" style="max-width: 650px;">
+
+  <!-- Login Section -->
+  <div id="section-login" class="card card-box p-4 bg-white">
+    <h4 class="text-center mb-3">Login Portal Sanggar</h4>
+    <div class="mb-3">
+      <label class="form-label">Member ID</label>
+      <input type="text" id="login-id" class="form-control" placeholder="Contoh: M001">
+    </div>
+    <div class="mb-3">
+      <label class="form-label">PIN</label>
+      <input type="password" id="login-pin" class="form-control" placeholder="PIN Anda">
+    </div>
+    <button class="btn btn-primary w-100" onclick="handleLogin()">Masuk</button>
+  </div>
+
+  <!-- Main App Section -->
+  <div id="section-app" class="d-none">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <div>
+        <h5 class="mb-0" id="welcome-text">Halo, Member</h5>
+        <small class="badge bg-secondary" id="user-role-badge">Member</small>
+      </div>
+      <button class="btn btn-sm btn-outline-danger" onclick="logout()">Keluar</button>
+    </div>
+
+    <!-- Saldo Kas -->
+    <div class="card card-box p-3 bg-white mb-3">
+      <small class="text-muted">Total Saldo Kas Sanggar</small>
+      <h3 class="text-success mb-0" id="display-saldo">Rp 0</h3>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-tabs mb-3" id="tabNav">
+      <li class="nav-item">
+        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Presensi</button>
+      </li>
+      <li class="nav-item">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button>
+      </li>
+      <li class="nav-item" id="tab-btn-kas">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas (Admin)</button>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+      <!-- Tab Presensi -->
+      <div class="tab-pane fade show active" id="tab-absen">
+        <div class="card card-box p-4 bg-white">
+          <h6 class="mb-3">Form Presensi Latihan</h6>
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select id="absen-status" class="form-select">
+              <option value="Hadir">Hadir</option>
+              <option value="Izin">Izin</option>
+              <option value="Sakit">Sakit</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Catatan</label>
+            <input type="text" id="absen-catatan" class="form-control" placeholder="Opsional (cth: Izin dinas luar)">
+          </div>
+          <button class="btn btn-success w-100" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi</button>
+        </div>
+      </div>
+
+      <!-- Tab Status Iuran Tahunan Member -->
+      <div class="tab-pane fade" id="tab-iuran">
+        <div class="card card-box p-4 bg-white">
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="mb-0">Kartu Iuran Tahunan</h6>
+            <select id="dues-year-select" class="form-select form-select-sm" style="width: 100px;" onchange="loadMemberDues()">
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
+            </select>
+          </div>
+
+          <!-- Highlight Status Terbayar Sampai -->
+          <div class="alert alert-info py-2 mb-3">
+            <small class="d-block text-muted">Lunas berturut-turut sampai:</small>
+            <strong id="dues-paid-until">Memuat data...</strong>
+          </div>
+
+          <!-- Grid 12 Bulan -->
+          <div class="month-grid" id="months-container">
+            <!-- Diisi lewat Javascript -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Tab Kas (Admin Only) -->
+      <div class="tab-pane fade" id="tab-kas">
+        <div class="card card-box p-4 bg-white">
+          <h6 class="mb-3">Pencatatan Kas & Iuran</h6>
+          <div class="mb-3">
+            <label class="form-label">Tipe</label>
+            <select id="kas-tipe" class="form-select">
+              <option value="Pemasukan">Pemasukan</option>
+              <option value="Pengeluaran">Pengeluaran</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Kategori</label>
+            <select id="kas-kategori" class="form-select" onchange="toggleIuranFields()">
+              <option value="Iuran Bulanan">Iuran Bulanan</option>
+              <option value="Donasi / Kas Kasual">Donasi / Kas Kasual</option>
+              <option value="Kostum & Make-up">Kostum & Make-up</option>
+              <option value="Konsumsi & Operasional">Konsumsi & Operasional</option>
+            </select>
+          </div>
+
+          <!-- Bagian Khusus Iuran Bulanan -->
+          <div id="iuran-extra-fields" class="p-3 bg-light rounded mb-3 border">
+            <div class="mb-2">
+              <label class="form-label">ID Member yang Membayar</label>
+              <input type="text" id="kas-target-member" class="form-control" placeholder="Misal: M001">
+            </div>
+            <div class="row g-2">
+              <div class="col-6">
+                <label class="form-label">Untuk Bulan</label>
+                <select id="kas-target-month" class="form-select">
+                  <option value="1">Januari</option>
+                  <option value="2">Februari</option>
+                  <option value="3">Maret</option>
+                  <option value="4">April</option>
+                  <option value="5">Mei</option>
+                  <option value="6">Juni</option>
+                  <option value="7">Juli</option>
+                  <option value="8">Agustus</option>
+                  <option value="9">September</option>
+                  <option value="10">Oktober</option>
+                  <option value="11">November</option>
+                  <option value="12">Desember</option>
+                </select>
+              </div>
+              <div class="col-6">
+                <label class="form-label">Tahun</label>
+                <input type="number" id="kas-target-year" class="form-control" value="2026">
+              </div>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Jumlah (Rp)</label>
+            <input type="number" id="kas-jumlah" class="form-control" placeholder="Contoh: 50000">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Keterangan Tambahan</label>
+            <input type="text" id="kas-keterangan" class="form-control" placeholder="Catatan transaksi">
+          </div>
+          <button class="btn btn-primary w-100" id="btn-submit-kas" onclick="submitKas()">Simpan Transaksi</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  // GANTI DENGAN URL DEPLOYMENT APPS SCRIPT ANDA
+  const API_URL = "https://script.google.com/macros/s/AKfycby.../exec";
+
+  const MONTH_NAMES = [
+    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+  ];
+
+  let currentUser = null;
+
+  async function callApi(payload, isPost = true) {
+    if (isPost) {
+      const response = await fetch(API_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
+      });
+      return await response.json();
+    } else {
+      const qs = new URLSearchParams(payload).toString();
+      const response = await fetch(`${API_URL}?${qs}`);
+      return await response.json();
+    }
+  }
+
+  async function handleLogin() {
+    const memberId = document.getElementById("login-id").value.trim();
+    const pin = document.getElementById("login-pin").value.trim();
+
+    if (!memberId || !pin) {
+      alert("Silakan isi Member ID dan PIN");
+      return;
+    }
+
+    try {
+      const res = await callApi({ action: "login", memberId, pin });
+      if (res.success) {
+        currentUser = res.user;
+        setupDashboard();
+      } else {
+        alert(res.message);
+      }
+    } catch (e) {
+      alert("Gagal terhubung ke server: " + e.message);
+    }
+  }
+
+  function setupDashboard() {
+    document.getElementById("section-login").classList.add("d-none");
+    document.getElementById("section-app").classList.remove("d-none");
+
+    document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
+    document.getElementById("user-role-badge").innerText = currentUser.role;
+
+    if (currentUser.role !== "Admin") {
+      document.getElementById("tab-btn-kas").style.display = "none";
+    } else {
+      document.getElementById("tab-btn-kas").style.display = "block";
+    }
+
+    loadSummary();
+    loadMemberDues();
+  }
+
+  async function loadSummary() {
+    try {
+      const res = await callApi({ action: "getSummary" }, false);
+      if (res.success) {
+        document.getElementById("display-saldo").innerText = new Intl.NumberFormat('id-ID', {
+          style: 'currency',
+          currency: 'IDR',
+          maximumFractionDigits: 0
+        }).format(res.saldo);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  // Menampilkan status pembayaran 12 bulan
+  async function loadMemberDues() {
+    if (!currentUser) return;
+    const selectedYear = document.getElementById("dues-year-select").value;
+    const container = document.getElementById("months-container");
+    container.innerHTML = "<div class='text-muted small col-span-3'>Memuat iuran...</div>";
+
+    try {
+      const res = await callApi({
+        action: "getMemberDues",
+        memberId: currentUser.memberId,
+        year: selectedYear
+      }, false);
+
+      if (res.success) {
+        document.getElementById("dues-paid-until").innerText = res.lastPaidUntil;
+        container.innerHTML = "";
+
+        MONTH_NAMES.forEach((month, index) => {
+          const isPaid = res.monthsPaid[index];
+          const badgeClass = isPaid ? "badge-lunas" : "badge-belum";
+          const statusText = isPaid ? "Lunas" : "Belum";
+
+          const card = document.createElement("div");
+          card.className = `month-badge ${badgeClass}`;
+          card.innerHTML = `<div>${month}</div><small style="font-size:0.75rem">${statusText}</small>`;
+          container.appendChild(card);
+        });
+      }
+    } catch (e) {
+      container.innerHTML = "<div class='text-danger small'>Gagal memuat status iuran.</div>";
+    }
+  }
+
+  function toggleIuranFields() {
+    const kategori = document.getElementById("kas-kategori").value;
+    const extraFields = document.getElementById("iuran-extra-fields");
+    extraFields.style.display = (kategori === "Iuran Bulanan") ? "block" : "none";
+  }
+
+  async function submitAbsensi() {
+    const status = document.getElementById("absen-status").value;
+    const catatan = document.getElementById("absen-catatan").value;
+    const btn = document.getElementById("btn-submit-absen");
+
+    btn.disabled = true;
+    btn.innerText = "Mengirim...";
+
+    try {
+      const res = await callApi({
+        action: "submitAbsen",
+        memberId: currentUser.memberId,
+        nama: currentUser.nama,
+        keterangan: status,
+        catatan: catatan
+      });
+      alert(res.message);
+      document.getElementById("absen-catatan").value = "";
+    } catch (e) {
+      alert("Terjadi kesalahan: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Kirim Presensi";
+    }
+  }
+
+  async function submitKas() {
+    const tipe = document.getElementById("kas-tipe").value;
+    const kategori = document.getElementById("kas-kategori").value;
+    const jumlah = document.getElementById("kas-jumlah").value;
+    const keterangan = document.getElementById("kas-keterangan").value;
+    const btn = document.getElementById("btn-submit-kas");
+
+    let targetMember = currentUser.memberId;
+    let targetYear = "";
+    let targetMonth = "";
+
+    if (kategori === "Iuran Bulanan") {
+      targetMember = document.getElementById("kas-target-member").value.trim();
+      targetYear = document.getElementById("kas-target-year").value;
+      targetMonth = document.getElementById("kas-target-month").value;
+
+      if (!targetMember) {
+        alert("Harap isi ID Member yang membayar iuran");
+        return;
+      }
+    }
+
+    if (!jumlah || Number(jumlah) <= 0) {
+      alert("Masukkan jumlah kas yang valid");
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerText = "Menyimpan...";
+
+    try {
+      const res = await callApi({
+        action: "submitKas",
+        memberId: targetMember,
+        nama: kategori === "Iuran Bulanan" ? "Member (" + targetMember + ")" : currentUser.nama,
+        tipe,
+        kategori,
+        jumlah,
+        keterangan,
+        tahunIuran: targetYear,
+        bulanIuran: targetMonth
+      });
+      alert(res.message);
+      document.getElementById("kas-jumlah").value = "";
+      document.getElementById("kas-keterangan").value = "";
+      loadSummary();
+      loadMemberDues();
+    } catch (e) {
+      alert("Terjadi kesalahan: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Simpan Transaksi";
+    }
+  }
+
+  function logout() {
+    currentUser = null;
+    document.getElementById("login-id").value = "";
+    document.getElementById("login-pin").value = "";
+    document.getElementById("section-app").classList.add("d-none");
+    document.getElementById("section-login").classList.remove("d-none");
+  }
+</script>
+</body>
+</html>
