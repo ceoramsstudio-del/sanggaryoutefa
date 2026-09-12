@@ -5,6 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Sanggar - Absensi & Kas</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Pustaka konversi HTML ke Gambar -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body { background-color: #f4f6f9; font-family: sans-serif; }
     .card-box { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
@@ -15,7 +17,7 @@
       gap: 10px;
     }
     .month-badge {
-      padding: 12px 6px;
+      padding: 10px 4px;
       border-radius: 8px;
       text-align: center;
       font-size: 0.85rem;
@@ -23,11 +25,12 @@
     }
     .badge-lunas { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
     .badge-belum { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
+    .printable-area { background-color: #ffffff; padding: 20px; border-radius: 10px; }
   </style>
 </head>
 <body>
 
-<div class="container py-4" style="max-width: 650px;">
+<div class="container py-4" style="max-width: 680px;">
 
   <!-- Login Section -->
   <div id="section-login" class="card card-box p-4 bg-white">
@@ -53,7 +56,7 @@
       <button class="btn btn-sm btn-outline-danger" onclick="logout()">Keluar</button>
     </div>
 
-    <!-- Saldo Kas -->
+    <!-- Saldo Kas Keseluruhan -->
     <div class="card card-box p-3 bg-white mb-3">
       <small class="text-muted">Total Saldo Kas Sanggar</small>
       <h3 class="text-success mb-0" id="display-saldo">Rp 0</h3>
@@ -68,12 +71,15 @@
         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button>
       </li>
       <li class="nav-item" id="tab-btn-kas">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas (Admin)</button>
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas</button>
+      </li>
+      <li class="nav-item" id="tab-btn-laporan">
+        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-laporan">Laporan Kas</button>
       </li>
     </ul>
 
     <div class="tab-content">
-      <!-- Tab Presensi -->
+      <!-- 1. Tab Presensi -->
       <div class="tab-pane fade show active" id="tab-absen">
         <div class="card card-box p-4 bg-white">
           <h6 class="mb-3">Form Presensi Latihan</h6>
@@ -87,38 +93,57 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Catatan</label>
-            <input type="text" id="absen-catatan" class="form-control" placeholder="Opsional (cth: Izin dinas luar)">
+            <input type="text" id="absen-catatan" class="form-control" placeholder="Opsional (cth: Latihan gabungan)">
           </div>
           <button class="btn btn-success w-100" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi</button>
         </div>
       </div>
 
-      <!-- Tab Status Iuran Tahunan Member -->
+      <!-- 2. Tab Status Iuran Member & Cetak Image -->
       <div class="tab-pane fade" id="tab-iuran">
         <div class="card card-box p-4 bg-white">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="mb-0">Kartu Iuran Tahunan</h6>
-            <select id="dues-year-select" class="form-select form-select-sm" style="width: 100px;" onchange="loadMemberDues()">
+            <select id="dues-year-select" class="form-select form-select-sm" style="width: 110px;" onchange="loadMemberDues()">
               <option value="2025">2025</option>
               <option value="2026" selected>2026</option>
               <option value="2027">2027</option>
             </select>
           </div>
 
-          <!-- Highlight Status Terbayar Sampai -->
-          <div class="alert alert-info py-2 mb-3">
-            <small class="d-block text-muted">Lunas berturut-turut sampai:</small>
-            <strong id="dues-paid-until">Memuat data...</strong>
+          <!-- Area yang akan diconvert ke Gambar -->
+          <div id="print-iuran-area" class="printable-area border mb-3">
+            <div class="text-center border-bottom pb-2 mb-3">
+              <h5 class="mb-0 fw-bold">SANGGAR SENI & TARI</h5>
+              <small class="text-muted">Bukti Pembayaran Iuran Member</small>
+            </div>
+            
+            <div class="mb-2">
+              <div>Nama: <strong id="print-member-name">-</strong></div>
+              <div>ID Member: <strong id="print-member-id">-</strong></div>
+              <div>Tahun Buku: <strong id="print-member-year">-</strong></div>
+            </div>
+
+            <div class="alert alert-info py-2 mb-3">
+              <small class="d-block text-muted">Status Pembayaran:</small>
+              <strong id="dues-paid-until">Memuat data...</strong>
+            </div>
+
+            <div class="month-grid" id="months-container">
+              <!-- Render otomatis via JS -->
+            </div>
+            <div class="text-end text-muted mt-3" style="font-size: 0.75rem;">
+              Dicetak tanggal: <span id="dues-print-date"></span>
+            </div>
           </div>
 
-          <!-- Grid 12 Bulan -->
-          <div class="month-grid" id="months-container">
-            <!-- Diisi lewat Javascript -->
-          </div>
+          <button class="btn btn-primary w-100" onclick="exportToImage('print-iuran-area', 'Kartu-Iuran')">
+            Unduh Kartu Iuran (.PNG)
+          </button>
         </div>
       </div>
 
-      <!-- Tab Kas (Admin Only) -->
+      <!-- 3. Tab Input Kas (Admin Only) -->
       <div class="tab-pane fade" id="tab-kas">
         <div class="card card-box p-4 bg-white">
           <h6 class="mb-3">Pencatatan Kas & Iuran</h6>
@@ -139,10 +164,9 @@
             </select>
           </div>
 
-          <!-- Bagian Khusus Iuran Bulanan -->
           <div id="iuran-extra-fields" class="p-3 bg-light rounded mb-3 border">
             <div class="mb-2">
-              <label class="form-label">ID Member yang Membayar</label>
+              <label class="form-label">ID Member</label>
               <input type="text" id="kas-target-member" class="form-control" placeholder="Misal: M001">
             </div>
             <div class="row g-2">
@@ -175,12 +199,88 @@
             <input type="number" id="kas-jumlah" class="form-control" placeholder="Contoh: 50000">
           </div>
           <div class="mb-3">
-            <label class="form-label">Keterangan Tambahan</label>
+            <label class="form-label">Keterangan</label>
             <input type="text" id="kas-keterangan" class="form-control" placeholder="Catatan transaksi">
           </div>
           <button class="btn btn-primary w-100" id="btn-submit-kas" onclick="submitKas()">Simpan Transaksi</button>
         </div>
       </div>
+
+      <!-- 4. Tab Laporan Kas Bulanan & Cetak Image -->
+      <div class="tab-pane fade" id="tab-laporan">
+        <div class="card card-box p-4 bg-white">
+          <h6 class="mb-3">Filter Laporan Kas Bulanan</h6>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <select id="laporan-bulan" class="form-select">
+                <option value="1">Januari</option>
+                <option value="2">Februari</option>
+                <option value="3">Maret</option>
+                <option value="4">April</option>
+                <option value="5">Mei</option>
+                <option value="6">Juni</option>
+                <option value="7">Juli</option>
+                <option value="8">Agustus</option>
+                <option value="9">September</option>
+                <option value="10">Oktober</option>
+                <option value="11">November</option>
+                <option value="12">Desember</option>
+              </select>
+            </div>
+            <div class="col-3">
+              <input type="number" id="laporan-tahun" class="form-control" value="2026">
+            </div>
+            <div class="col-3">
+              <button class="btn btn-outline-primary w-100" onclick="loadMonthlyReport()">Cari</button>
+            </div>
+          </div>
+
+          <!-- Area Rekap yang akan di-print ke Gambar -->
+          <div id="print-laporan-area" class="printable-area border mb-3">
+            <div class="text-center border-bottom pb-2 mb-3">
+              <h5 class="mb-0 fw-bold">LAPORAN KAS SANGGAR</h5>
+              <small class="text-muted" id="laporan-periode-text">Periode: -</small>
+            </div>
+
+            <div class="row text-center mb-3">
+              <div class="col-4">
+                <small class="text-muted d-block">Pemasukan</small>
+                <strong class="text-success" id="rep-masuk">Rp 0</strong>
+              </div>
+              <div class="col-4">
+                <small class="text-muted d-block">Pengeluaran</small>
+                <strong class="text-danger" id="rep-keluar">Rp 0</strong>
+              </div>
+              <div class="col-4">
+                <small class="text-muted d-block">Saldo Bersih</small>
+                <strong class="text-primary" id="rep-bersih">Rp 0</strong>
+              </div>
+            </div>
+
+            <table class="table table-sm table-striped" style="font-size: 0.8rem;">
+              <thead>
+                <tr>
+                  <th>Tgl</th>
+                  <th>Keterangan</th>
+                  <th class="text-end">Jumlah</th>
+                </tr>
+              </thead>
+              <tbody id="rep-transaksi-tbody">
+                <tr><td colspan="3" class="text-center text-muted">Pilih filter dan klik Cari</td></tr>
+              </tbody>
+            </table>
+
+            <div class="text-end text-muted mt-2" style="font-size: 0.75rem;">
+              Dicetak tanggal: <span id="laporan-print-date"></span>
+            </div>
+          </div>
+
+          <button class="btn btn-success w-100" onclick="exportToImage('print-laporan-area', 'Laporan-Kas')">
+            Unduh Laporan Kas (.PNG)
+          </button>
+        </div>
+      </div>
+
     </div>
 
   </div>
@@ -203,12 +303,17 @@
     if (isPost) {
       const response = await fetch(API_URL, {
         method: "POST",
-        body: JSON.stringify(payload)
+        headers: { "Content-Type": "text/plain;charset=utf-8" },
+        body: JSON.stringify(payload),
+        redirect: "follow"
       });
       return await response.json();
     } else {
       const qs = new URLSearchParams(payload).toString();
-      const response = await fetch(`${API_URL}?${qs}`);
+      const response = await fetch(`${API_URL}?${qs}`, {
+        method: "GET",
+        redirect: "follow"
+      });
       return await response.json();
     }
   }
@@ -242,10 +347,13 @@
     document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
     document.getElementById("user-role-badge").innerText = currentUser.role;
 
+    // Akses Tab Kas & Laporan khusus Admin
     if (currentUser.role !== "Admin") {
       document.getElementById("tab-btn-kas").style.display = "none";
+      document.getElementById("tab-btn-laporan").style.display = "none";
     } else {
       document.getElementById("tab-btn-kas").style.display = "block";
+      document.getElementById("tab-btn-laporan").style.display = "block";
     }
 
     loadSummary();
@@ -256,23 +364,24 @@
     try {
       const res = await callApi({ action: "getSummary" }, false);
       if (res.success) {
-        document.getElementById("display-saldo").innerText = new Intl.NumberFormat('id-ID', {
-          style: 'currency',
-          currency: 'IDR',
-          maximumFractionDigits: 0
-        }).format(res.saldo);
+        document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
       }
     } catch (err) {
       console.error(err);
     }
   }
 
-  // Menampilkan status pembayaran 12 bulan
   async function loadMemberDues() {
     if (!currentUser) return;
     const selectedYear = document.getElementById("dues-year-select").value;
     const container = document.getElementById("months-container");
-    container.innerHTML = "<div class='text-muted small col-span-3'>Memuat iuran...</div>";
+    
+    document.getElementById("print-member-name").innerText = currentUser.nama;
+    document.getElementById("print-member-id").innerText = currentUser.memberId;
+    document.getElementById("print-member-year").innerText = selectedYear;
+    document.getElementById("dues-print-date").innerText = new Date().toLocaleDateString('id-ID');
+
+    container.innerHTML = "<div class='text-muted small col-span-3 text-center'>Memuat data iuran...</div>";
 
     try {
       const res = await callApi({
@@ -297,8 +406,62 @@
         });
       }
     } catch (e) {
-      container.innerHTML = "<div class='text-danger small'>Gagal memuat status iuran.</div>";
+      container.innerHTML = "<div class='text-danger small text-center'>Gagal memuat status iuran.</div>";
     }
+  }
+
+  // Tarik Laporan Kas Bulanan (Admin)
+  async function loadMonthlyReport() {
+    const m = document.getElementById("laporan-bulan").value;
+    const y = document.getElementById("laporan-tahun").value;
+    const tbody = document.getElementById("rep-transaksi-tbody");
+
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Mengambil data laporan...</td></tr>`;
+
+    try {
+      const res = await callApi({ action: "getMonthlyReport", month: m, year: y }, false);
+      if (res.success) {
+        document.getElementById("laporan-periode-text").innerText = `Periode: ${MONTH_NAMES[m - 1]} ${y}`;
+        document.getElementById("laporan-print-date").innerText = new Date().toLocaleDateString('id-ID');
+        document.getElementById("rep-masuk").innerText = formatRupiah(res.totalMasuk);
+        document.getElementById("rep-keluar").innerText = formatRupiah(res.totalKeluar);
+        document.getElementById("rep-bersih").innerText = formatRupiah(res.saldoBersih);
+
+        if (res.transaksi.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Tidak ada transaksi di periode ini</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        res.transaksi.forEach(t => {
+          const isMasuk = t.tipe === "Pemasukan";
+          const warna = isMasuk ? "text-success" : "text-danger";
+          const tanda = isMasuk ? "+" : "-";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${t.tanggal}</td>
+            <td><strong>${t.kategori}</strong><br><small class="text-muted">${t.keterangan || t.nama}</small></td>
+            <td class="text-end ${warna}">${tanda}${formatRupiah(t.jumlah)}</td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    } catch (err) {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat laporan</td></tr>`;
+    }
+  }
+
+  // Fungsi Ekspor Elemen HTML menjadi Gambar (.PNG)
+  function exportToImage(elementId, filePrefix) {
+    const element = document.getElementById(elementId);
+    
+    html2canvas(element, { scale: 2 }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = `${filePrefix}-${new Date().getTime()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
   }
 
   function toggleIuranFields() {
@@ -386,6 +549,14 @@
       btn.disabled = false;
       btn.innerText = "Simpan Transaksi";
     }
+  }
+
+  function formatRupiah(angka) {
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      maximumFractionDigits: 0
+    }).format(angka);
   }
 
   function logout() {
