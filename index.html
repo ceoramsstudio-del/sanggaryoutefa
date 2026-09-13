@@ -450,17 +450,22 @@ function setupDashboard() {
           return;
         }
 
-        tbody.innerHTML = "";
-        res.transaksi.forEach(t => {
-          const isMasuk = t.tipe === "Pemasukan";
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${t.tanggal}</td>
-            <td><strong>${t.kategori}</strong><br><small class="text-muted">${t.keterangan || t.nama}</small></td>
-            <td class="text-end ${isMasuk ? 'text-success' : 'text-danger'}">${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}</td>
-          `;
-          tbody.appendChild(tr);
-        });
+       tbody.innerHTML = "";
+res.transaksi.forEach(t => {
+  const isMasuk = t.tipe === "Pemasukan";
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td class="align-middle">${t.tanggal}</td>
+    <td>
+      <strong class="text-dark">${t.kategori}</strong>
+      <div class="text-muted" style="font-size: 0.75rem;">${t.keteranganDetail}</div>
+    </td>
+    <td class="text-end align-middle ${isMasuk ? 'text-success' : 'text-danger'} fw-bold">
+      ${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}
+    </td>
+  `;
+  tbody.appendChild(tr);
+});
       }
     } catch (err) {
       tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat laporan</td></tr>`;
