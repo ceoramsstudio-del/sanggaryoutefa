@@ -3,34 +3,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Sanggar - Absensi & Kas</title>
+  <title>Portal Sanggar</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-  <!-- Pustaka konversi HTML ke Gambar -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <style>
     body { background-color: #f4f6f9; font-family: sans-serif; }
     .card-box { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .nav-tabs .nav-link.active { font-weight: bold; }
-    .month-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    .month-badge {
-      padding: 10px 4px;
-      border-radius: 8px;
-      text-align: center;
-      font-size: 0.85rem;
-      font-weight: 600;
-    }
+    .month-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .month-badge { padding: 8px 4px; border-radius: 8px; text-align: center; font-size: 0.8rem; font-weight: 600; }
     .badge-lunas { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
     .badge-belum { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
-    .printable-area { background-color: #ffffff; padding: 20px; border-radius: 10px; }
+    .printable-area { background: #ffffff; padding: 20px; border-radius: 10px; }
+    .profile-avatar { width: 70px; height: 70px; object-fit: cover; border-radius: 50%; border: 2px solid #0d6efd; }
   </style>
 </head>
 <body>
 
-<div class="container py-4" style="max-width: 680px;">
+<div class="container py-3" style="max-width: 680px;">
 
   <!-- Login Section -->
   <div id="section-login" class="card card-box p-4 bg-white">
@@ -48,41 +37,38 @@
 
   <!-- Main App Section -->
   <div id="section-app" class="d-none">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <h5 class="mb-0" id="welcome-text">Halo, Member</h5>
-        <small class="badge bg-secondary" id="user-role-badge">Member</small>
+    <div class="card card-box p-3 bg-white mb-3 d-flex flex-row align-items-center justify-content-between">
+      <div class="d-flex align-items-center gap-3">
+        <img id="user-avatar" src="https://via.placeholder.com/70" class="profile-avatar">
+        <div>
+          <h5 class="mb-0" id="welcome-text">Halo, Member</h5>
+          <span class="badge bg-secondary" id="user-role-badge">Member</span>
+        </div>
       </div>
       <button class="btn btn-sm btn-outline-danger" onclick="logout()">Keluar</button>
     </div>
 
-    <!-- Saldo Kas Keseluruhan -->
+    <!-- Saldo -->
     <div class="card card-box p-3 bg-white mb-3">
       <small class="text-muted">Total Saldo Kas Sanggar</small>
       <h3 class="text-success mb-0" id="display-saldo">Rp 0</h3>
     </div>
 
-    <!-- Navigation Tabs -->
+    <!-- Tabs Nav -->
     <ul class="nav nav-tabs mb-3" id="tabNav">
-      <li class="nav-item">
-        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Presensi</button>
-      </li>
-      <li class="nav-item">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button>
-      </li>
-      <li class="nav-item" id="tab-btn-kas">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas</button>
-      </li>
-      <li class="nav-item" id="tab-btn-laporan">
-        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-laporan">Laporan Kas</button>
-      </li>
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Presensi</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button></li>
+      <li class="nav-item" id="tab-btn-kas"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas</button></li>
+      <li class="nav-item" id="tab-btn-laporan"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-laporan">Laporan Kas</button></li>
+      <li class="nav-item" id="tab-btn-addmember"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-addmember">+ Member</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-profile">Profil</button></li>
     </ul>
 
     <div class="tab-content">
-      <!-- 1. Tab Presensi -->
+      <!-- 1. Presensi -->
       <div class="tab-pane fade show active" id="tab-absen">
         <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Form Presensi Latihan</h6>
+          <h6 class="mb-3">Presensi Kegiatan</h6>
           <div class="mb-3">
             <label class="form-label">Status</label>
             <select id="absen-status" class="form-select">
@@ -93,60 +79,46 @@
           </div>
           <div class="mb-3">
             <label class="form-label">Catatan</label>
-            <input type="text" id="absen-catatan" class="form-control" placeholder="Opsional (cth: Latihan gabungan)">
+            <input type="text" id="absen-catatan" class="form-control" placeholder="Opsional">
           </div>
           <button class="btn btn-success w-100" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi</button>
         </div>
       </div>
 
-      <!-- 2. Tab Status Iuran Member & Cetak Image -->
+      <!-- 2. Iuran & Cetak -->
       <div class="tab-pane fade" id="tab-iuran">
         <div class="card card-box p-4 bg-white">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Kartu Iuran Tahunan</h6>
-            <select id="dues-year-select" class="form-select form-select-sm" style="width: 110px;" onchange="loadMemberDues()">
+            <h6 class="mb-0">Kartu Iuran</h6>
+            <select id="dues-year-select" class="form-select form-select-sm" style="width: 100px;" onchange="loadMemberDues()">
               <option value="2025">2025</option>
               <option value="2026" selected>2026</option>
               <option value="2027">2027</option>
             </select>
           </div>
-
-          <!-- Area yang akan diconvert ke Gambar -->
           <div id="print-iuran-area" class="printable-area border mb-3">
             <div class="text-center border-bottom pb-2 mb-3">
-              <h5 class="mb-0 fw-bold">SANGGAR SENI & TARI</h5>
-              <small class="text-muted">Bukti Pembayaran Iuran Member</small>
+              <h5 class="mb-0 fw-bold">KARTU IURAN SANGGAR</h5>
+              <small class="text-muted">Bukti Pembayaran Resmi</small>
             </div>
-            
-            <div class="mb-2">
-              <div>Nama: <strong id="print-member-name">-</strong></div>
-              <div>ID Member: <strong id="print-member-id">-</strong></div>
-              <div>Tahun Buku: <strong id="print-member-year">-</strong></div>
+            <div>Nama: <strong id="print-member-name">-</strong></div>
+            <div>ID: <strong id="print-member-id">-</strong> | Tahun: <strong id="print-member-year">-</strong></div>
+            <div class="alert alert-info py-2 my-2 small">
+              Status Lunas Sampai: <strong id="dues-paid-until">-</strong>
             </div>
-
-            <div class="alert alert-info py-2 mb-3">
-              <small class="d-block text-muted">Status Pembayaran:</small>
-              <strong id="dues-paid-until">Memuat data...</strong>
-            </div>
-
-            <div class="month-grid" id="months-container">
-              <!-- Render otomatis via JS -->
-            </div>
-            <div class="text-end text-muted mt-3" style="font-size: 0.75rem;">
-              Dicetak tanggal: <span id="dues-print-date"></span>
+            <div class="month-grid" id="months-container"></div>
+            <div class="text-end text-muted mt-2" style="font-size: 0.75rem;">
+              Dicetak: <span id="dues-print-date"></span>
             </div>
           </div>
-
-          <button class="btn btn-primary w-100" onclick="exportToImage('print-iuran-area', 'Kartu-Iuran')">
-            Unduh Kartu Iuran (.PNG)
-          </button>
+          <button class="btn btn-primary w-100" onclick="exportToImage('print-iuran-area', 'Kartu-Iuran')">Unduh Gambar Iuran (.PNG)</button>
         </div>
       </div>
 
-      <!-- 3. Tab Input Kas (Admin Only) -->
+      <!-- 3. Input Kas -->
       <div class="tab-pane fade" id="tab-kas">
         <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Pencatatan Kas & Iuran</h6>
+          <h6 class="mb-3">Input Kas & Iuran</h6>
           <div class="mb-3">
             <label class="form-label">Tipe</label>
             <select id="kas-tipe" class="form-select">
@@ -158,73 +130,50 @@
             <label class="form-label">Kategori</label>
             <select id="kas-kategori" class="form-select" onchange="toggleIuranFields()">
               <option value="Iuran Bulanan">Iuran Bulanan</option>
-              <option value="Donasi / Kas Kasual">Donasi / Kas Kasual</option>
-              <option value="Kostum & Make-up">Kostum & Make-up</option>
-              <option value="Konsumsi & Operasional">Konsumsi & Operasional</option>
+              <option value="Donasi / Kasual">Donasi / Kasual</option>
+              <option value="Operasional">Operasional</option>
             </select>
           </div>
-
           <div id="iuran-extra-fields" class="p-3 bg-light rounded mb-3 border">
-            <div class="mb-2">
-              <label class="form-label">ID Member</label>
-              <input type="text" id="kas-target-member" class="form-control" placeholder="Misal: M001">
-            </div>
+            <label class="form-label">ID Member</label>
+            <input type="text" id="kas-target-member" class="form-control mb-2" placeholder="Cth: M001">
             <div class="row g-2">
               <div class="col-6">
-                <label class="form-label">Untuk Bulan</label>
                 <select id="kas-target-month" class="form-select">
-                  <option value="1">Januari</option>
-                  <option value="2">Februari</option>
-                  <option value="3">Maret</option>
-                  <option value="4">April</option>
-                  <option value="5">Mei</option>
-                  <option value="6">Juni</option>
-                  <option value="7">Juli</option>
-                  <option value="8">Agustus</option>
-                  <option value="9">September</option>
-                  <option value="10">Oktober</option>
-                  <option value="11">November</option>
-                  <option value="12">Desember</option>
+                  <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                  <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                  <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                  <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
                 </select>
               </div>
               <div class="col-6">
-                <label class="form-label">Tahun</label>
                 <input type="number" id="kas-target-year" class="form-control" value="2026">
               </div>
             </div>
           </div>
-
           <div class="mb-3">
             <label class="form-label">Jumlah (Rp)</label>
-            <input type="number" id="kas-jumlah" class="form-control" placeholder="Contoh: 50000">
+            <input type="number" id="kas-jumlah" class="form-control" placeholder="50000">
           </div>
           <div class="mb-3">
             <label class="form-label">Keterangan</label>
-            <input type="text" id="kas-keterangan" class="form-control" placeholder="Catatan transaksi">
+            <input type="text" id="kas-keterangan" class="form-control" placeholder="Opsional">
           </div>
           <button class="btn btn-primary w-100" id="btn-submit-kas" onclick="submitKas()">Simpan Transaksi</button>
         </div>
       </div>
 
-      <!-- 4. Tab Laporan Kas Bulanan & Cetak Image -->
+      <!-- 4. Laporan Kas Bulanan -->
       <div class="tab-pane fade" id="tab-laporan">
         <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Filter Laporan Kas Bulanan</h6>
+          <h6 class="mb-3">Laporan Kas Bulanan</h6>
           <div class="row g-2 mb-3">
             <div class="col-6">
               <select id="laporan-bulan" class="form-select">
-                <option value="1">Januari</option>
-                <option value="2">Februari</option>
-                <option value="3">Maret</option>
-                <option value="4">April</option>
-                <option value="5">Mei</option>
-                <option value="6">Juni</option>
-                <option value="7">Juli</option>
-                <option value="8">Agustus</option>
-                <option value="9">September</option>
-                <option value="10">Oktober</option>
-                <option value="11">November</option>
-                <option value="12">Desember</option>
+                <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
+                <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
+                <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
+                <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
               </select>
             </div>
             <div class="col-3">
@@ -235,13 +184,11 @@
             </div>
           </div>
 
-          <!-- Area Rekap yang akan di-print ke Gambar -->
           <div id="print-laporan-area" class="printable-area border mb-3">
             <div class="text-center border-bottom pb-2 mb-3">
               <h5 class="mb-0 fw-bold">LAPORAN KAS SANGGAR</h5>
               <small class="text-muted" id="laporan-periode-text">Periode: -</small>
             </div>
-
             <div class="row text-center mb-3">
               <div class="col-4">
                 <small class="text-muted d-block">Pemasukan</small>
@@ -256,33 +203,87 @@
                 <strong class="text-primary" id="rep-bersih">Rp 0</strong>
               </div>
             </div>
-
-            <table class="table table-sm table-striped" style="font-size: 0.8rem;">
+            <table class="table table-sm" style="font-size: 0.8rem;">
               <thead>
-                <tr>
-                  <th>Tgl</th>
-                  <th>Keterangan</th>
-                  <th class="text-end">Jumlah</th>
-                </tr>
+                <tr><th>Tgl</th><th>Ket</th><th class="text-end">Jumlah</th></tr>
               </thead>
               <tbody id="rep-transaksi-tbody">
-                <tr><td colspan="3" class="text-center text-muted">Pilih filter dan klik Cari</td></tr>
+                <tr><td colspan="3" class="text-center text-muted">Silakan klik tombol Cari</td></tr>
               </tbody>
             </table>
-
             <div class="text-end text-muted mt-2" style="font-size: 0.75rem;">
-              Dicetak tanggal: <span id="laporan-print-date"></span>
+              Dicetak: <span id="laporan-print-date"></span>
             </div>
           </div>
+          <button class="btn btn-success w-100" onclick="exportToImage('print-laporan-area', 'Laporan-Kas')">Unduh Laporan (.PNG)</button>
+        </div>
+      </div>
 
-          <button class="btn btn-success w-100" onclick="exportToImage('print-laporan-area', 'Laporan-Kas')">
-            Unduh Laporan Kas (.PNG)
-          </button>
+      <!-- 5. Tambah Member Baru (Admin Only) -->
+      <div class="tab-pane fade" id="tab-addmember">
+        <div class="card card-box p-4 bg-white">
+          <h6 class="mb-3">Pendaftaran Member Baru</h6>
+          <div class="mb-3">
+            <label class="form-label">Member ID</label>
+            <input type="text" id="new-id" class="form-control" placeholder="Cth: M003">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" id="new-nama" class="form-control" placeholder="Nama Lengkap">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label">Role</label>
+              <select id="new-role" class="form-select">
+                <option value="Member">Member</option>
+                <option value="Admin">Admin</option>
+              </select>
+            </div>
+            <div class="col-6">
+              <label class="form-label">PIN</label>
+              <input type="password" id="new-pin" class="form-control" placeholder="PIN 4-6 digit">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">No. Telepon/WA</label>
+            <input type="tel" id="new-telp" class="form-control" placeholder="0812xxxx">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Foto Profil Member</label>
+            <input type="file" id="new-foto" class="form-control" accept="image/*">
+          </div>
+          <button class="btn btn-primary w-100" id="btn-add-member" onclick="submitAddMember()">Daftarkan Member</button>
+        </div>
+      </div>
+
+      <!-- 6. Profil Saya (Edit Nama, PIN, Foto) -->
+      <div class="tab-pane fade" id="tab-profile">
+        <div class="card card-box p-4 bg-white">
+          <h6 class="mb-3">Edit Profil Saya</h6>
+          <div class="mb-3 text-center">
+            <img id="profile-preview" src="https://via.placeholder.com/90" class="profile-avatar" style="width:90px;height:90px;">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Ganti Foto Profil</label>
+            <input type="file" id="edit-foto" class="form-control" accept="image/*" onchange="previewProfileImage(this)">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nama Lengkap</label>
+            <input type="text" id="edit-nama" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">No. Telepon/WA</label>
+            <input type="tel" id="edit-telp" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Ganti PIN (Kosongkan jika tidak diubah)</label>
+            <input type="password" id="edit-pin" class="form-control" placeholder="PIN Baru">
+          </div>
+          <button class="btn btn-primary w-100" id="btn-update-profile" onclick="submitUpdateProfile()">Simpan Perubahan</button>
         </div>
       </div>
 
     </div>
-
   </div>
 
 </div>
@@ -292,12 +293,17 @@
   // GANTI DENGAN URL DEPLOYMENT APPS SCRIPT ANDA
   const API_URL = "https://script.google.com/macros/s/AKfycbwyMlTH83S5hkIDQ7kaYOOOaCD5Y9bum6iazxHn5APHQVzS5fjureIR3EPL-A99dpD8/exec";
 
-  const MONTH_NAMES = [
-    "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-    "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-  ];
-
+  const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   let currentUser = null;
+
+  function toBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
 
   async function callApi(payload, isPost = true) {
     if (isPost) {
@@ -321,11 +327,7 @@
   async function handleLogin() {
     const memberId = document.getElementById("login-id").value.trim();
     const pin = document.getElementById("login-pin").value.trim();
-
-    if (!memberId || !pin) {
-      alert("Silakan isi Member ID dan PIN");
-      return;
-    }
+    if (!memberId || !pin) return alert("Silakan isi Member ID dan PIN");
 
     try {
       const res = await callApi({ action: "login", memberId, pin });
@@ -346,29 +348,41 @@
 
     document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
     document.getElementById("user-role-badge").innerText = currentUser.role;
+    updateUserAvatar(currentUser.fotoUrl);
 
-    // Akses Tab Kas & Laporan khusus Admin
-    if (currentUser.role !== "Admin") {
-      document.getElementById("tab-btn-kas").style.display = "none";
-      document.getElementById("tab-btn-laporan").style.display = "none";
-    } else {
-      document.getElementById("tab-btn-kas").style.display = "block";
-      document.getElementById("tab-btn-laporan").style.display = "block";
-    }
+    // Form profile default
+    document.getElementById("edit-nama").value = currentUser.nama;
+    document.getElementById("edit-telp").value = currentUser.telepon || "";
+
+    const isAdmin = currentUser.role === "Admin";
+    document.getElementById("tab-btn-kas").style.display = isAdmin ? "block" : "none";
+    document.getElementById("tab-btn-laporan").style.display = isAdmin ? "block" : "none";
+    document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
 
     loadSummary();
     loadMemberDues();
   }
 
+  function updateUserAvatar(url) {
+    const defaultPic = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60";
+    const src = url && url.length > 5 ? url : defaultPic;
+    document.getElementById("user-avatar").src = src;
+    document.getElementById("profile-preview").src = src;
+  }
+
+  function previewProfileImage(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = e => document.getElementById("profile-preview").src = e.target.result;
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+
   async function loadSummary() {
     try {
       const res = await callApi({ action: "getSummary" }, false);
-      if (res.success) {
-        document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
-      }
-    } catch (err) {
-      console.error(err);
-    }
+      if (res.success) document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
+    } catch (err) { console.error(err); }
   }
 
   async function loadMemberDues() {
@@ -380,28 +394,18 @@
     document.getElementById("print-member-id").innerText = currentUser.memberId;
     document.getElementById("print-member-year").innerText = selectedYear;
     document.getElementById("dues-print-date").innerText = new Date().toLocaleDateString('id-ID');
-
-    container.innerHTML = "<div class='text-muted small col-span-3 text-center'>Memuat data iuran...</div>";
+    container.innerHTML = "<div class='text-muted small col-span-3 text-center'>Memuat data...</div>";
 
     try {
-      const res = await callApi({
-        action: "getMemberDues",
-        memberId: currentUser.memberId,
-        year: selectedYear
-      }, false);
-
+      const res = await callApi({ action: "getMemberDues", memberId: currentUser.memberId, year: selectedYear }, false);
       if (res.success) {
         document.getElementById("dues-paid-until").innerText = res.lastPaidUntil;
         container.innerHTML = "";
-
         MONTH_NAMES.forEach((month, index) => {
           const isPaid = res.monthsPaid[index];
-          const badgeClass = isPaid ? "badge-lunas" : "badge-belum";
-          const statusText = isPaid ? "Lunas" : "Belum";
-
           const card = document.createElement("div");
-          card.className = `month-badge ${badgeClass}`;
-          card.innerHTML = `<div>${month}</div><small style="font-size:0.75rem">${statusText}</small>`;
+          card.className = `month-badge ${isPaid ? "badge-lunas" : "badge-belum"}`;
+          card.innerHTML = `<div>${month}</div><small>${isPaid ? "Lunas" : "Belum"}</small>`;
           container.appendChild(card);
         });
       }
@@ -410,10 +414,10 @@
     }
   }
 
-  // Tarik Laporan Kas Bulanan (Admin)
+  // Load Laporan Kas Bulanan
   async function loadMonthlyReport() {
-    const m = document.getElementById("laporan-bulan").value;
-    const y = document.getElementById("laporan-tahun").value;
+    const m = Number(document.getElementById("laporan-bulan").value);
+    const y = Number(document.getElementById("laporan-tahun").value);
     const tbody = document.getElementById("rep-transaksi-tbody");
 
     tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Mengambil data laporan...</td></tr>`;
@@ -427,22 +431,19 @@
         document.getElementById("rep-keluar").innerText = formatRupiah(res.totalKeluar);
         document.getElementById("rep-bersih").innerText = formatRupiah(res.saldoBersih);
 
-        if (res.transaksi.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Tidak ada transaksi di periode ini</td></tr>`;
+        if (!res.transaksi || res.transaksi.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Tidak ada transaksi di periode ini</td></tr>`;
           return;
         }
 
         tbody.innerHTML = "";
         res.transaksi.forEach(t => {
           const isMasuk = t.tipe === "Pemasukan";
-          const warna = isMasuk ? "text-success" : "text-danger";
-          const tanda = isMasuk ? "+" : "-";
-
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td>${t.tanggal}</td>
             <td><strong>${t.kategori}</strong><br><small class="text-muted">${t.keterangan || t.nama}</small></td>
-            <td class="text-end ${warna}">${tanda}${formatRupiah(t.jumlah)}</td>
+            <td class="text-end ${isMasuk ? 'text-success' : 'text-danger'}">${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -452,10 +453,85 @@
     }
   }
 
-  // Fungsi Ekspor Elemen HTML menjadi Gambar (.PNG)
+  // Tambah Member Baru
+  async function submitAddMember() {
+    const memberId = document.getElementById("new-id").value.trim();
+    const nama = document.getElementById("new-nama").value.trim();
+    const role = document.getElementById("new-role").value;
+    const pin = document.getElementById("new-pin").value.trim();
+    const telepon = document.getElementById("new-telp").value.trim();
+    const fileInput = document.getElementById("new-foto");
+    const btn = document.getElementById("btn-add-member");
+
+    if (!memberId || !nama || !pin) return alert("ID, Nama, dan PIN wajib diisi");
+
+    btn.disabled = true;
+    btn.innerText = "Mendaftarkan...";
+
+    let fotoBase64 = "";
+    if (fileInput.files[0]) {
+      fotoBase64 = await toBase64(fileInput.files[0]);
+    }
+
+    try {
+      const res = await callApi({ action: "addMember", memberId, nama, role, pin, telepon, fotoBase64 });
+      alert(res.message);
+      if (res.success) {
+        document.getElementById("new-id").value = "";
+        document.getElementById("new-nama").value = "";
+        document.getElementById("new-pin").value = "";
+        document.getElementById("new-telp").value = "";
+        fileInput.value = "";
+      }
+    } catch (e) {
+      alert("Terjadi kesalahan: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Daftarkan Member";
+    }
+  }
+
+  // Update Profile
+  async function submitUpdateProfile() {
+    const nama = document.getElementById("edit-nama").value.trim();
+    const pin = document.getElementById("edit-pin").value.trim();
+    const telepon = document.getElementById("edit-telp").value.trim();
+    const fileInput = document.getElementById("edit-foto");
+    const btn = document.getElementById("btn-update-profile");
+
+    btn.disabled = true;
+    btn.innerText = "Menyimpan...";
+
+    let fotoBase64 = "";
+    if (fileInput.files[0]) {
+      fotoBase64 = await toBase64(fileInput.files[0]);
+    }
+
+    try {
+      const res = await callApi({
+        action: "updateProfile",
+        memberId: currentUser.memberId,
+        nama, pin, telepon, fotoBase64
+      });
+
+      alert(res.message);
+      if (res.success) {
+        currentUser = res.user;
+        document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
+        updateUserAvatar(currentUser.fotoUrl);
+        fileInput.value = "";
+        document.getElementById("edit-pin").value = "";
+      }
+    } catch (e) {
+      alert("Gagal memperbarui profil: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Simpan Perubahan";
+    }
+  }
+
   function exportToImage(elementId, filePrefix) {
     const element = document.getElementById(elementId);
-    
     html2canvas(element, { scale: 2 }).then(canvas => {
       const link = document.createElement("a");
       link.download = `${filePrefix}-${new Date().getTime()}.png`;
@@ -466,34 +542,22 @@
 
   function toggleIuranFields() {
     const kategori = document.getElementById("kas-kategori").value;
-    const extraFields = document.getElementById("iuran-extra-fields");
-    extraFields.style.display = (kategori === "Iuran Bulanan") ? "block" : "none";
+    document.getElementById("iuran-extra-fields").style.display = (kategori === "Iuran Bulanan") ? "block" : "none";
   }
 
   async function submitAbsensi() {
     const status = document.getElementById("absen-status").value;
     const catatan = document.getElementById("absen-catatan").value;
     const btn = document.getElementById("btn-submit-absen");
-
     btn.disabled = true;
     btn.innerText = "Mengirim...";
 
     try {
-      const res = await callApi({
-        action: "submitAbsen",
-        memberId: currentUser.memberId,
-        nama: currentUser.nama,
-        keterangan: status,
-        catatan: catatan
-      });
+      const res = await callApi({ action: "submitAbsen", memberId: currentUser.memberId, nama: currentUser.nama, keterangan: status, catatan });
       alert(res.message);
       document.getElementById("absen-catatan").value = "";
-    } catch (e) {
-      alert("Terjadi kesalahan: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Kirim Presensi";
-    }
+    } catch (e) { alert("Error: " + e.message); } 
+    finally { btn.disabled = false; btn.innerText = "Kirim Presensi"; }
   }
 
   async function submitKas() {
@@ -511,17 +575,10 @@
       targetMember = document.getElementById("kas-target-member").value.trim();
       targetYear = document.getElementById("kas-target-year").value;
       targetMonth = document.getElementById("kas-target-month").value;
-
-      if (!targetMember) {
-        alert("Harap isi ID Member yang membayar iuran");
-        return;
-      }
+      if (!targetMember) return alert("Harap isi ID Member");
     }
 
-    if (!jumlah || Number(jumlah) <= 0) {
-      alert("Masukkan jumlah kas yang valid");
-      return;
-    }
+    if (!jumlah || Number(jumlah) <= 0) return alert("Masukkan jumlah kas yang valid");
 
     btn.disabled = true;
     btn.innerText = "Menyimpan...";
@@ -531,32 +588,19 @@
         action: "submitKas",
         memberId: targetMember,
         nama: kategori === "Iuran Bulanan" ? "Member (" + targetMember + ")" : currentUser.nama,
-        tipe,
-        kategori,
-        jumlah,
-        keterangan,
-        tahunIuran: targetYear,
-        bulanIuran: targetMonth
+        tipe, kategori, jumlah, keterangan,
+        tahunIuran: targetYear, bulanIuran: targetMonth
       });
       alert(res.message);
       document.getElementById("kas-jumlah").value = "";
       document.getElementById("kas-keterangan").value = "";
       loadSummary();
-      loadMemberDues();
-    } catch (e) {
-      alert("Terjadi kesalahan: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Simpan Transaksi";
-    }
+    } catch (e) { alert("Error: " + e.message); } 
+    finally { btn.disabled = false; btn.innerText = "Simpan Transaksi"; }
   }
 
   function formatRupiah(angka) {
-    return new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0
-    }).format(angka);
+    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
   }
 
   function logout() {
