@@ -42,7 +42,7 @@
     .app-wrapper {
       position: relative;
       z-index: 1;
-      max-width: 660px;
+      max-width: 680px;
     }
 
     .brand-title {
@@ -90,7 +90,6 @@
       font-size: 1.4rem;
       font-weight: 800;
       border: 3px solid #fff3b0;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
 
     .saldo-box {
@@ -135,17 +134,12 @@
     .btn-gold:hover {
       background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
       color: #1e0901;
-      transform: translateY(-1px);
     }
 
     .form-control, .form-select {
       border-radius: 12px;
       border: 1.5px solid #e5e7eb;
       padding: 10px 14px;
-    }
-    .form-control:focus, .form-select:focus {
-      border-color: #f59e0b;
-      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
     }
 
     .month-grid {
@@ -170,7 +164,6 @@
       border: 2px solid #f59e0b;
     }
 
-    /* Modal Loading Tematik */
     #loadingModal .modal-content {
       background: linear-gradient(145deg, #3d1b06, #1f0b02);
       border: 2px solid #f5b01e;
@@ -191,7 +184,7 @@
     <div style="font-size: 0.8rem; color: #fde68a; letter-spacing: 0.5px;">Lestarikan Budaya, Tari Menghubungkan Kita</div>
   </div>
 
-  <!-- Form Login (Menggunakan Nama Lengkap) -->
+  <!-- Form Login -->
   <div id="section-login" class="custom-card p-4 mx-auto" style="max-width: 420px;">
     <h5 class="text-center fw-bold mb-3" style="color: #451a03;">Masuk Member / Pelatih</h5>
     <div class="mb-3">
@@ -220,7 +213,7 @@
       <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="logout()">Keluar</button>
     </div>
 
-    <!-- Total Kas Sanggar (Hanya Admin) -->
+    <!-- Total Kas Sanggar (Admin Saja) -->
     <div id="admin-saldo-container" class="saldo-box p-3 mb-3 d-none">
       <div class="d-flex justify-content-between align-items-center">
         <div>
@@ -234,35 +227,106 @@
     <!-- Navigasi Tabs -->
     <ul class="nav nav-tabs mb-3" id="tabNav">
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Presensi</button></li>
+      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-rekap-absen" onclick="loadAbsensiReport()">Rekap Absen</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button></li>
       <li class="nav-item" id="tab-btn-kas"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas</button></li>
       <li class="nav-item" id="tab-btn-laporan"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-laporan">Laporan Kas</button></li>
+      <li class="nav-item" id="tab-btn-jadwal"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-jadwal">+ Jadwal</button></li>
       <li class="nav-item" id="tab-btn-addmember"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-addmember">+ Member</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-profile">Profil</button></li>
     </ul>
 
     <div class="tab-content">
-      <!-- 1. Presensi -->
+      <!-- 1. Tab Presensi Terjadwal & Terkunci -->
       <div class="tab-pane fade show active" id="tab-absen">
         <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Form Presensi Latihan</h6>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
-            <select id="absen-status" class="form-select">
-              <option value="Hadir">Hadir</option>
-              <option value="Izin">Izin</option>
-              <option value="Sakit">Sakit</option>
-            </select>
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Presensi Latihan Sanggar</h6>
+          
+          <!-- Banner Status Sesi Latihan -->
+          <div id="absen-status-banner" class="alert alert-secondary py-2 mb-3 small fw-bold">
+            Memeriksa jadwal latihan hari ini...
           </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">CATATAN (OPSIONAL)</label>
-            <input type="text" id="absen-catatan" class="form-control" placeholder="Contoh: Latihan Rutin Sabtu">
+
+          <div id="absen-form-wrapper" class="d-none">
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
+              <select id="absen-status" class="form-select">
+                <option value="Hadir">Hadir</option>
+                <option value="Izin">Izin</option>
+                <option value="Sakit">Sakit</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label small fw-bold text-muted">CATATAN (OPSIONAL)</label>
+              <input type="text" id="absen-catatan" class="form-control" placeholder="Contoh: Datang tepat waktu">
+            </div>
+            <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi Sekarang</button>
           </div>
-          <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi</button>
         </div>
       </div>
 
-      <!-- 2. Iuran -->
+      <!-- 2. Tab Rekap Absensi (Filter Harian & Tahunan) -->
+      <div class="tab-pane fade" id="tab-rekap-absen">
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Rekap Keaktifan Member</h6>
+          
+          <div class="row g-2 mb-3">
+            <div class="col-4">
+              <select id="rekap-filter-type" class="form-select form-select-sm" onchange="toggleRekapFilterInput()">
+                <option value="daily">Harian</option>
+                <option value="yearly">Tahunan</option>
+              </select>
+            </div>
+            <div class="col-5" id="rekap-input-date-col">
+              <input type="date" id="rekap-filter-date" class="form-control form-select-sm">
+            </div>
+            <div class="col-5 d-none" id="rekap-input-year-col">
+              <input type="number" id="rekap-filter-year" class="form-control form-select-sm" value="2026">
+            </div>
+            <div class="col-3">
+              <button class="btn btn-dark btn-sm w-100 fw-bold" onclick="loadAbsensiReport()">Cari</button>
+            </div>
+          </div>
+
+          <!-- Ringkasan Kehadiran -->
+          <div class="row text-center mb-3 g-2">
+            <div class="col-4">
+              <div class="p-2 border rounded bg-light">
+                <small class="text-muted d-block" style="font-size:0.75rem;">Hadir</small>
+                <strong class="text-success" id="rekap-count-hadir">0</strong>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="p-2 border rounded bg-light">
+                <small class="text-muted d-block" style="font-size:0.75rem;">Izin</small>
+                <strong class="text-warning" id="rekap-count-izin">0</strong>
+              </div>
+            </div>
+            <div class="col-4">
+              <div class="p-2 border rounded bg-light">
+                <small class="text-muted d-block" style="font-size:0.75rem;">Sakit</small>
+                <strong class="text-danger" id="rekap-count-sakit">0</strong>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabel Rekap -->
+          <table class="table table-sm" style="font-size: 0.8rem;">
+            <thead class="table-light">
+              <tr>
+                <th>Waktu</th>
+                <th>Nama</th>
+                <th class="text-end">Status</th>
+              </tr>
+            </thead>
+            <tbody id="rekap-absen-tbody">
+              <tr><td colspan="3" class="text-center text-muted py-3">Klik tombol Cari</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 3. Tab Iuran Saya -->
       <div class="tab-pane fade" id="tab-iuran">
         <div class="custom-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
@@ -295,7 +359,7 @@
         </div>
       </div>
 
-      <!-- 3. Input Kas (Autocomplete Nama Anggota) -->
+      <!-- 4. Tab Input Kas -->
       <div class="tab-pane fade" id="tab-kas">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Catat Pemasukan / Pengeluaran</h6>
@@ -315,11 +379,9 @@
             </select>
           </div>
 
-          <!-- Input Nama dengan Autocomplete Database -->
           <div id="iuran-extra-fields" class="p-3 bg-light rounded-3 mb-3 border">
             <label class="form-label small fw-bold text-muted">NAMA MEMBER YANG MEMBAYAR</label>
             <input type="text" id="kas-target-member" list="list-member-datalist" class="form-control mb-2" placeholder="Ketik nama member...">
-            <!-- Datalist untuk Autocomplete -->
             <datalist id="list-member-datalist"></datalist>
 
             <div class="row g-2">
@@ -349,7 +411,7 @@
         </div>
       </div>
 
-      <!-- 4. Laporan Kas Bulanan -->
+      <!-- 5. Tab Laporan Kas Bulanan -->
       <div class="tab-pane fade" id="tab-laporan">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Laporan Keuangan Bulanan</h6>
@@ -406,7 +468,33 @@
         </div>
       </div>
 
-      <!-- 5. Tambah Member -->
+      <!-- 6. Tab Atur Jadwal Latihan (Admin Only) -->
+      <div class="tab-pane fade" id="tab-jadwal">
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Tetapkan Jadwal Latihan</h6>
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">TANGGAL LATIHAN</label>
+            <input type="date" id="jadwal-tgl" class="form-control">
+          </div>
+          <div class="row g-2 mb-3">
+            <div class="col-6">
+              <label class="form-label small fw-bold text-muted">JAM MULAI</label>
+              <input type="time" id="jadwal-mulai" class="form-control" value="09:00">
+            </div>
+            <div class="col-6">
+              <label class="form-label small fw-bold text-muted">JAM SELESAI</label>
+              <input type="time" id="jadwal-selesai" class="form-control" value="12:00">
+            </div>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-bold text-muted">KETERANGAN LATIHAN</label>
+            <input type="text" id="jadwal-ket" class="form-control" placeholder="Contoh: Latihan Tari Saman & Piring">
+          </div>
+          <button class="btn btn-gold w-100 py-2" id="btn-save-jadwal" onclick="submitJadwal()">Buka Jadwal Latihan</button>
+        </div>
+      </div>
+
+      <!-- 7. Tab Tambah Member (Admin Only) -->
       <div class="tab-pane fade" id="tab-addmember">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Pendaftaran Anggota Baru</h6>
@@ -439,7 +527,7 @@
         </div>
       </div>
 
-      <!-- 6. Profil -->
+      <!-- 8. Tab Profil -->
       <div class="tab-pane fade" id="tab-profile">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Data Akun Saya</h6>
@@ -464,7 +552,7 @@
 
 </div>
 
-<!-- Modal Popup Loading Tematik -->
+<!-- Modal Loading Tematik -->
 <div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
   <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
     <div class="modal-content p-4 text-center">
@@ -486,6 +574,9 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     loadingModalInstance = new bootstrap.Modal(document.getElementById("loadingModal"));
+    const today = new Date().toISOString().split('T')[0];
+    document.getElementById("rekap-filter-date").value = today;
+    document.getElementById("jadwal-tgl").value = today;
   });
 
   async function callApi(payload, isPost = true) {
@@ -514,13 +605,11 @@
     }
   }
 
-  // LOGIN MENGGUNAKAN NAMA LENGKAP & POPUP LOADING
   async function handleLogin() {
     const username = document.getElementById("login-name").value.trim();
     const pin = document.getElementById("login-pin").value.trim();
     if (!username || !pin) return alert("Silakan masukkan Nama Lengkap dan PIN");
 
-    // Tampilkan Popup Loading Tematik
     document.getElementById("loading-member-name").innerText = `Hai ${username}!`;
     document.getElementById("loading-msg").innerText = "Tunggu ya, kita lagi persiapkan sanggarnya...";
     loadingModalInstance.show();
@@ -536,7 +625,6 @@
     } catch (e) {
       alert("Gagal terhubung: " + e.message);
     } finally {
-      // Hilangkan Popup Loading setelah selesai
       loadingModalInstance.hide();
     }
   }
@@ -558,12 +646,11 @@
 
     const isAdmin = currentUser.role === "Admin";
 
-    // SALDO KAS HANYA MUNCUL DI ADMIN
     const saldoBox = document.getElementById("admin-saldo-container");
     if (isAdmin) {
       saldoBox.classList.remove("d-none");
       loadSummary();
-      loadMemberListForInput(); // Load daftar member untuk autocomplete input kas
+      loadMemberListForInput();
       loadMonthlyReport();
     } else {
       saldoBox.classList.add("d-none");
@@ -571,12 +658,152 @@
 
     document.getElementById("tab-btn-kas").style.display = isAdmin ? "block" : "none";
     document.getElementById("tab-btn-laporan").style.display = isAdmin ? "block" : "none";
+    document.getElementById("tab-btn-jadwal").style.display = isAdmin ? "block" : "none";
     document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
 
+    checkPresensiStatus();
     loadMemberDues();
+    loadAbsensiReport();
   }
 
-  // AMBIL DAFTAR NAMA MEMBER UNTUK AUTOCOMPLETE INPUT KAS
+  // 1. Cek Apakah Presensi Dibuka Hari Ini
+  async function checkPresensiStatus() {
+    const banner = document.getElementById("absen-status-banner");
+    const formWrapper = document.getElementById("absen-form-wrapper");
+
+    try {
+      const res = await callApi({ action: "getJadwalToday", memberId: currentUser.memberId }, false);
+      if (res.isOpen) {
+        banner.className = "alert alert-success py-2 mb-3 small fw-bold";
+        banner.innerText = res.message;
+        formWrapper.classList.remove("d-none");
+      } else {
+        banner.className = res.alreadyPresent ? "alert alert-info py-2 mb-3 small fw-bold" : "alert alert-danger py-2 mb-3 small fw-bold";
+        banner.innerText = res.message;
+        formWrapper.classList.add("d-none");
+      }
+    } catch (e) {
+      banner.className = "alert alert-warning py-2 mb-3 small";
+      banner.innerText = "Gagal memverifikasi status sesi latihan.";
+    }
+  }
+
+  async function submitAbsensi() {
+    const status = document.getElementById("absen-status").value;
+    const catatan = document.getElementById("absen-catatan").value;
+    const btn = document.getElementById("btn-submit-absen");
+    btn.disabled = true;
+    btn.innerText = "Mengirim...";
+
+    try {
+      const res = await callApi({
+        action: "submitAbsen",
+        memberId: currentUser.memberId,
+        nama: currentUser.nama,
+        keterangan: status,
+        catatan: catatan
+      });
+      alert(res.message);
+      checkPresensiStatus(); // Kunci form kembali
+      loadAbsensiReport();
+    } catch (e) {
+      alert("Error: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Kirim Presensi Sekarang";
+    }
+  }
+
+  // 2. Rekap Absensi (Harian & Tahunan)
+  function toggleRekapFilterInput() {
+    const type = document.getElementById("rekap-filter-type").value;
+    if (type === "daily") {
+      document.getElementById("rekap-input-date-col").classList.remove("d-none");
+      document.getElementById("rekap-input-year-col").classList.add("d-none");
+    } else {
+      document.getElementById("rekap-input-date-col").classList.add("d-none");
+      document.getElementById("rekap-input-year-col").classList.remove("d-none");
+    }
+  }
+
+  async function loadAbsensiReport() {
+    const type = document.getElementById("rekap-filter-type").value;
+    const date = document.getElementById("rekap-filter-date").value;
+    const year = document.getElementById("rekap-filter-year").value;
+    const tbody = document.getElementById("rekap-absen-tbody");
+
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Memuat data rekap...</td></tr>`;
+
+    const payload = {
+      action: "getAbsensiReport",
+      filterType: type,
+      date: date,
+      year: year
+    };
+
+    // Jika member biasa, hanya tampilkan data dirinya sendiri
+    if (currentUser.role !== "Admin") {
+      payload.memberId = currentUser.memberId;
+    }
+
+    try {
+      const res = await callApi(payload, false);
+      if (res.success) {
+        document.getElementById("rekap-count-hadir").innerText = res.hadir;
+        document.getElementById("rekap-count-izin").innerText = res.izin;
+        document.getElementById("rekap-count-sakit").innerText = res.sakit;
+
+        if (res.records.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Tidak ada data absensi</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = "";
+        res.records.forEach(r => {
+          let badgeColor = "bg-success";
+          if (r.keterangan === "Izin") badgeColor = "bg-warning text-dark";
+          if (r.keterangan === "Sakit") badgeColor = "bg-danger";
+
+          const tr = document.createElement("tr");
+          tr.innerHTML = `
+            <td>${r.tanggal}</td>
+            <td><strong>${r.nama}</strong><br><small class="text-muted">${r.catatan}</small></td>
+            <td class="text-end"><span class="badge ${badgeColor}">${r.keterangan}</span></td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
+    } catch (e) {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat rekap absensi</td></tr>`;
+    }
+  }
+
+  // 3. Admin: Atur Jadwal Latihan Baru
+  async function submitJadwal() {
+    const tanggal = document.getElementById("jadwal-tgl").value;
+    const jamMulai = document.getElementById("jadwal-mulai").value;
+    const jamSelesai = document.getElementById("jadwal-selesai").value;
+    const keterangan = document.getElementById("jadwal-ket").value.trim();
+    const btn = document.getElementById("btn-save-jadwal");
+
+    if (!tanggal || !jamMulai || !jamSelesai) return alert("Harap lengkapi tanggal dan jam latihan!");
+
+    btn.disabled = true;
+    btn.innerText = "Menyimpan...";
+
+    try {
+      const res = await callApi({ action: "setJadwal", tanggal, jamMulai, jamSelesai, keterangan });
+      alert(res.message);
+      checkPresensiStatus();
+    } catch (e) {
+      alert("Gagal membuat jadwal: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Buka Jadwal Latihan";
+    }
+  }
+
+  // 4. Laporan Kas & Iuran
   async function loadMemberListForInput() {
     try {
       const res = await callApi({ action: "getMembers" }, false);
@@ -585,21 +812,17 @@
         datalist.innerHTML = "";
         res.members.forEach(m => {
           const opt = document.createElement("option");
-          opt.value = m.nama; // Nilai autocomplete adalah Nama Lengkap
+          opt.value = m.nama;
           datalist.appendChild(opt);
         });
       }
-    } catch (err) {
-      console.error("Gagal load member list:", err);
-    }
+    } catch (err) { console.error(err); }
   }
 
   async function loadSummary() {
     try {
       const res = await callApi({ action: "getSummary" }, false);
-      if (res.success) {
-        document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
-      }
+      if (res.success) document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
     } catch (err) { console.error(err); }
   }
 
@@ -675,99 +898,6 @@
     }
   }
 
-  async function submitAddMember() {
-    const memberId = document.getElementById("new-id").value.trim();
-    const nama = document.getElementById("new-nama").value.trim();
-    const role = document.getElementById("new-role").value;
-    const pin = document.getElementById("new-pin").value.trim();
-    const telepon = document.getElementById("new-telp").value.trim();
-    const btn = document.getElementById("btn-add-member");
-
-    if (!memberId || !nama || !pin) return alert("ID, Nama, dan PIN wajib diisi");
-
-    btn.disabled = true;
-    btn.innerText = "Mendaftarkan...";
-
-    try {
-      const res = await callApi({ action: "addMember", memberId, nama, role, pin, telepon });
-      alert(res.message);
-      if (res.success) {
-        document.getElementById("new-id").value = "";
-        document.getElementById("new-nama").value = "";
-        document.getElementById("new-pin").value = "";
-        document.getElementById("new-telp").value = "";
-        loadMemberListForInput(); // Refresh autocomplete
-      }
-    } catch (e) {
-      alert("Terjadi kesalahan: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Daftarkan Anggota";
-    }
-  }
-
-  async function submitUpdateProfile() {
-    const nama = document.getElementById("edit-nama").value.trim();
-    const pin = document.getElementById("edit-pin").value.trim();
-    const telepon = document.getElementById("edit-telp").value.trim();
-    const btn = document.getElementById("btn-update-profile");
-
-    btn.disabled = true;
-    btn.innerText = "Menyimpan...";
-
-    try {
-      const res = await callApi({
-        action: "updateProfile",
-        memberId: currentUser.memberId,
-        nama, pin, telepon
-      });
-
-      alert(res.message);
-      if (res.success) {
-        currentUser = res.user;
-        document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
-        document.getElementById("user-initial-badge").innerText = currentUser.nama.charAt(0).toUpperCase();
-        document.getElementById("edit-pin").value = "";
-      }
-    } catch (e) {
-      alert("Gagal memperbarui profil: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Simpan Perubahan";
-    }
-  }
-
-  function exportToImage(elementId, filePrefix) {
-    const element = document.getElementById(elementId);
-    html2canvas(element, { scale: 2 }).then(canvas => {
-      const link = document.createElement("a");
-      link.download = `${filePrefix}-${new Date().getTime()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    });
-  }
-
-  function toggleIuranFields() {
-    const kategori = document.getElementById("kas-kategori").value;
-    document.getElementById("iuran-extra-fields").style.display = (kategori === "Iuran Bulanan") ? "block" : "none";
-  }
-
-  async function submitAbsensi() {
-    const status = document.getElementById("absen-status").value;
-    const catatan = document.getElementById("absen-catatan").value;
-    const btn = document.getElementById("btn-submit-absen");
-    btn.disabled = true;
-    btn.innerText = "Mengirim...";
-
-    try {
-      const res = await callApi({ action: "submitAbsen", memberId: currentUser.memberId, nama: currentUser.nama, keterangan: status, catatan });
-      alert(res.message);
-      document.getElementById("absen-catatan").value = "";
-    } catch (e) { alert("Error: " + e.message); } 
-    finally { btn.disabled = false; btn.innerText = "Kirim Presensi"; }
-  }
-
-  // SUBMIT KAS MENGGUNAKAN NAMA (AUTO-MAPPING KE MEMBER ID DI BACKEND)
   async function submitKas() {
     const tipe = document.getElementById("kas-tipe").value;
     const kategori = document.getElementById("kas-kategori").value;
@@ -808,6 +938,70 @@
       }
     } catch (e) { alert("Error: " + e.message); } 
     finally { btn.disabled = false; btn.innerText = "Simpan Transaksi"; }
+  }
+
+  async function submitAddMember() {
+    const memberId = document.getElementById("new-id").value.trim();
+    const nama = document.getElementById("new-nama").value.trim();
+    const role = document.getElementById("new-role").value;
+    const pin = document.getElementById("new-pin").value.trim();
+    const telepon = document.getElementById("new-telp").value.trim();
+    const btn = document.getElementById("btn-add-member");
+
+    if (!memberId || !nama || !pin) return alert("ID, Nama, dan PIN wajib diisi");
+
+    btn.disabled = true;
+    btn.innerText = "Mendaftarkan...";
+
+    try {
+      const res = await callApi({ action: "addMember", memberId, nama, role, pin, telepon });
+      alert(res.message);
+      if (res.success) {
+        document.getElementById("new-id").value = "";
+        document.getElementById("new-nama").value = "";
+        document.getElementById("new-pin").value = "";
+        document.getElementById("new-telp").value = "";
+        loadMemberListForInput();
+      }
+    } catch (e) { alert("Error: " + e.message); } 
+    finally { btn.disabled = false; btn.innerText = "Daftarkan Anggota"; }
+  }
+
+  async function submitUpdateProfile() {
+    const nama = document.getElementById("edit-nama").value.trim();
+    const pin = document.getElementById("edit-pin").value.trim();
+    const telepon = document.getElementById("edit-telp").value.trim();
+    const btn = document.getElementById("btn-update-profile");
+
+    btn.disabled = true;
+    btn.innerText = "Menyimpan...";
+
+    try {
+      const res = await callApi({ action: "updateProfile", memberId: currentUser.memberId, nama, pin, telepon });
+      alert(res.message);
+      if (res.success) {
+        currentUser = res.user;
+        document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
+        document.getElementById("user-initial-badge").innerText = currentUser.nama.charAt(0).toUpperCase();
+        document.getElementById("edit-pin").value = "";
+      }
+    } catch (e) { alert("Error: " + e.message); } 
+    finally { btn.disabled = false; btn.innerText = "Simpan Perubahan"; }
+  }
+
+  function exportToImage(elementId, filePrefix) {
+    const element = document.getElementById(elementId);
+    html2canvas(element, { scale: 2 }).then(canvas => {
+      const link = document.createElement("a");
+      link.download = `${filePrefix}-${new Date().getTime()}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    });
+  }
+
+  function toggleIuranFields() {
+    const kategori = document.getElementById("kas-kategori").value;
+    document.getElementById("iuran-extra-fields").style.display = (kategori === "Iuran Bulanan") ? "block" : "none";
   }
 
   function formatRupiah(angka) {
