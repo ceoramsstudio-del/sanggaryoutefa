@@ -3,63 +3,238 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Portal Sanggar</title>
+  <title>Portal Sanggar Tari Youtefa</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
   <style>
-    body { background-color: #f4f6f9; font-family: sans-serif; }
-    .card-box { border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .month-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .month-badge { padding: 8px 4px; border-radius: 8px; text-align: center; font-size: 0.8rem; font-weight: 600; }
-    .badge-lunas { background-color: #d1e7dd; color: #0f5132; border: 1px solid #badbcc; }
-    .badge-belum { background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7; }
-    .printable-area { background: #ffffff; padding: 20px; border-radius: 10px; }
-    .user-icon-badge {
-      width: 48px; height: 48px; border-radius: 50%;
-      background: #0d6efd; color: #ffffff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.25rem; font-weight: bold;
+    :root {
+      --gold-primary: #f5b01e;
+      --gold-light: #fde882;
+      --gold-dark: #b87503;
+      --brown-deep: #1f0f04;
+      --brown-card: #2e1606;
+      --brown-accent: #47230b;
+      --text-gold: #ffdf79;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-height: 100vh;
+      color: #333333;
+      /* Background Nuansa Hangat & Emas Nusantara */
+      background: radial-gradient(circle at 50% 15%, #b45309 0%, #78350f 30%, #451a03 65%, #1f0b02 100%);
+      background-attachment: fixed;
+      position: relative;
+    }
+
+    /* Pola ukir abstrak halus di latar */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: radial-gradient(rgba(245, 176, 30, 0.12) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .app-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 660px;
+    }
+
+    /* Header Brand */
+    .brand-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      letter-spacing: 2px;
+      font-weight: 900;
+      background: linear-gradient(180deg, #fff7b2 0%, #f5b01e 50%, #c47600 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 4px 15px rgba(245, 176, 30, 0.4);
+    }
+    .brand-subtitle {
+      color: #ffdf79;
+      font-size: 0.85rem;
+      letter-spacing: 1px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+
+    /* Kartu Bertema */
+    .custom-card {
+      background: rgba(255, 255, 255, 0.96);
+      border-radius: 20px;
+      border: 2px solid rgba(245, 176, 30, 0.4);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+      backdrop-filter: blur(8px);
+    }
+
+    .header-card {
+      background: linear-gradient(135deg, #3d1b06 0%, #200d02 100%);
+      border: 2px solid var(--gold-primary);
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Avatar Inisial */
+    .user-avatar-badge {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #ffd05b, #b46b02);
+      color: #200d02;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: 800;
+      border: 3px solid #fff3b0;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    /* Saldo Card Khusus Admin */
+    .saldo-box {
+      background: linear-gradient(135deg, #fffcf5 0%, #fef3c7 100%);
+      border: 2px dashed #d97706;
+      border-radius: 16px;
+    }
+
+    /* Navigasi Tab Bertema Emas & Kayu */
+    .nav-tabs {
+      border-bottom: 2px solid rgba(245, 176, 30, 0.5);
+      gap: 6px;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: 4px;
+    }
+    .nav-tabs .nav-item { flex-shrink: 0; }
+    .nav-tabs .nav-link {
+      color: #ffdca3;
+      border: none;
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 8px 14px;
+      transition: all 0.2s ease;
+    }
+    .nav-tabs .nav-link.active {
+      color: #240e02;
+      background: linear-gradient(180deg, #ffe083 0%, #f5af19 100%);
+      box-shadow: 0 4px 12px rgba(245, 175, 25, 0.4);
+    }
+
+    /* Tombol Utama Bertema Nusantara */
+    .btn-gold {
+      background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
+      border: 1px solid #fef08a;
+      color: #2e1202;
+      font-weight: 800;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.35);
+      transition: all 0.2s;
+    }
+    .btn-gold:hover {
+      background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
+      color: #1e0901;
+      transform: translateY(-1px);
+    }
+
+    .form-control, .form-select {
+      border-radius: 12px;
+      border: 1.5px solid #e5e7eb;
+      padding: 10px 14px;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+
+    /* Grid Status 12 Bulan */
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+    .month-badge {
+      padding: 10px 6px;
+      border-radius: 10px;
+      text-align: center;
+      font-size: 0.82rem;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+    }
+    .badge-lunas { background-color: #d1fae5; color: #065f46; border: 1.5px solid #a7f3d0; }
+    .badge-belum { background-color: #fee2e2; color: #991b1b; border: 1.5px solid #fecaca; }
+
+    /* Area Cetak Gambar */
+    .printable-area {
+      background: #ffffff;
+      padding: 22px;
+      border-radius: 16px;
+      border: 2px solid #f59e0b;
     }
   </style>
 </head>
 <body>
 
-<div class="container py-3" style="max-width: 680px;">
+<div class="container py-4 app-wrapper">
 
-  <!-- Login Section -->
-  <div id="section-login" class="card card-box p-4 bg-white">
-    <h4 class="text-center mb-3">Login Portal Sanggar</h4>
+  <!-- Bagian Header Utama Sanggar -->
+  <div class="text-center mb-4">
+    <div class="brand-subtitle">Portal Presensi & Keuangan</div>
+    <div class="brand-title">SANGGAR TARI YOUTEFA</div>
+    <div style="font-size: 0.8rem; color: #fde68a; letter-spacing: 0.5px;">Lestarikan Budaya, Tari Menghubungkan Kita</div>
+  </div>
+
+  <!-- Form Login -->
+  <div id="section-login" class="custom-card p-4 mx-auto" style="max-width: 420px;">
+    <h5 class="text-center fw-bold mb-3" style="color: #451a03;">Masuk Member / Pelatih</h5>
     <div class="mb-3">
-      <label class="form-label">Member ID</label>
+      <label class="form-label small fw-bold text-muted">ID MEMBER</label>
       <input type="text" id="login-id" class="form-control" placeholder="Contoh: M001">
     </div>
     <div class="mb-3">
-      <label class="form-label">PIN</label>
+      <label class="form-label small fw-bold text-muted">PIN</label>
       <input type="password" id="login-pin" class="form-control" placeholder="PIN Anda">
     </div>
-    <button class="btn btn-primary w-100" onclick="handleLogin()">Masuk</button>
+    <button class="btn btn-gold w-100 py-2 mt-2" onclick="handleLogin()">Buka Dashboard</button>
   </div>
 
-  <!-- Main App Section -->
+  <!-- Konten Aplikasi Setelah Login -->
   <div id="section-app" class="d-none">
-    <div class="card card-box p-3 bg-white mb-3 d-flex flex-row align-items-center justify-content-between">
+
+    <!-- Card Profil Ringkas -->
+    <div class="header-card p-3 mb-3 d-flex flex-row align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-3">
-        <div id="user-initial-badge" class="user-icon-badge">M</div>
+        <div id="user-initial-badge" class="user-avatar-badge">M</div>
         <div>
-          <h5 class="mb-0" id="welcome-text">Halo, Member</h5>
-          <span class="badge bg-secondary" id="user-role-badge">Member</span>
+          <h5 class="mb-0 text-white fw-bold" id="welcome-text">Halo, Member</h5>
+          <span class="badge" id="user-role-badge" style="background-color: var(--gold-primary); color: #2b1101; font-weight: 800;">Member</span>
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-danger" onclick="logout()">Keluar</button>
+      <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="logout()">Keluar</button>
     </div>
 
-    <!-- Saldo Kas Keseluruhan -->
-    <div class="card card-box p-3 bg-white mb-3">
-      <small class="text-muted">Total Saldo Kas Sanggar</small>
-      <h3 class="text-success mb-0" id="display-saldo">Rp 0</h3>
+    <!-- Total Saldo Kas (HANYA MUNCUL DI ROLE ADMIN) -->
+    <div id="admin-saldo-container" class="saldo-box p-3 mb-3 d-none">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <small class="text-muted fw-bold d-block">TOTAL KAS SANGGAR (ADMIN)</small>
+          <h3 class="text-dark fw-bold mb-0" id="display-saldo">Rp 0</h3>
+        </div>
+        <span class="badge bg-warning text-dark px-2 py-1">Kas Terkini</span>
+      </div>
     </div>
 
-    <!-- Navigasi Tab -->
+    <!-- Tab Navigasi -->
     <ul class="nav nav-tabs mb-3" id="tabNav">
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Presensi</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button></li>
@@ -72,10 +247,10 @@
     <div class="tab-content">
       <!-- 1. Tab Presensi -->
       <div class="tab-pane fade show active" id="tab-absen">
-        <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Presensi Kegiatan Latihan</h6>
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Form Presensi Latihan</h6>
           <div class="mb-3">
-            <label class="form-label">Status Kehadiran</label>
+            <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
             <select id="absen-status" class="form-select">
               <option value="Hadir">Hadir</option>
               <option value="Izin">Izin</option>
@@ -83,18 +258,18 @@
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Catatan</label>
-            <input type="text" id="absen-catatan" class="form-control" placeholder="Opsional (cth: Latihan gabungan)">
+            <label class="form-label small fw-bold text-muted">CATATAN (OPSIONAL)</label>
+            <input type="text" id="absen-catatan" class="form-control" placeholder="Contoh: Latihan Rutin Sabtu">
           </div>
-          <button class="btn btn-success w-100" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi</button>
+          <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi</button>
         </div>
       </div>
 
-      <!-- 2. Tab Kartu Iuran -->
+      <!-- 2. Tab Kartu Iuran Tahunan -->
       <div class="tab-pane fade" id="tab-iuran">
-        <div class="card card-box p-4 bg-white">
+        <div class="custom-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="mb-0">Kartu Iuran Tahunan</h6>
+            <h6 class="fw-bold mb-0" style="color: #451a03;">Kartu Iuran Bulanan</h6>
             <select id="dues-year-select" class="form-select form-select-sm" style="width: 100px;" onchange="loadMemberDues()">
               <option value="2025">2025</option>
               <option value="2026" selected>2026</option>
@@ -102,48 +277,51 @@
             </select>
           </div>
 
-          <div id="print-iuran-area" class="printable-area border mb-3">
-            <div class="text-center border-bottom pb-2 mb-3">
-              <h5 class="mb-0 fw-bold">KARTU IURAN SANGGAR</h5>
-              <small class="text-muted">Bukti Pembayaran Resmi</small>
+          <!-- Area Kartu Iuran Cetak -->
+          <div id="print-iuran-area" class="printable-area mb-3">
+            <div class="text-center border-bottom border-warning pb-2 mb-3">
+              <h5 class="mb-0 fw-bold" style="color: #78350f; font-family: 'Cinzel', serif;">SANGGAR TARI YOUTEFA</h5>
+              <small class="text-muted">Bukti Pembayaran Iuran Member</small>
             </div>
-            <div>Nama: <strong id="print-member-name">-</strong></div>
-            <div>ID: <strong id="print-member-id">-</strong> | Tahun: <strong id="print-member-year">-</strong></div>
-            <div class="alert alert-info py-2 my-2 small">
-              Status Lunas Sampai: <strong id="dues-paid-until">-</strong>
+            <div class="mb-2">
+              <div>Nama: <strong id="print-member-name" class="text-dark">-</strong></div>
+              <div>ID: <strong id="print-member-id">-</strong> | Tahun: <strong id="print-member-year">-</strong></div>
             </div>
-            <div class="month-grid" id="months-container"></div>
-            <div class="text-end text-muted mt-2" style="font-size: 0.75rem;">
-              Dicetak: <span id="dues-print-date"></span>
+            <div class="alert alert-warning py-2 my-2 small border-0" style="background-color: #fef3c7; color: #92400e;">
+              Status Terbayar: <strong id="dues-paid-until">-</strong>
+            </div>
+            <div class="month-grid my-3" id="months-container"></div>
+            <div class="text-end text-muted" style="font-size: 0.75rem;">
+              Dicetak pada: <span id="dues-print-date"></span>
             </div>
           </div>
-          <button class="btn btn-primary w-100" onclick="exportToImage('print-iuran-area', 'Kartu-Iuran')">Unduh Gambar Iuran (.PNG)</button>
+          <button class="btn btn-gold w-100" onclick="exportToImage('print-iuran-area', 'Kartu-Iuran')">Unduh Gambar Kartu Iuran (.PNG)</button>
         </div>
       </div>
 
-      <!-- 3. Tab Input Kas (Admin Only) -->
+      <!-- 3. Tab Input Kas (Khusus Admin) -->
       <div class="tab-pane fade" id="tab-kas">
-        <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Pencatatan Kas & Iuran</h6>
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Catat Pemasukan / Pengeluaran</h6>
           <div class="mb-3">
-            <label class="form-label">Tipe</label>
+            <label class="form-label small fw-bold text-muted">TIPE TRANSAKSI</label>
             <select id="kas-tipe" class="form-select">
               <option value="Pemasukan">Pemasukan</option>
               <option value="Pengeluaran">Pengeluaran</option>
             </select>
           </div>
           <div class="mb-3">
-            <label class="form-label">Kategori</label>
+            <label class="form-label small fw-bold text-muted">KATEGORI</label>
             <select id="kas-kategori" class="form-select" onchange="toggleIuranFields()">
               <option value="Iuran Bulanan">Iuran Bulanan</option>
               <option value="Donasi / Kasual">Donasi / Kasual</option>
-              <option value="Operasional">Operasional</option>
+              <option value="Operasional & Perlengkapan">Operasional & Perlengkapan</option>
             </select>
           </div>
 
-          <div id="iuran-extra-fields" class="p-3 bg-light rounded mb-3 border">
-            <label class="form-label">ID Member yang Bayar</label>
-            <input type="text" id="kas-target-member" class="form-control mb-2" placeholder="Cth: M001">
+          <div id="iuran-extra-fields" class="p-3 bg-light rounded-3 mb-3 border">
+            <label class="form-label small fw-bold text-muted">ID MEMBER YANG MEMBAYAR</label>
+            <input type="text" id="kas-target-member" class="form-control mb-2" placeholder="Contoh: M001">
             <div class="row g-2">
               <div class="col-6">
                 <select id="kas-target-month" class="form-select">
@@ -160,21 +338,21 @@
           </div>
 
           <div class="mb-3">
-            <label class="form-label">Jumlah (Rp)</label>
-            <input type="number" id="kas-jumlah" class="form-control" placeholder="50000">
+            <label class="form-label small fw-bold text-muted">JUMLAH (RP)</label>
+            <input type="number" id="kas-jumlah" class="form-control" placeholder="Contoh: 75000">
           </div>
           <div class="mb-3">
-            <label class="form-label">Keterangan</label>
+            <label class="form-label small fw-bold text-muted">KETERANGAN</label>
             <input type="text" id="kas-keterangan" class="form-control" placeholder="Opsional">
           </div>
-          <button class="btn btn-primary w-100" id="btn-submit-kas" onclick="submitKas()">Simpan Transaksi</button>
+          <button class="btn btn-gold w-100 py-2" id="btn-submit-kas" onclick="submitKas()">Simpan Transaksi</button>
         </div>
       </div>
 
-      <!-- 4. Tab Laporan Kas Bulanan -->
+      <!-- 4. Tab Laporan Kas Bulanan (Khusus Admin) -->
       <div class="tab-pane fade" id="tab-laporan">
-        <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Laporan Kas Bulanan</h6>
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Laporan Keuangan Bulanan</h6>
           <div class="row g-2 mb-3">
             <div class="col-6">
               <select id="laporan-bulan" class="form-select">
@@ -188,96 +366,96 @@
               <input type="number" id="laporan-tahun" class="form-control" value="2026">
             </div>
             <div class="col-3">
-              <button class="btn btn-outline-primary w-100" onclick="loadMonthlyReport()">Cari</button>
+              <button class="btn btn-outline-dark fw-bold w-100" onclick="loadMonthlyReport()">Cari</button>
             </div>
           </div>
 
-          <div id="print-laporan-area" class="printable-area border mb-3">
-            <div class="text-center border-bottom pb-2 mb-3">
-              <h5 class="mb-0 fw-bold">LAPORAN KAS SANGGAR</h5>
+          <div id="print-laporan-area" class="printable-area mb-3">
+            <div class="text-center border-bottom border-warning pb-2 mb-3">
+              <h5 class="mb-0 fw-bold" style="color: #78350f; font-family: 'Cinzel', serif;">LAPORAN KAS SANGGAR YOUTEFA</h5>
               <small class="text-muted" id="laporan-periode-text">Periode: -</small>
             </div>
             <div class="row text-center mb-3">
               <div class="col-4">
-                <small class="text-muted d-block">Pemasukan</small>
+                <small class="text-muted d-block fw-bold">Pemasukan</small>
                 <strong class="text-success" id="rep-masuk">Rp 0</strong>
               </div>
               <div class="col-4">
-                <small class="text-muted d-block">Pengeluaran</small>
+                <small class="text-muted d-block fw-bold">Pengeluaran</small>
                 <strong class="text-danger" id="rep-keluar">Rp 0</strong>
               </div>
               <div class="col-4">
-                <small class="text-muted d-block">Saldo Bersih</small>
+                <small class="text-muted d-block fw-bold">Saldo Bersih</small>
                 <strong class="text-primary" id="rep-bersih">Rp 0</strong>
               </div>
             </div>
 
             <table class="table table-sm" style="font-size: 0.8rem;">
-              <thead>
+              <thead class="table-light">
                 <tr><th>Tgl</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr>
               </thead>
               <tbody id="rep-transaksi-tbody">
-                <tr><td colspan="3" class="text-center text-muted">Silakan klik tombol Cari</td></tr>
+                <tr><td colspan="3" class="text-center text-muted py-3">Pilih filter dan klik Cari</td></tr>
               </tbody>
             </table>
             <div class="text-end text-muted mt-2" style="font-size: 0.75rem;">
               Dicetak: <span id="laporan-print-date"></span>
             </div>
           </div>
-          <button class="btn btn-success w-100" onclick="exportToImage('print-laporan-area', 'Laporan-Kas')">Unduh Laporan (.PNG)</button>
+          <button class="btn btn-gold w-100" onclick="exportToImage('print-laporan-area', 'Laporan-Kas')">Unduh Laporan (.PNG)</button>
         </div>
       </div>
 
-      <!-- 5. Tab Tambah Member Baru (Admin Only) -->
+      <!-- 5. Tab Tambah Member (Khusus Admin) -->
       <div class="tab-pane fade" id="tab-addmember">
-        <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Pendaftaran Member Baru</h6>
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Pendaftaran Anggota Baru</h6>
           <div class="mb-3">
-            <label class="form-label">Member ID</label>
-            <input type="text" id="new-id" class="form-control" placeholder="Cth: M003">
+            <label class="form-label small fw-bold text-muted">ID MEMBER</label>
+            <input type="text" id="new-id" class="form-control" placeholder="Contoh: M003">
           </div>
           <div class="mb-3">
-            <label class="form-label">Nama Lengkap</label>
-            <input type="text" id="new-nama" class="form-control" placeholder="Nama Lengkap">
+            <label class="form-label small fw-bold text-muted">NAMA LENGKAP</label>
+            <input type="text" id="new-nama" class="form-control" placeholder="Nama Anggota">
           </div>
           <div class="row g-2 mb-3">
             <div class="col-6">
-              <label class="form-label">Role</label>
+              <label class="form-label small fw-bold text-muted">ROLE</label>
               <select id="new-role" class="form-select">
                 <option value="Member">Member</option>
                 <option value="Admin">Admin</option>
               </select>
             </div>
             <div class="col-6">
-              <label class="form-label">PIN</label>
-              <input type="password" id="new-pin" class="form-control" placeholder="PIN 4-6 digit">
+              <label class="form-label small fw-bold text-muted">PIN (4-6 DIGIT)</label>
+              <input type="password" id="new-pin" class="form-control" placeholder="PIN">
             </div>
           </div>
           <div class="mb-3">
-            <label class="form-label">No. Telepon/WA</label>
-            <input type="tel" id="new-telp" class="form-control" placeholder="0812xxxx">
+            <label class="form-label small fw-bold text-muted">NOMOR TELEPON/WHATSAPP</label>
+            <input type="tel" id="new-telp" class="form-control" placeholder="0812xxxxxxxx">
           </div>
-          <button class="btn btn-primary w-100" id="btn-add-member" onclick="submitAddMember()">Daftarkan Member</button>
+          <button class="btn btn-gold w-100 py-2" id="btn-add-member" onclick="submitAddMember()">Daftarkan Anggota</button>
         </div>
       </div>
 
       <!-- 6. Tab Profil Saya -->
       <div class="tab-pane fade" id="tab-profile">
-        <div class="card card-box p-4 bg-white">
-          <h6 class="mb-3">Edit Profil Saya</h6>
+        <div class="custom-card p-4">
+          <h6 class="fw-bold mb-3" style="color: #451a03;">Data Akun Saya</h6>
           <div class="mb-3">
-            <label class="form-label">Nama Lengkap</label>
+            <label class="form-label small fw-bold text-muted">NAMA LENGKAP</label>
             <input type="text" id="edit-nama" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">No. Telepon/WA</label>
+            <label class="form-label small fw-bold text-muted">NOMOR TELEPON / WA</label>
             <input type="tel" id="edit-telp" class="form-control">
           </div>
           <div class="mb-3">
-            <label class="form-label">Ganti PIN (Kosongkan jika tidak diubah)</label>
+            <label class="form-label small fw-bold text-muted">GANTI PIN (KOSONGKAN JIKA TIDAK DIUBAH)</label>
             <input type="password" id="edit-pin" class="form-control" placeholder="PIN Baru">
           </div>
-          <button class="btn btn-primary w-100" id="btn-update-profile" onclick="submitUpdateProfile()">Simpan Perubahan</button>
+          <button class="btn btn-gold w-100 py-2" id="btn-update-profile" onclick="submitUpdateProfile()">Simpan Perubahan</button>
         </div>
       </div>
 
@@ -288,7 +466,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-  // GANTI DENGAN URL DEPLOYMENT APPS SCRIPT KAMU
+  // GANTI DENGAN URL DEPLOYMENT APPS SCRIPT ANDA
   const API_URL = "https://script.google.com/macros/s/AKfycbxpJmycQVRzYiLakV57QKDm7Hb7rOqemXYpF4FB8eWr-WnejygSiMWt8qgyw5e0F9Mj/exec";
 
   const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
@@ -354,11 +532,20 @@
     document.getElementById("laporan-tahun").value = now.getFullYear();
 
     const isAdmin = currentUser.role === "Admin";
+
+    // PROTEKSI ROLE: Hanya Admin yang bisa melihat Saldo Kas dan Tab Admin
+    const saldoBox = document.getElementById("admin-saldo-container");
+    if (isAdmin) {
+      saldoBox.classList.remove("d-none");
+      loadSummary();
+    } else {
+      saldoBox.classList.add("d-none");
+    }
+
     document.getElementById("tab-btn-kas").style.display = isAdmin ? "block" : "none";
     document.getElementById("tab-btn-laporan").style.display = isAdmin ? "block" : "none";
     document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
 
-    loadSummary();
     loadMemberDues();
     if (isAdmin) {
       loadMonthlyReport();
@@ -368,7 +555,9 @@
   async function loadSummary() {
     try {
       const res = await callApi({ action: "getSummary" }, false);
-      if (res.success) document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
+      if (res.success) {
+        document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
+      }
     } catch (err) { console.error(err); }
   }
 
@@ -470,7 +659,7 @@
       alert("Terjadi kesalahan: " + e.message);
     } finally {
       btn.disabled = false;
-      btn.innerText = "Daftarkan Member";
+      btn.innerText = "Daftarkan Anggota";
     }
   }
 
@@ -569,7 +758,9 @@
       alert(res.message);
       document.getElementById("kas-jumlah").value = "";
       document.getElementById("kas-keterangan").value = "";
-      loadSummary();
+      if (currentUser.role === "Admin") {
+        loadSummary();
+      }
     } catch (e) { alert("Error: " + e.message); } 
     finally { btn.disabled = false; btn.innerText = "Simpan Transaksi"; }
   }
