@@ -349,26 +349,33 @@ async function callApi(payload, isPost = true) {
     }
   }
 
-  function setupDashboard() {
-    document.getElementById("section-login").classList.add("d-none");
-    document.getElementById("section-app").classList.remove("d-none");
+function setupDashboard() {
+  document.getElementById("section-login").classList.add("d-none");
+  document.getElementById("section-app").classList.remove("d-none");
 
-    document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
-    document.getElementById("user-role-badge").innerText = currentUser.role;
-    updateUserAvatar(currentUser.fotoUrl);
+  document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
+  document.getElementById("user-role-badge").innerText = currentUser.role;
+  updateUserAvatar(currentUser.fotoUrl);
 
-    // Form profile default
-    document.getElementById("edit-nama").value = currentUser.nama;
-    document.getElementById("edit-telp").value = currentUser.telepon || "";
+  document.getElementById("edit-nama").value = currentUser.nama;
+  document.getElementById("edit-telp").value = currentUser.telepon || "";
 
-    const isAdmin = currentUser.role === "Admin";
-    document.getElementById("tab-btn-kas").style.display = isAdmin ? "block" : "none";
-    document.getElementById("tab-btn-laporan").style.display = isAdmin ? "block" : "none";
-    document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
+  // Otomatis set filter laporan ke bulan dan tahun sekarang
+  const now = new Date();
+  document.getElementById("laporan-bulan").value = now.getMonth() + 1;
+  document.getElementById("laporan-tahun").value = now.getFullYear();
 
-    loadSummary();
-    loadMemberDues();
+  const isAdmin = currentUser.role === "Admin";
+  document.getElementById("tab-btn-kas").style.display = isAdmin ? "block" : "none";
+  document.getElementById("tab-btn-laporan").style.display = isAdmin ? "block" : "none";
+  document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
+
+  loadSummary();
+  loadMemberDues();
+  if (isAdmin) {
+    loadMonthlyReport(); // Langsung ambil data bulan ini secara otomatis
   }
+}
 
   function updateUserAvatar(url) {
     const defaultPic = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&auto=format&fit=crop&q=60";
