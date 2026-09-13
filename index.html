@@ -220,7 +220,7 @@
           <small class="text-muted fw-bold d-block">TOTAL KAS SANGGAR (ADMIN)</small>
           <h3 class="text-dark fw-bold mb-0" id="display-saldo">Rp 0</h3>
         </div>
-        <span class="badge bg-warning text-dark px-2 py-1">Kas Terkini</span>
+        <button class="btn btn-sm btn-outline-warning text-dark border-dark fw-bold" onclick="loadSummary(true)">Segarkan Kas</button>
       </div>
     </div>
 
@@ -240,14 +240,15 @@
       <!-- 1. Tab Presensi -->
       <div class="tab-pane fade show active" id="tab-absen">
         <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Presensi Latihan Sanggar</h6>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0" style="color: #451a03;">Presensi Latihan Sanggar</h6>
+            <button class="btn btn-sm btn-outline-secondary" onclick="checkPresensiStatus(true)">Cek Jadwal Baru</button>
+          </div>
           
-          <!-- Banner Info Status Hari Ini -->
           <div id="absen-status-banner" class="alert alert-secondary py-2 mb-3 small fw-bold">
             Memeriksa jadwal latihan...
           </div>
 
-          <!-- Form & Tombol Presensi -->
           <div id="absen-form-wrapper" class="p-3 bg-light rounded-3 border mb-3 d-none">
             <div class="mb-3">
               <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
@@ -264,7 +265,6 @@
             <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi Sekarang</button>
           </div>
 
-          <!-- List Jadwal Latihan Mendatang -->
           <div class="mt-4">
             <h6 class="fw-bold mb-2" style="font-size: 0.9rem; color: #78350f;">Jadwal Latihan Mendatang</h6>
             <div id="upcoming-schedule-list" class="d-flex flex-column gap-2">
@@ -293,7 +293,7 @@
               <input type="number" id="rekap-filter-year" class="form-control form-select-sm" value="2026">
             </div>
             <div class="col-3">
-              <button class="btn btn-dark btn-sm w-100 fw-bold" onclick="loadAbsensiReport()">Cari</button>
+              <button class="btn btn-dark btn-sm w-100 fw-bold" onclick="loadAbsensiReport(true)">Cari</button>
             </div>
           </div>
 
@@ -320,11 +320,7 @@
 
           <table class="table table-sm" style="font-size: 0.8rem;">
             <thead class="table-light">
-              <tr>
-                <th>Waktu</th>
-                <th>Nama</th>
-                <th class="text-end">Status</th>
-              </tr>
+              <tr><th>Waktu</th><th>Nama</th><th class="text-end">Status</th></tr>
             </thead>
             <tbody id="rekap-absen-tbody">
               <tr><td colspan="3" class="text-center text-muted py-3">Klik tombol Cari</td></tr>
@@ -333,16 +329,19 @@
         </div>
       </div>
 
-      <!-- 3. Tab Iuran Saya -->
+      <!-- 3. Tab Iuran Saya (Dengan Cache Storage & Tombol Refresh) -->
       <div class="tab-pane fade" id="tab-iuran">
         <div class="custom-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
             <h6 class="fw-bold mb-0" style="color: #451a03;">Kartu Iuran Bulanan</h6>
-            <select id="dues-year-select" class="form-select form-select-sm" style="width: 100px;" onchange="loadMemberDues()">
-              <option value="2025">2025</option>
-              <option value="2026" selected>2026</option>
-              <option value="2027">2027</option>
-            </select>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-warning text-dark border-dark fw-bold" onclick="loadMemberDues(true)">Segarkan Data</button>
+              <select id="dues-year-select" class="form-select form-select-sm" style="width: 90px;" onchange="loadMemberDues()">
+                <option value="2025">2025</option>
+                <option value="2026" selected>2026</option>
+                <option value="2027">2027</option>
+              </select>
+            </div>
           </div>
 
           <div id="print-iuran-area" class="printable-area mb-3">
@@ -357,7 +356,15 @@
             <div class="alert alert-warning py-2 my-2 small border-0" style="background-color: #fef3c7; color: #92400e;">
               Status Terbayar: <strong id="dues-paid-until">-</strong>
             </div>
-            <div class="month-grid my-3" id="months-container"></div>
+
+            <!-- Pesan Info Sedang Mengambil Data -->
+            <div id="dues-loading-info" class="text-muted small text-center my-2 d-none">
+              <div class="spinner-border spinner-border-sm text-warning me-1"></div> Data sedang diambil dari server...
+            </div>
+
+            <div class="month-grid my-3" id="months-container">
+              <!-- Render 12 Bulan -->
+            </div>
             <div class="text-end text-muted" style="font-size: 0.75rem;">
               Dicetak pada: <span id="dues-print-date"></span>
             </div>
@@ -418,10 +425,14 @@
         </div>
       </div>
 
-      <!-- 5. Tab Laporan Kas Bulanan -->
+      <!-- 5. Tab Laporan Kas Bulanan (Dengan Cache Storage & Tombol Refresh) -->
       <div class="tab-pane fade" id="tab-laporan">
         <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Laporan Keuangan Bulanan</h6>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <h6 class="fw-bold mb-0" style="color: #451a03;">Laporan Keuangan Bulanan</h6>
+            <button class="btn btn-sm btn-outline-warning text-dark border-dark fw-bold" onclick="loadMonthlyReport(true)">Segarkan Laporan</button>
+          </div>
+
           <div class="row g-2 mb-3">
             <div class="col-6">
               <select id="laporan-bulan" class="form-select">
@@ -435,7 +446,7 @@
               <input type="number" id="laporan-tahun" class="form-control" value="2026">
             </div>
             <div class="col-3">
-              <button class="btn btn-outline-dark fw-bold w-100" onclick="loadMonthlyReport()">Cari</button>
+              <button class="btn btn-outline-dark fw-bold w-100" onclick="loadMonthlyReport(true)">Cari</button>
             </div>
           </div>
 
@@ -459,6 +470,11 @@
               </div>
             </div>
 
+            <!-- Pesan Info Sedang Mengambil Laporan -->
+            <div id="laporan-loading-info" class="text-muted small text-center my-2 d-none">
+              <div class="spinner-border spinner-border-sm text-warning me-1"></div> Data sedang diambil dari server...
+            </div>
+
             <table class="table table-sm" style="font-size: 0.8rem;">
               <thead class="table-light">
                 <tr><th>Tgl</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr>
@@ -475,7 +491,7 @@
         </div>
       </div>
 
-      <!-- 6. Tab Atur Jadwal Latihan (Admin Only) -->
+      <!-- 6. Tab Atur Jadwal Latihan -->
       <div class="tab-pane fade" id="tab-jadwal">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Tetapkan Jadwal Latihan</h6>
@@ -501,7 +517,7 @@
         </div>
       </div>
 
-      <!-- 7. Tab Tambah Member (Admin Only) -->
+      <!-- 7. Tab Tambah Member -->
       <div class="tab-pane fade" id="tab-addmember">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Pendaftaran Anggota Baru</h6>
@@ -585,12 +601,15 @@
     document.getElementById("rekap-filter-date").value = today;
     document.getElementById("jadwal-tgl").value = today;
 
-    // Refresh otomatis jadwal saat tab presensi diklik
-    const tabAbsenBtn = document.querySelector('button[data-bs-target="#tab-absen"]');
-    if (tabAbsenBtn) {
-      tabAbsenBtn.addEventListener('click', () => {
-        if (currentUser) checkPresensiStatus();
-      });
+    // Otomatis cek session login di memory perangkat
+    const savedUser = localStorage.getItem("sanggar_user");
+    if (savedUser) {
+      try {
+        currentUser = JSON.parse(savedUser);
+        setupDashboard();
+      } catch (e) {
+        localStorage.removeItem("sanggar_user");
+      }
     }
   });
 
@@ -633,6 +652,7 @@
       const res = await callApi({ action: "login", username, pin });
       if (res.success) {
         currentUser = res.user;
+        localStorage.setItem("sanggar_user", JSON.stringify(currentUser));
         setupDashboard();
       } else {
         alert(res.message);
@@ -681,113 +701,206 @@
     loadAbsensiReport();
   }
 
-  // 1. Cek Status Presensi Hari Ini & Render Jadwal Mendatang
-  async function checkPresensiStatus() {
+  // 1. Cek Jadwal Presensi & Render Mendatang (Dukungan Cache Lokal)
+  async function checkPresensiStatus(forceRefresh = false) {
     const banner = document.getElementById("absen-status-banner");
     const formWrapper = document.getElementById("absen-form-wrapper");
     const scheduleContainer = document.getElementById("upcoming-schedule-list");
 
-    if (!banner || !scheduleContainer) return;
+    const cacheKey = "cache_jadwal_" + currentUser.memberId;
+    if (!forceRefresh) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        renderJadwalUI(JSON.parse(cached));
+      }
+    }
 
     try {
       const res = await callApi({ action: "getJadwalToday", memberId: currentUser.memberId }, false);
-
-      // A. Tampilan Banner & Form Tombol Absensi
-      if (res.isOpen) {
-        banner.className = "alert alert-success py-2 mb-3 small fw-bold";
-        banner.innerText = res.message;
-        if (formWrapper) formWrapper.classList.remove("d-none");
-      } else {
-        banner.className = res.alreadyPresent ? "alert alert-success py-2 mb-3 small fw-bold" : "alert alert-danger py-2 mb-3 small fw-bold";
-        banner.innerText = res.message;
-        if (formWrapper) formWrapper.classList.add("d-none");
-      }
-
-      // B. Tampilan List Jadwal Mendatang
-      if (!res.upcoming || res.upcoming.length === 0) {
-        scheduleContainer.innerHTML = `<div class="text-muted small p-2 border rounded bg-light">Belum ada jadwal latihan mendatang.</div>`;
-        return;
-      }
-
-      scheduleContainer.innerHTML = "";
-      res.upcoming.forEach(item => {
-        const parts = String(item.tanggal).split("-");
-        let dateDisplay = item.tanggal;
-        if (parts.length === 3) {
-          const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-          dateDisplay = d.toLocaleDateString("id-ID", {
-            weekday: "long",
-            day: "numeric",
-            month: "short",
-            year: "numeric"
-          });
-        }
-
-        const isToday = item.isToday;
-        const card = document.createElement("div");
-        card.className = `p-3 rounded-3 border d-flex justify-content-between align-items-center mb-2 ${isToday ? 'border-warning bg-warning bg-opacity-10' : 'bg-white'}`;
-        card.innerHTML = `
-          <div>
-            <div class="fw-bold text-dark" style="font-size: 0.9rem;">
-              ${dateDisplay} ${isToday ? '<span class="badge bg-warning text-dark ms-1">Hari Ini</span>' : ''}
-            </div>
-            <div class="text-muted small">${item.keterangan || 'Latihan Rutin'}</div>
-          </div>
-          <div class="text-end">
-            <span class="badge bg-dark">${item.jamMulai} - ${item.jamSelesai} WIB</span>
-          </div>
-        `;
-        scheduleContainer.appendChild(card);
-      });
-
+      localStorage.setItem(cacheKey, JSON.stringify(res));
+      renderJadwalUI(res);
     } catch (e) {
-      banner.className = "alert alert-warning py-2 mb-3 small";
-      banner.innerText = "Gagal memuat status latihan.";
-      if (scheduleContainer) {
-        scheduleContainer.innerHTML = `<div class="text-danger small p-2">Gagal memuat daftar jadwal latihan.</div>`;
+      if (!localStorage.getItem(cacheKey)) {
+        banner.className = "alert alert-warning py-2 mb-3 small";
+        banner.innerText = "Gagal memuat status latihan.";
       }
     }
   }
 
-  async function submitAbsensi() {
-    const status = document.getElementById("absen-status").value;
-    const catatan = document.getElementById("absen-catatan").value;
-    const btn = document.getElementById("btn-submit-absen");
-    btn.disabled = true;
-    btn.innerText = "Mengirim...";
+  function renderJadwalUI(res) {
+    const banner = document.getElementById("absen-status-banner");
+    const formWrapper = document.getElementById("absen-form-wrapper");
+    const scheduleContainer = document.getElementById("upcoming-schedule-list");
+
+    if (res.isOpen) {
+      banner.className = "alert alert-success py-2 mb-3 small fw-bold";
+      banner.innerText = res.message;
+      if (formWrapper) formWrapper.classList.remove("d-none");
+    } else {
+      banner.className = res.alreadyPresent ? "alert alert-success py-2 mb-3 small fw-bold" : "alert alert-danger py-2 mb-3 small fw-bold";
+      banner.innerText = res.message;
+      if (formWrapper) formWrapper.classList.add("d-none");
+    }
+
+    if (!res.upcoming || res.upcoming.length === 0) {
+      scheduleContainer.innerHTML = `<div class="text-muted small p-2 border rounded bg-light">Belum ada jadwal latihan mendatang.</div>`;
+      return;
+    }
+
+    scheduleContainer.innerHTML = "";
+    res.upcoming.forEach(item => {
+      const parts = String(item.tanggal).split("-");
+      let dateDisplay = item.tanggal;
+      if (parts.length === 3) {
+        const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
+        dateDisplay = d.toLocaleDateString("id-ID", {
+          weekday: "long",
+          day: "numeric",
+          month: "short",
+          year: "numeric"
+        });
+      }
+
+      const isToday = item.isToday;
+      const card = document.createElement("div");
+      card.className = `p-3 rounded-3 border d-flex justify-content-between align-items-center mb-2 ${isToday ? 'border-warning bg-warning bg-opacity-10' : 'bg-white'}`;
+      card.innerHTML = `
+        <div>
+          <div class="fw-bold text-dark" style="font-size: 0.9rem;">
+            ${dateDisplay} ${isToday ? '<span class="badge bg-warning text-dark ms-1">Hari Ini</span>' : ''}
+          </div>
+          <div class="text-muted small">${item.keterangan || 'Latihan Rutin'}</div>
+        </div>
+        <div class="text-end">
+          <span class="badge bg-dark">${item.jamMulai} - ${item.jamSelesai} WIB</span>
+        </div>
+      `;
+      scheduleContainer.appendChild(card);
+    });
+  }
+
+  // 2. Load Kartu Iuran 12 Bulan (Dengan Cache Lokal & Solusi Bug Grid)
+  async function loadMemberDues(forceRefresh = false) {
+    if (!currentUser) return;
+    const selectedYear = document.getElementById("dues-year-select").value;
+    const container = document.getElementById("months-container");
+    const loadingInfo = document.getElementById("dues-loading-info");
+
+    document.getElementById("print-member-name").innerText = currentUser.nama;
+    document.getElementById("print-member-id").innerText = currentUser.memberId;
+    document.getElementById("print-member-year").innerText = selectedYear;
+    document.getElementById("dues-print-date").innerText = new Date().toLocaleDateString('id-ID');
+
+    const cacheKey = `cache_dues_${currentUser.memberId}_${selectedYear}`;
+
+    // 1. Tampilkan dari Cache Lokal bila ada
+    if (!forceRefresh) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        renderDuesUI(JSON.parse(cached));
+      }
+    }
+
+    loadingInfo.classList.remove("d-none");
 
     try {
-      const res = await callApi({
-        action: "submitAbsen",
-        memberId: currentUser.memberId,
-        nama: currentUser.nama,
-        keterangan: status,
-        catatan: catatan
-      });
-      alert(res.message);
-      checkPresensiStatus();
-      loadAbsensiReport();
+      const res = await callApi({ action: "getMemberDues", memberId: currentUser.memberId, year: selectedYear }, false);
+      loadingInfo.classList.add("d-none");
+      if (res.success) {
+        localStorage.setItem(cacheKey, JSON.stringify(res));
+        renderDuesUI(res);
+      }
     } catch (e) {
-      alert("Error: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Kirim Presensi Sekarang";
+      loadingInfo.classList.add("d-none");
+      if (!localStorage.getItem(cacheKey)) {
+        container.innerHTML = "<div class='text-danger small text-center py-2'>Gagal memuat status iuran. Klik tombol 'Segarkan Data'.</div>";
+      }
     }
   }
 
-  // 2. Rekap Absensi (Harian & Tahunan)
-  function toggleRekapFilterInput() {
-    const type = document.getElementById("rekap-filter-type").value;
-    if (type === "daily") {
-      document.getElementById("rekap-input-date-col").classList.remove("d-none");
-      document.getElementById("rekap-input-year-col").classList.add("d-none");
-    } else {
-      document.getElementById("rekap-input-date-col").classList.add("d-none");
-      document.getElementById("rekap-input-year-col").classList.remove("d-none");
+  function renderDuesUI(res) {
+    const container = document.getElementById("months-container");
+    document.getElementById("dues-paid-until").innerText = res.lastPaidUntil || "Belum ada pembayaran";
+    container.innerHTML = "";
+
+    const paidList = res.monthsPaid || [];
+    MONTH_NAMES.forEach((month, index) => {
+      const isPaid = !!paidList[index];
+      const card = document.createElement("div");
+      card.className = `month-badge ${isPaid ? "badge-lunas" : "badge-belum"}`;
+      card.innerHTML = `<div>${month}</div><small style="font-size:0.75rem;">${isPaid ? "Lunas" : "Belum"}</small>`;
+      container.appendChild(card);
+    });
+  }
+
+  // 3. Load Laporan Bulanan (Dengan Cache Lokal & Notifikasi "Data sedang diambil...")
+  async function loadMonthlyReport(forceRefresh = false) {
+    const m = Number(document.getElementById("laporan-bulan").value);
+    const y = Number(document.getElementById("laporan-tahun").value);
+    const loadingInfo = document.getElementById("laporan-loading-info");
+
+    const cacheKey = `cache_report_${m}_${y}`;
+
+    if (!forceRefresh) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        renderReportUI(JSON.parse(cached));
+      }
+    }
+
+    loadingInfo.classList.remove("d-none");
+
+    try {
+      const res = await callApi({ action: "getMonthlyReport", month: m, year: y }, false);
+      loadingInfo.classList.add("d-none");
+      if (res.success) {
+        localStorage.setItem(cacheKey, JSON.stringify(res));
+        renderReportUI(res);
+      }
+    } catch (err) {
+      loadingInfo.classList.add("d-none");
+      if (!localStorage.getItem(cacheKey)) {
+        document.getElementById("rep-transaksi-tbody").innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat laporan. Klik Segarkan Laporan.</td></tr>`;
+      }
     }
   }
 
-  async function loadAbsensiReport() {
+  function renderReportUI(res) {
+    const m = Number(document.getElementById("laporan-bulan").value);
+    const y = Number(document.getElementById("laporan-tahun").value);
+    const tbody = document.getElementById("rep-transaksi-tbody");
+
+    document.getElementById("laporan-periode-text").innerText = `Periode: ${MONTH_NAMES[m - 1]} ${y}`;
+    document.getElementById("laporan-print-date").innerText = new Date().toLocaleDateString('id-ID');
+    document.getElementById("rep-masuk").innerText = formatRupiah(res.totalMasuk || 0);
+    document.getElementById("rep-keluar").innerText = formatRupiah(res.totalKeluar || 0);
+    document.getElementById("rep-bersih").innerText = formatRupiah(res.saldoBersih || 0);
+
+    if (!res.transaksi || res.transaksi.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Tidak ada transaksi di periode ini</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = "";
+    res.transaksi.forEach(t => {
+      const isMasuk = String(t.tipe).toLowerCase() === "pemasukan";
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="align-middle">${t.tanggal}</td>
+        <td>
+          <strong class="text-dark">${t.kategori}</strong>
+          <div class="text-muted" style="font-size: 0.75rem;">${t.keteranganDetail}</div>
+        </td>
+        <td class="text-end align-middle ${isMasuk ? 'text-success' : 'text-danger'} fw-bold">
+          ${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}
+        </td>
+      `;
+      tbody.appendChild(tr);
+    });
+  }
+
+  // 4. Rekap Absensi
+  async function loadAbsensiReport(forceRefresh = false) {
     const type = document.getElementById("rekap-filter-type").value;
     const date = document.getElementById("rekap-filter-date").value;
     const year = document.getElementById("rekap-filter-year").value;
@@ -838,123 +951,40 @@
     }
   }
 
-  // 3. Admin: Atur Jadwal Latihan Baru
-  async function submitJadwal() {
-    const tanggal = document.getElementById("jadwal-tgl").value;
-    const jamMulai = document.getElementById("jadwal-mulai").value;
-    const jamSelesai = document.getElementById("jadwal-selesai").value;
-    const keterangan = document.getElementById("jadwal-ket").value.trim();
-    const btn = document.getElementById("btn-save-jadwal");
+  function toggleRekapFilterInput() {
+    const type = document.getElementById("rekap-filter-type").value;
+    if (type === "daily") {
+      document.getElementById("rekap-input-date-col").classList.remove("d-none");
+      document.getElementById("rekap-input-year-col").classList.add("d-none");
+    } else {
+      document.getElementById("rekap-input-date-col").classList.add("d-none");
+      document.getElementById("rekap-input-year-col").classList.remove("d-none");
+    }
+  }
 
-    if (!tanggal || !jamMulai || !jamSelesai) return alert("Harap lengkapi tanggal dan jam latihan!");
-
+  async function submitAbsensi() {
+    const status = document.getElementById("absen-status").value;
+    const catatan = document.getElementById("absen-catatan").value;
+    const btn = document.getElementById("btn-submit-absen");
     btn.disabled = true;
-    btn.innerText = "Menyimpan...";
+    btn.innerText = "Mengirim...";
 
     try {
-      const res = await callApi({ action: "setJadwal", tanggal, jamMulai, jamSelesai, keterangan });
+      const res = await callApi({
+        action: "submitAbsen",
+        memberId: currentUser.memberId,
+        nama: currentUser.nama,
+        keterangan: status,
+        catatan: catatan
+      });
       alert(res.message);
-      checkPresensiStatus();
+      checkPresensiStatus(true);
+      loadAbsensiReport(true);
     } catch (e) {
-      alert("Gagal membuat jadwal: " + e.message);
+      alert("Error: " + e.message);
     } finally {
       btn.disabled = false;
-      btn.innerText = "Buka Jadwal Latihan";
-    }
-  }
-
-  // 4. Laporan Kas & Iuran
-  async function loadMemberListForInput() {
-    try {
-      const res = await callApi({ action: "getMembers" }, false);
-      if (res.success && res.members) {
-        const datalist = document.getElementById("list-member-datalist");
-        datalist.innerHTML = "";
-        res.members.forEach(m => {
-          const opt = document.createElement("option");
-          opt.value = m.nama;
-          datalist.appendChild(opt);
-        });
-      }
-    } catch (err) { console.error(err); }
-  }
-
-  async function loadSummary() {
-    try {
-      const res = await callApi({ action: "getSummary" }, false);
-      if (res.success) document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
-    } catch (err) { console.error(err); }
-  }
-
-  async function loadMemberDues() {
-    if (!currentUser) return;
-    const selectedYear = document.getElementById("dues-year-select").value;
-    const container = document.getElementById("months-container");
-    
-    document.getElementById("print-member-name").innerText = currentUser.nama;
-    document.getElementById("print-member-id").innerText = currentUser.memberId;
-    document.getElementById("print-member-year").innerText = selectedYear;
-    document.getElementById("dues-print-date").innerText = new Date().toLocaleDateString('id-ID');
-    container.innerHTML = "<div class='text-muted small col-span-3 text-center'>Memuat data...</div>";
-
-    try {
-      const res = await callApi({ action: "getMemberDues", memberId: currentUser.memberId, year: selectedYear }, false);
-      if (res.success) {
-        document.getElementById("dues-paid-until").innerText = res.lastPaidUntil;
-        container.innerHTML = "";
-        MONTH_NAMES.forEach((month, index) => {
-          const isPaid = res.monthsPaid[index];
-          const card = document.createElement("div");
-          card.className = `month-badge ${isPaid ? "badge-lunas" : "badge-belum"}`;
-          card.innerHTML = `<div>${month}</div><small>${isPaid ? "Lunas" : "Belum"}</small>`;
-          container.appendChild(card);
-        });
-      }
-    } catch (e) {
-      container.innerHTML = "<div class='text-danger small text-center'>Gagal memuat status iuran.</div>";
-    }
-  }
-
-  async function loadMonthlyReport() {
-    const m = Number(document.getElementById("laporan-bulan").value);
-    const y = Number(document.getElementById("laporan-tahun").value);
-    const tbody = document.getElementById("rep-transaksi-tbody");
-
-    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Mengambil data laporan...</td></tr>`;
-
-    try {
-      const res = await callApi({ action: "getMonthlyReport", month: m, year: y }, false);
-      if (res.success) {
-        document.getElementById("laporan-periode-text").innerText = `Periode: ${MONTH_NAMES[m - 1]} ${y}`;
-        document.getElementById("laporan-print-date").innerText = new Date().toLocaleDateString('id-ID');
-        document.getElementById("rep-masuk").innerText = formatRupiah(res.totalMasuk);
-        document.getElementById("rep-keluar").innerText = formatRupiah(res.totalKeluar);
-        document.getElementById("rep-bersih").innerText = formatRupiah(res.saldoBersih);
-
-        if (!res.transaksi || res.transaksi.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Tidak ada transaksi di periode ini</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = "";
-        res.transaksi.forEach(t => {
-          const isMasuk = t.tipe === "Pemasukan";
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td class="align-middle">${t.tanggal}</td>
-            <td>
-              <strong class="text-dark">${t.kategori}</strong>
-              <div class="text-muted" style="font-size: 0.75rem;">${t.keteranganDetail}</div>
-            </td>
-            <td class="text-end align-middle ${isMasuk ? 'text-success' : 'text-danger'} fw-bold">
-              ${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}
-            </td>
-          `;
-          tbody.appendChild(tr);
-        });
-      }
-    } catch (err) {
-      tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat laporan</td></tr>`;
+      btn.innerText = "Kirim Presensi Sekarang";
     }
   }
 
@@ -992,12 +1022,74 @@
       document.getElementById("kas-target-member").value = "";
       document.getElementById("kas-jumlah").value = "";
       document.getElementById("kas-keterangan").value = "";
+      
+      // Bersihkan cache agar data terbaru langsung ditarik
+      localStorage.clear();
+      localStorage.setItem("sanggar_user", JSON.stringify(currentUser));
+      
       if (currentUser.role === "Admin") {
-        loadSummary();
-        loadMonthlyReport();
+        loadSummary(true);
+        loadMonthlyReport(true);
       }
     } catch (e) { alert("Error: " + e.message); } 
     finally { btn.disabled = false; btn.innerText = "Simpan Transaksi"; }
+  }
+
+  async function submitJadwal() {
+    const tanggal = document.getElementById("jadwal-tgl").value;
+    const jamMulai = document.getElementById("jadwal-mulai").value;
+    const jamSelesai = document.getElementById("jadwal-selesai").value;
+    const keterangan = document.getElementById("jadwal-ket").value.trim();
+    const btn = document.getElementById("btn-save-jadwal");
+
+    if (!tanggal || !jamMulai || !jamSelesai) return alert("Harap lengkapi tanggal dan jam latihan!");
+
+    btn.disabled = true;
+    btn.innerText = "Menyimpan...";
+
+    try {
+      const res = await callApi({ action: "setJadwal", tanggal, jamMulai, jamSelesai, keterangan });
+      alert(res.message);
+      checkPresensiStatus(true);
+    } catch (e) {
+      alert("Gagal membuat jadwal: " + e.message);
+    } finally {
+      btn.disabled = false;
+      btn.innerText = "Buka Jadwal Latihan";
+    }
+  }
+
+  async function loadMemberListForInput() {
+    try {
+      const res = await callApi({ action: "getMembers" }, false);
+      if (res.success && res.members) {
+        const datalist = document.getElementById("list-member-datalist");
+        datalist.innerHTML = "";
+        res.members.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.nama;
+          datalist.appendChild(opt);
+        });
+      }
+    } catch (err) { console.error(err); }
+  }
+
+  async function loadSummary(forceRefresh = false) {
+    const cacheKey = "cache_summary_kas";
+    if (!forceRefresh) {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        document.getElementById("display-saldo").innerText = formatRupiah(Number(cached));
+      }
+    }
+
+    try {
+      const res = await callApi({ action: "getSummary" }, false);
+      if (res.success) {
+        localStorage.setItem(cacheKey, res.saldo);
+        document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
+      }
+    } catch (err) { console.error(err); }
   }
 
   async function submitAddMember() {
@@ -1041,6 +1133,7 @@
       alert(res.message);
       if (res.success) {
         currentUser = res.user;
+        localStorage.setItem("sanggar_user", JSON.stringify(currentUser));
         document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
         document.getElementById("user-initial-badge").innerText = currentUser.nama.charAt(0).toUpperCase();
         document.getElementById("edit-pin").value = "";
@@ -1070,6 +1163,7 @@
 
   function logout() {
     currentUser = null;
+    localStorage.clear();
     document.getElementById("login-name").value = "";
     document.getElementById("login-pin").value = "";
     document.getElementById("section-app").classList.add("d-none");
