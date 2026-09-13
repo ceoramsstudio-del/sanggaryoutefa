@@ -17,7 +17,6 @@
       --gold-dark: #b87503;
       --brown-deep: #1f0f04;
       --brown-card: #2e1606;
-      --brown-accent: #47230b;
       --text-gold: #ffdf79;
     }
 
@@ -25,13 +24,11 @@
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       color: #333333;
-      /* Background Nuansa Hangat & Emas Nusantara */
       background: radial-gradient(circle at 50% 15%, #b45309 0%, #78350f 30%, #451a03 65%, #1f0b02 100%);
       background-attachment: fixed;
       position: relative;
     }
 
-    /* Pola ukir abstrak halus di latar */
     body::before {
       content: "";
       position: fixed;
@@ -48,7 +45,6 @@
       max-width: 660px;
     }
 
-    /* Header Brand */
     .brand-title {
       font-family: 'Cinzel', serif;
       font-size: 1.8rem;
@@ -67,7 +63,6 @@
       text-transform: uppercase;
     }
 
-    /* Kartu Bertema */
     .custom-card {
       background: rgba(255, 255, 255, 0.96);
       border-radius: 20px;
@@ -83,30 +78,27 @@
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
     }
 
-    /* Avatar Inisial */
     .user-avatar-badge {
-      width: 54px;
-      height: 54px;
+      width: 52px;
+      height: 52px;
       border-radius: 50%;
       background: linear-gradient(135deg, #ffd05b, #b46b02);
       color: #200d02;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.4rem;
       font-weight: 800;
       border: 3px solid #fff3b0;
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
     }
 
-    /* Saldo Card Khusus Admin */
     .saldo-box {
       background: linear-gradient(135deg, #fffcf5 0%, #fef3c7 100%);
       border: 2px dashed #d97706;
       border-radius: 16px;
     }
 
-    /* Navigasi Tab Bertema Emas & Kayu */
     .nav-tabs {
       border-bottom: 2px solid rgba(245, 176, 30, 0.5);
       gap: 6px;
@@ -131,7 +123,6 @@
       box-shadow: 0 4px 12px rgba(245, 175, 25, 0.4);
     }
 
-    /* Tombol Utama Bertema Nusantara */
     .btn-gold {
       background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
       border: 1px solid #fef08a;
@@ -157,7 +148,6 @@
       box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
     }
 
-    /* Grid Status 12 Bulan */
     .month-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -169,17 +159,24 @@
       text-align: center;
       font-size: 0.82rem;
       font-weight: 700;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.04);
     }
     .badge-lunas { background-color: #d1fae5; color: #065f46; border: 1.5px solid #a7f3d0; }
     .badge-belum { background-color: #fee2e2; color: #991b1b; border: 1.5px solid #fecaca; }
 
-    /* Area Cetak Gambar */
     .printable-area {
       background: #ffffff;
       padding: 22px;
       border-radius: 16px;
       border: 2px solid #f59e0b;
+    }
+
+    /* Modal Loading Tematik */
+    #loadingModal .modal-content {
+      background: linear-gradient(145deg, #3d1b06, #1f0b02);
+      border: 2px solid #f5b01e;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
+      color: #fff;
     }
   </style>
 </head>
@@ -187,19 +184,19 @@
 
 <div class="container py-4 app-wrapper">
 
-  <!-- Bagian Header Utama Sanggar -->
+  <!-- Header Brand -->
   <div class="text-center mb-4">
     <div class="brand-subtitle">Portal Presensi & Keuangan</div>
     <div class="brand-title">SANGGAR TARI YOUTEFA</div>
     <div style="font-size: 0.8rem; color: #fde68a; letter-spacing: 0.5px;">Lestarikan Budaya, Tari Menghubungkan Kita</div>
   </div>
 
-  <!-- Form Login -->
+  <!-- Form Login (Menggunakan Nama Lengkap) -->
   <div id="section-login" class="custom-card p-4 mx-auto" style="max-width: 420px;">
     <h5 class="text-center fw-bold mb-3" style="color: #451a03;">Masuk Member / Pelatih</h5>
     <div class="mb-3">
-      <label class="form-label small fw-bold text-muted">ID MEMBER</label>
-      <input type="text" id="login-id" class="form-control" placeholder="Contoh: M001">
+      <label class="form-label small fw-bold text-muted">NAMA LENGKAP</label>
+      <input type="text" id="login-name" class="form-control" placeholder="Masukkan nama Anda (cth: Aca)">
     </div>
     <div class="mb-3">
       <label class="form-label small fw-bold text-muted">PIN</label>
@@ -208,10 +205,10 @@
     <button class="btn btn-gold w-100 py-2 mt-2" onclick="handleLogin()">Buka Dashboard</button>
   </div>
 
-  <!-- Konten Aplikasi Setelah Login -->
+  <!-- Dashboard App -->
   <div id="section-app" class="d-none">
 
-    <!-- Card Profil Ringkas -->
+    <!-- Card Profil Header -->
     <div class="header-card p-3 mb-3 d-flex flex-row align-items-center justify-content-between">
       <div class="d-flex align-items-center gap-3">
         <div id="user-initial-badge" class="user-avatar-badge">M</div>
@@ -223,7 +220,7 @@
       <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="logout()">Keluar</button>
     </div>
 
-    <!-- Total Saldo Kas (HANYA MUNCUL DI ROLE ADMIN) -->
+    <!-- Total Kas Sanggar (Hanya Admin) -->
     <div id="admin-saldo-container" class="saldo-box p-3 mb-3 d-none">
       <div class="d-flex justify-content-between align-items-center">
         <div>
@@ -234,7 +231,7 @@
       </div>
     </div>
 
-    <!-- Tab Navigasi -->
+    <!-- Navigasi Tabs -->
     <ul class="nav nav-tabs mb-3" id="tabNav">
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Presensi</button></li>
       <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button></li>
@@ -245,7 +242,7 @@
     </ul>
 
     <div class="tab-content">
-      <!-- 1. Tab Presensi -->
+      <!-- 1. Presensi -->
       <div class="tab-pane fade show active" id="tab-absen">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Form Presensi Latihan</h6>
@@ -265,7 +262,7 @@
         </div>
       </div>
 
-      <!-- 2. Tab Kartu Iuran Tahunan -->
+      <!-- 2. Iuran -->
       <div class="tab-pane fade" id="tab-iuran">
         <div class="custom-card p-4">
           <div class="d-flex justify-content-between align-items-center mb-3">
@@ -277,7 +274,6 @@
             </select>
           </div>
 
-          <!-- Area Kartu Iuran Cetak -->
           <div id="print-iuran-area" class="printable-area mb-3">
             <div class="text-center border-bottom border-warning pb-2 mb-3">
               <h5 class="mb-0 fw-bold" style="color: #78350f; font-family: 'Cinzel', serif;">SANGGAR TARI YOUTEFA</h5>
@@ -299,7 +295,7 @@
         </div>
       </div>
 
-      <!-- 3. Tab Input Kas (Khusus Admin) -->
+      <!-- 3. Input Kas (Autocomplete Nama Anggota) -->
       <div class="tab-pane fade" id="tab-kas">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Catat Pemasukan / Pengeluaran</h6>
@@ -319,9 +315,13 @@
             </select>
           </div>
 
+          <!-- Input Nama dengan Autocomplete Database -->
           <div id="iuran-extra-fields" class="p-3 bg-light rounded-3 mb-3 border">
-            <label class="form-label small fw-bold text-muted">ID MEMBER YANG MEMBAYAR</label>
-            <input type="text" id="kas-target-member" class="form-control mb-2" placeholder="Contoh: M001">
+            <label class="form-label small fw-bold text-muted">NAMA MEMBER YANG MEMBAYAR</label>
+            <input type="text" id="kas-target-member" list="list-member-datalist" class="form-control mb-2" placeholder="Ketik nama member...">
+            <!-- Datalist untuk Autocomplete -->
+            <datalist id="list-member-datalist"></datalist>
+
             <div class="row g-2">
               <div class="col-6">
                 <select id="kas-target-month" class="form-select">
@@ -349,7 +349,7 @@
         </div>
       </div>
 
-      <!-- 4. Tab Laporan Kas Bulanan (Khusus Admin) -->
+      <!-- 4. Laporan Kas Bulanan -->
       <div class="tab-pane fade" id="tab-laporan">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Laporan Keuangan Bulanan</h6>
@@ -406,7 +406,7 @@
         </div>
       </div>
 
-      <!-- 5. Tab Tambah Member (Khusus Admin) -->
+      <!-- 5. Tambah Member -->
       <div class="tab-pane fade" id="tab-addmember">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Pendaftaran Anggota Baru</h6>
@@ -439,7 +439,7 @@
         </div>
       </div>
 
-      <!-- 6. Tab Profil Saya -->
+      <!-- 6. Profil -->
       <div class="tab-pane fade" id="tab-profile">
         <div class="custom-card p-4">
           <h6 class="fw-bold mb-3" style="color: #451a03;">Data Akun Saya</h6>
@@ -464,6 +464,17 @@
 
 </div>
 
+<!-- Modal Popup Loading Tematik -->
+<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
+    <div class="modal-content p-4 text-center">
+      <div class="spinner-border text-warning mb-3 mx-auto" style="width: 3rem; height: 3rem;" role="status"></div>
+      <h6 class="fw-bold text-warning mb-2" id="loading-member-name">Menyiapkan Portal...</h6>
+      <p class="small text-light mb-0" id="loading-msg">Tunggu ya, kita lagi persiapkan sanggarnya...</p>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
   // GANTI DENGAN URL DEPLOYMENT APPS SCRIPT ANDA
@@ -471,6 +482,11 @@
 
   const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
   let currentUser = null;
+  let loadingModalInstance = null;
+
+  document.addEventListener("DOMContentLoaded", () => {
+    loadingModalInstance = new bootstrap.Modal(document.getElementById("loadingModal"));
+  });
 
   async function callApi(payload, isPost = true) {
     let response;
@@ -498,13 +514,19 @@
     }
   }
 
+  // LOGIN MENGGUNAKAN NAMA LENGKAP & POPUP LOADING
   async function handleLogin() {
-    const memberId = document.getElementById("login-id").value.trim();
+    const username = document.getElementById("login-name").value.trim();
     const pin = document.getElementById("login-pin").value.trim();
-    if (!memberId || !pin) return alert("Silakan isi Member ID dan PIN");
+    if (!username || !pin) return alert("Silakan masukkan Nama Lengkap dan PIN");
+
+    // Tampilkan Popup Loading Tematik
+    document.getElementById("loading-member-name").innerText = `Hai ${username}!`;
+    document.getElementById("loading-msg").innerText = "Tunggu ya, kita lagi persiapkan sanggarnya...";
+    loadingModalInstance.show();
 
     try {
-      const res = await callApi({ action: "login", memberId, pin });
+      const res = await callApi({ action: "login", username, pin });
       if (res.success) {
         currentUser = res.user;
         setupDashboard();
@@ -513,6 +535,9 @@
       }
     } catch (e) {
       alert("Gagal terhubung: " + e.message);
+    } finally {
+      // Hilangkan Popup Loading setelah selesai
+      loadingModalInstance.hide();
     }
   }
 
@@ -533,11 +558,13 @@
 
     const isAdmin = currentUser.role === "Admin";
 
-    // PROTEKSI ROLE: Hanya Admin yang bisa melihat Saldo Kas dan Tab Admin
+    // SALDO KAS HANYA MUNCUL DI ADMIN
     const saldoBox = document.getElementById("admin-saldo-container");
     if (isAdmin) {
       saldoBox.classList.remove("d-none");
       loadSummary();
+      loadMemberListForInput(); // Load daftar member untuk autocomplete input kas
+      loadMonthlyReport();
     } else {
       saldoBox.classList.add("d-none");
     }
@@ -547,8 +574,23 @@
     document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
 
     loadMemberDues();
-    if (isAdmin) {
-      loadMonthlyReport();
+  }
+
+  // AMBIL DAFTAR NAMA MEMBER UNTUK AUTOCOMPLETE INPUT KAS
+  async function loadMemberListForInput() {
+    try {
+      const res = await callApi({ action: "getMembers" }, false);
+      if (res.success && res.members) {
+        const datalist = document.getElementById("list-member-datalist");
+        datalist.innerHTML = "";
+        res.members.forEach(m => {
+          const opt = document.createElement("option");
+          opt.value = m.nama; // Nilai autocomplete adalah Nama Lengkap
+          datalist.appendChild(opt);
+        });
+      }
+    } catch (err) {
+      console.error("Gagal load member list:", err);
     }
   }
 
@@ -654,6 +696,7 @@
         document.getElementById("new-nama").value = "";
         document.getElementById("new-pin").value = "";
         document.getElementById("new-telp").value = "";
+        loadMemberListForInput(); // Refresh autocomplete
       }
     } catch (e) {
       alert("Terjadi kesalahan: " + e.message);
@@ -724,6 +767,7 @@
     finally { btn.disabled = false; btn.innerText = "Kirim Presensi"; }
   }
 
+  // SUBMIT KAS MENGGUNAKAN NAMA (AUTO-MAPPING KE MEMBER ID DI BACKEND)
   async function submitKas() {
     const tipe = document.getElementById("kas-tipe").value;
     const kategori = document.getElementById("kas-kategori").value;
@@ -731,15 +775,15 @@
     const keterangan = document.getElementById("kas-keterangan").value;
     const btn = document.getElementById("btn-submit-kas");
 
-    let targetMember = currentUser.memberId;
+    let namaInput = currentUser.nama;
     let targetYear = "";
     let targetMonth = "";
 
     if (kategori === "Iuran Bulanan") {
-      targetMember = document.getElementById("kas-target-member").value.trim();
+      namaInput = document.getElementById("kas-target-member").value.trim();
       targetYear = document.getElementById("kas-target-year").value;
       targetMonth = document.getElementById("kas-target-month").value;
-      if (!targetMember) return alert("Harap isi ID Member");
+      if (!namaInput) return alert("Harap isi Nama Member yang membayar iuran");
     }
 
     if (!jumlah || Number(jumlah) <= 0) return alert("Masukkan jumlah kas yang valid");
@@ -750,16 +794,17 @@
     try {
       const res = await callApi({
         action: "submitKas",
-        memberId: targetMember,
-        nama: "",
+        namaInput: namaInput,
         tipe, kategori, jumlah, keterangan,
         tahunIuran: targetYear, bulanIuran: targetMonth
       });
       alert(res.message);
+      document.getElementById("kas-target-member").value = "";
       document.getElementById("kas-jumlah").value = "";
       document.getElementById("kas-keterangan").value = "";
       if (currentUser.role === "Admin") {
         loadSummary();
+        loadMonthlyReport();
       }
     } catch (e) { alert("Error: " + e.message); } 
     finally { btn.disabled = false; btn.innerText = "Simpan Transaksi"; }
@@ -771,7 +816,7 @@
 
   function logout() {
     currentUser = null;
-    document.getElementById("login-id").value = "";
+    document.getElementById("login-name").value = "";
     document.getElementById("login-pin").value = "";
     document.getElementById("section-app").classList.add("d-none");
     document.getElementById("section-login").classList.remove("d-none");
