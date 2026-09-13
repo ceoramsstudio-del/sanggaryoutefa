@@ -237,33 +237,42 @@
     </ul>
 
     <div class="tab-content">
-      <!-- 1. Tab Presensi Terjadwal & Terkunci -->
-      <div class="tab-pane fade show active" id="tab-absen">
-        <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Presensi Latihan Sanggar</h6>
-          
-          <!-- Banner Status Sesi Latihan -->
-          <div id="absen-status-banner" class="alert alert-secondary py-2 mb-3 small fw-bold">
-            Memeriksa jadwal latihan hari ini...
-          </div>
+     <!-- Tab Presensi -->
+<div class="tab-pane fade show active" id="tab-absen">
+  <div class="custom-card p-4">
+    <h6 class="fw-bold mb-3" style="color: #451a03;">Presensi Latihan Sanggar</h6>
+    
+    <!-- Banner Info Status Hari Ini -->
+    <div id="absen-status-banner" class="alert alert-secondary py-2 mb-3 small fw-bold">
+      Memeriksa jadwal latihan...
+    </div>
 
-          <div id="absen-form-wrapper" class="d-none">
-            <div class="mb-3">
-              <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
-              <select id="absen-status" class="form-select">
-                <option value="Hadir">Hadir</option>
-                <option value="Izin">Izin</option>
-                <option value="Sakit">Sakit</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label small fw-bold text-muted">CATATAN (OPSIONAL)</label>
-              <input type="text" id="absen-catatan" class="form-control" placeholder="Contoh: Datang tepat waktu">
-            </div>
-            <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi Sekarang</button>
-          </div>
-        </div>
+    <!-- Form & Tombol Presensi (Hanya Terbuka Saat Hari dan Jam Latihan Masuk) -->
+    <div id="absen-form-wrapper" class="p-3 bg-light rounded-3 border mb-3 d-none">
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
+        <select id="absen-status" class="form-select">
+          <option value="Hadir">Hadir</option>
+          <option value="Izin">Izin</option>
+          <option value="Sakit">Sakit</option>
+        </select>
       </div>
+      <div class="mb-3">
+        <label class="form-label small fw-bold text-muted">CATATAN (OPSIONAL)</label>
+        <input type="text" id="absen-catatan" class="form-control" placeholder="Contoh: Datang tepat waktu">
+      </div>
+      <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi Sekarang</button>
+    </div>
+
+    <!-- List Jadwal Latihan Mendatang -->
+    <div class="mt-4">
+      <h6 class="fw-bold mb-2" style="font-size: 0.9rem; color: #78350f;">Jadwal Latihan Mendatang</h6>
+      <div id="upcoming-schedule-list" class="d-flex flex-column gap-2">
+        <div class="text-muted small py-2">Memuat jadwal...</div>
+      </div>
+    </div>
+  </div>
+</div>
 
       <!-- 2. Tab Rekap Absensi (Filter Harian & Tahunan) -->
       <div class="tab-pane fade" id="tab-rekap-absen">
