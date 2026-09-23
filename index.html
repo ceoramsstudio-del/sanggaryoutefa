@@ -10,7 +10,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Font Awesome Icons -->
+  <!-- Font Awesome -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
   <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -39,14 +39,12 @@
     ::-webkit-scrollbar { height: 8px; width: 8px; }
     ::-webkit-scrollbar-track { background: #F1F5F9; }
     ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-    
     @keyframes popIn {
       0% { transform: scale(0.92); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
     .animate-pop { animation: popIn 0.22s ease-out forwards; }
 
-    /* Badge Lunas dan Kurang dengan style kuat agar tidak hilang saat diunduh */
     .badge-lunas {
       background-color: #d1fae5 !important;
       border: 1.5px solid #10b981 !important;
@@ -75,21 +73,21 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8">
 
-  <!-- ================= OVERLAY LOADING SANGGAR ================= -->
+  <!-- ================= LOADING OVERLAY ================= -->
   <div id="loading-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4 transition-opacity duration-300">
     <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 border border-pink-100 animate-pop max-w-xs text-center">
       <div class="relative w-16 h-16 flex items-center justify-center">
         <div class="w-16 h-16 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"></div>
-        <i class="fa-solid fa-cloud text-pink-500 text-xl absolute"></i>
+        <i class="fa-solid fa-table text-pink-500 text-xl absolute"></i>
       </div>
       <div>
         <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang ambil data sanggar...</h4>
-        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi Cloud Google Spreadsheet</p>
+        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Membaca Tabel Google Spreadsheet</p>
       </div>
     </div>
   </div>
 
-  <!-- ================= TOP TOAST NOTIFIKASI ================= -->
+  <!-- ================= TOAST ================= -->
   <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
     <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
     <span id="toast-msg">Pesan</span>
@@ -97,7 +95,7 @@
 
   <div class="max-w-7xl mx-auto">
     
-    <!-- ================= HEADER ATAS ================= -->
+    <!-- ================= HEADER UTAMA ================= -->
     <header class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-sm border border-pink-100 flex flex-wrap items-center justify-between gap-4 mb-6">
       <div class="flex items-center gap-4 cursor-pointer" onclick="showView('home')">
         <div id="top-logo-container" class="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md shadow-pink-200 overflow-hidden flex-shrink-0">
@@ -138,7 +136,6 @@
         <h2 id="hero-studio-name" class="heading-font text-2xl sm:text-4xl font-extrabold text-slate-800 mb-2">Sanggar Tari YOUTEFA</h2>
         <p id="hero-studio-slogan" class="text-sm sm:text-base text-slate-600 mb-8 max-w-md mx-auto">Portal Presensi & Administrasi Pembelajaran Tari Anak-Anak</p>
 
-        <!-- Tombol Utama -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
           <button onclick="showView('attendance')" class="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-2xl shadow-lg shadow-pink-200 font-bold transition transform active:scale-95 text-base">
             <i class="fa-solid fa-calendar-check text-xl"></i>
@@ -151,7 +148,6 @@
           </button>
         </div>
 
-        <!-- Menu Tambahan Admin -->
         <div id="home-admin-quick-menu" class="hidden mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button onclick="showView('spp')" class="flex items-center justify-center gap-2 p-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold border border-amber-200">
             <i class="fa-solid fa-money-bill-wave text-amber-600"></i> Laporan SPP
@@ -221,7 +217,7 @@
             <div id="att-period-badge" class="heading-font inline-block bg-pink-50 text-pink-700 text-base font-bold px-4 py-1.5 rounded-2xl border border-pink-200">
               Sep-26
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Status Terverifikasi</p>
+            <p class="text-[10px] text-slate-400 mt-1">Terekam di Spreadsheet</p>
           </div>
         </div>
 
@@ -245,9 +241,6 @@
           <div class="flex items-center gap-2">
             <span class="font-bold text-slate-700">Pelatih :</span>
             <span id="coach-names-display" class="font-bold text-pink-600">Kak Raras & Kak Dewi</span>
-            <button id="btn-edit-coach" onclick="promptEditCoach()" class="no-export hidden text-slate-400 hover:text-slate-600 ml-1">
-              <i class="fa-solid fa-pen-to-square"></i>
-            </button>
           </div>
           <div class="text-slate-400 text-[11px]">
             <span>Keterangan: </span>
@@ -368,7 +361,7 @@
 
       <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
         <div class="flex items-center justify-between mb-4">
-          <p class="text-xs text-slate-500">Daftar semua murid aktif terdaftar di sanggar.</p>
+          <p class="text-xs text-slate-500">Daftar semua murid aktif terdaftar di sanggar (Tersimpan di Sheet "Member").</p>
           <span id="member-badge-count" class="text-xs font-bold bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200">26 Member</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="member-cards-container"></div>
@@ -405,6 +398,11 @@
           </div>
 
           <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pelatih</label>
+            <input type="text" id="setting-coach-name" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-pink-500" />
+          </div>
+
+          <div>
             <label class="block text-xs font-bold text-slate-600 mb-1">Upload Foto Logo Sendiri</label>
             <div class="flex items-center gap-4">
               <div id="setting-logo-preview" class="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
@@ -412,13 +410,13 @@
               </div>
               <div class="space-y-1">
                 <input type="file" id="setting-logo-file" accept="image/*" onchange="handleLogoUpload(event)" class="text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer" />
-                <button onclick="resetToDefaultLogo()" class="text-[11px] text-rose-500 hover:underline block font-semibold">Gunakan Logo Animasi Bawaan</button>
+                <button onclick="resetToDefaultLogo()" class="text-[11px] text-rose-500 hover:underline block font-semibold">Gunakan Logo Bawaan</button>
               </div>
             </div>
           </div>
 
           <div class="pt-2">
-            <button onclick="saveStudioSettings()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-200 transition">
+            <button onclick="saveAllSettings()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-200 transition">
               Simpan Identitas Sanggar
             </button>
           </div>
@@ -446,7 +444,7 @@
           </div>
 
           <div class="pt-2">
-            <button onclick="saveAdminCredentials()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200 transition">
+            <button onclick="saveAllSettings()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200 transition">
               Simpan Password Baru
             </button>
           </div>
@@ -515,23 +513,6 @@
           <p id="spp-calc-status" class="text-xs font-bold mt-1.5 text-emerald-600">Status: Menunggu input...</p>
         </div>
 
-        <div class="p-3 bg-pink-50/60 rounded-xl border border-pink-100 space-y-2">
-          <div class="flex items-center gap-2">
-            <input type="checkbox" id="spp-is-new-member" onchange="toggleRegFeeInput()" class="w-4 h-4 rounded text-pink-500 focus:ring-pink-400" />
-            <label for="spp-is-new-member" class="text-xs font-bold text-pink-800 cursor-pointer">
-              Member Baru (Ada Biaya Pendaftaran)
-            </label>
-          </div>
-
-          <div id="reg-fee-field" class="hidden pt-1">
-            <label class="block text-[11px] font-bold text-pink-700 mb-1">Pendaftaran: Rp.</label>
-            <div class="relative">
-              <span class="absolute left-3 top-2 text-pink-400 font-bold text-xs">Rp</span>
-              <input type="number" id="spp-input-reg-fee" step="1000" placeholder="50000" class="w-full pl-9 pr-3 py-1.5 rounded-lg border border-pink-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-pink-500" />
-            </div>
-          </div>
-        </div>
-
         <div class="flex gap-2 pt-2">
           <button onclick="deleteSPPRecord()" class="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200">Hapus</button>
           <button onclick="closeModal('modal-spp')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
@@ -546,14 +527,14 @@
     <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-purple-100 animate-pop">
       <div class="text-center mb-4">
         <h3 id="modal-member-title" class="heading-font text-lg font-bold text-slate-800">Tambah Member Baru</h3>
-        <p class="text-xs text-slate-500">Masukkan nama anak yang terdaftar di sanggar</p>
+        <p class="text-xs text-slate-500">Tersimpan ke Tab "Member"</p>
       </div>
 
       <div class="space-y-3">
         <input type="hidden" id="member-edit-id" value="" />
         <div>
           <label class="block text-xs font-bold text-slate-600 mb-1">Nama Panggilan / Lengkap</label>
-          <input type="text" id="member-name-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500 capitalize" placeholder="Contoh: Vhia" />
+          <input type="text" id="member-name-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500 capitalize" placeholder="Contoh: Cantika" />
         </div>
 
         <div class="flex gap-2 pt-2">
@@ -564,14 +545,11 @@
     </div>
   </div>
 
-  <!-- ================= JAVASCRIPT CORE ================= -->
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
   <script>
-    // =========================================================================
-    // TEMPELKAN URL APPS SCRIPT ANDA (/exec) DI SINI:
-    // =========================================================================
+    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA (/exec) DI SINI:
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6-ASJ6Q_8I7rCAo-WVmmrx4OMbs7YJNTe0D4ZQ9ViuhqtLsMKgJZFR4-_76ovTaTHew/exec";
 
-    // 26 Nama Member Asli Sanggar
     const DEFAULT_MEMBERS = [
       "Aca", "Ina", "Dewinda", "Agil", "Kanaya",
       "Alea", "Talea", "Shabira", "Gendis", "Keysa",
@@ -592,18 +570,19 @@
     let appSettings = {
       studioName: "Sanggar Tari YOUTEFA",
       studioSlogan: "Tari Seni & Kreasi Tradisional Anak",
-      customLogo: null,
-      coachNames: "Kak Raras & Kak Dewi"
+      customLogo: "",
+      coachNames: "Kak Raras & Kak Dewi",
+      adminUser: "admin",
+      adminPass: "12345"
     };
-    let adminAuth = { user: "admin", pass: "12345" };
     let isAdminLoggedIn = false;
 
-    let currentAttMonth = 8; // September
+    let currentAttMonth = 8;
     let currentAttYear = 2026;
     let currentSPPYear = 2026;
     let activeSPPEdit = { memberName: "", monthIndex: 0, year: 2026 };
 
-    function showLoading(title = "Sedang ambil data sanggar...", desc = "Sinkronisasi Cloud Google Spreadsheet") {
+    function showLoading(title = "Sedang ambil data sanggar...", desc = "Membaca Tabel Google Spreadsheet") {
       document.getElementById('loading-title').innerText = title;
       document.getElementById('loading-desc').innerText = desc;
       document.getElementById('loading-overlay').classList.remove('hidden');
@@ -612,7 +591,7 @@
       document.getElementById('loading-overlay').classList.add('hidden');
     }
 
-    window.addEventListener('DOMContentLoaded', async () => {
+    window.addEventListener('DOMContentLoaded', () => {
       loadFromLocalStorage();
       applySettingsToUI();
       renderAttendanceTable();
@@ -620,11 +599,11 @@
       renderMemberList();
       showView('home');
 
-      // Ambil data terbaru dari spreadsheet secara online
+      // Ambil data langsung dari Tabel Spreadsheet Google
       fetchOnlineData(false);
     });
 
-    // 1. AMBIL DATA VIA JSONP (ANTI BLOKIR CLOUDFLARE)
+    // 1. BACA DATA DARI TABEL GOOGLE SPREADSHEET VIA JSONP
     function fetchOnlineData(isManualRefresh = false) {
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
         hideLoading();
@@ -632,17 +611,16 @@
         return;
       }
 
-      showLoading("Sedang ambil data sanggar...", "Menghubungkan ke Google Spreadsheet");
+      showLoading("Sedang ambil data sanggar...", "Membaca Tab Sheet Google Drive");
 
       window.onSanggarDataReceived = function(json) {
         hideLoading();
         if (json && json.status === "success" && json.data) {
           const d = json.data;
-          if (d.sanggar_members) members = JSON.parse(d.sanggar_members);
-          if (d.sanggar_settings) appSettings = { ...appSettings, ...JSON.parse(d.sanggar_settings) };
-          if (d.sanggar_att_db) attendanceData = JSON.parse(d.sanggar_att_db);
-          if (d.sanggar_spp_db) sppData = JSON.parse(d.sanggar_spp_db);
-          if (d.sanggar_auth) adminAuth = JSON.parse(d.sanggar_auth);
+          if (d.settings && Object.keys(d.settings).length > 0) appSettings = { ...appSettings, ...d.settings };
+          if (d.members && d.members.length > 0) members = d.members;
+          if (d.absensi) attendanceData = d.absensi;
+          if (d.spp) sppData = d.spp;
 
           saveToLocalStorage();
           applySettingsToUI();
@@ -650,7 +628,7 @@
           renderSPPTable();
           renderMemberList();
 
-          if (isManualRefresh) showToast("Data berhasil diperbarui dari Google Sheets!");
+          if (isManualRefresh) showToast("Data berhasil disinkronkan dari Spreadsheet!");
         }
       };
 
@@ -659,73 +637,58 @@
 
       const script = document.createElement('script');
       script.id = 'jsonp-fetcher';
-      script.src = `${SCRIPT_URL}?callback=onSanggarDataReceived&t=${new Date().getTime()}`;
+      script.src = `${SCRIPT_URL}?action=get_all&callback=onSanggarDataReceived&t=${new Date().getTime()}`;
       script.onerror = function() {
         hideLoading();
-        console.warn("Gagal menghubungi Google Apps Script via JSONP.");
-        if (isManualRefresh) showToast("Gagal terhubung ke Google Sheets.", false);
+        console.warn("Gagal terhubung ke Google Apps Script.");
+        if (isManualRefresh) showToast("Gagal terhubung ke Spreadsheet.", false);
       };
       document.body.appendChild(script);
     }
 
-    // 2. SIMPAN DATA KE SPREADSHEET (POST TEXT/PLAIN TAHAN UKURAN BESAR & BEBAS CORS)
-    async function syncToGoogleSheets(customMsg = "Menyimpan ke Google Spreadsheet...") {
+    // 2. KIRIM DATA KE TABEL GOOGLE SPREADSHEET TERTENTU
+    function kirimKeGoogleSheet(tipe, dataObj, customMsg = "Menyimpan ke Spreadsheet...") {
       saveToLocalStorage();
 
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) return;
 
-      showLoading(customMsg, "Sinkronisasi ke Cloud...");
+      showLoading(customMsg, "Menulis baris ke Spreadsheet...");
 
-      try {
-        const payloadData = {
-          allData: {
-            sanggar_members: members,
-            sanggar_settings: appSettings,
-            sanggar_att_db: attendanceData,
-            sanggar_spp_db: sppData,
-            sanggar_auth: adminAuth
-          }
-        };
+      const payloadStr = encodeURIComponent(JSON.stringify(dataObj));
+      const targetUrl = `${SCRIPT_URL}?action=save_data&tipe=${tipe}&data=${payloadStr}&t=${new Date().getTime()}`;
 
-        // Kirim dengan fetch mode no-cors text/plain
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "text/plain;charset=utf-8" },
-          body: JSON.stringify(payloadData)
-        });
-
-        setTimeout(() => {
-          hideLoading();
-          showToast("Data tersimpan ke Cloud!");
-        }, 1200);
-
-      } catch (err) {
-        console.error("Sync error:", err);
+      // Kirim via GET JSONP agar langsung diterima Apps Script tanpa blokir CORS
+      const sc = document.createElement('script');
+      sc.src = targetUrl;
+      sc.onload = function() {
+        sc.remove();
         hideLoading();
-        showToast("Tersimpan di perangkat lokal.", true);
-      }
+        showToast("Tersimpan di Google Sheets!");
+      };
+      sc.onerror = function() {
+        sc.remove();
+        hideLoading();
+        showToast("Gagal menyimpan ke Google Sheets.", false);
+      };
+      document.body.appendChild(sc);
     }
 
     function loadFromLocalStorage() {
-      const m = localStorage.getItem('sanggar_members');
+      const m = localStorage.getItem('youtefa_members');
       if (m) members = JSON.parse(m);
-      const s = localStorage.getItem('sanggar_settings');
+      const s = localStorage.getItem('youtefa_settings');
       if (s) appSettings = { ...appSettings, ...JSON.parse(s) };
-      const a = localStorage.getItem('sanggar_att_db');
+      const a = localStorage.getItem('youtefa_att');
       if (a) attendanceData = JSON.parse(a);
-      const sp = localStorage.getItem('sanggar_spp_db');
+      const sp = localStorage.getItem('youtefa_spp');
       if (sp) sppData = JSON.parse(sp);
-      const au = localStorage.getItem('sanggar_auth');
-      if (au) adminAuth = JSON.parse(au);
     }
 
     function saveToLocalStorage() {
-      localStorage.setItem('sanggar_members', JSON.stringify(members));
-      localStorage.setItem('sanggar_settings', JSON.stringify(appSettings));
-      localStorage.setItem('sanggar_att_db', JSON.stringify(attendanceData));
-      localStorage.setItem('sanggar_spp_db', JSON.stringify(sppData));
-      localStorage.setItem('sanggar_auth', JSON.stringify(adminAuth));
+      localStorage.setItem('youtefa_members', JSON.stringify(members));
+      localStorage.setItem('youtefa_settings', JSON.stringify(appSettings));
+      localStorage.setItem('youtefa_att', JSON.stringify(attendanceData));
+      localStorage.setItem('youtefa_spp', JSON.stringify(sppData));
     }
 
     function showToast(msg, isSuccess = true) {
@@ -781,13 +744,12 @@
       const p = document.getElementById('login-password').value.trim();
       const err = document.getElementById('login-error-msg');
 
-      if (u === adminAuth.user && p === adminAuth.pass) {
+      if (u === appSettings.adminUser && p === appSettings.adminPass) {
         isAdminLoggedIn = true;
         closeModal('modal-login');
         document.getElementById('admin-badge').classList.remove('hidden');
         document.getElementById('admin-badge').classList.add('flex');
         document.getElementById('btn-logout').classList.remove('hidden');
-        document.getElementById('btn-edit-coach').classList.remove('hidden');
         document.getElementById('btn-admin-label').innerText = "Menu Admin (Aktif)";
         document.getElementById('home-admin-quick-menu').classList.remove('hidden');
         showToast("Login Admin Berhasil!");
@@ -803,7 +765,6 @@
       document.getElementById('admin-badge').classList.add('hidden');
       document.getElementById('admin-badge').classList.remove('flex');
       document.getElementById('btn-logout').classList.add('hidden');
-      document.getElementById('btn-edit-coach').classList.add('hidden');
       document.getElementById('btn-admin-label').innerText = "Login Admin";
       document.getElementById('home-admin-quick-menu').classList.add('hidden');
       showToast("Telah keluar dari akun admin");
@@ -832,7 +793,6 @@
       });
     }
 
-    // KOMPRESI LOGO AGAR RINGAN DAN TIDAK MENOLAK DI SERVER
     function handleLogoUpload(e) {
       const file = e.target.files[0];
       if (file) {
@@ -841,13 +801,12 @@
           const img = new Image();
           img.onload = function() {
             const canvas = document.createElement('canvas');
-            const targetDim = 100; // Ukuran logo proporsional
+            const targetDim = 80;
             canvas.width = targetDim;
             canvas.height = targetDim;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, targetDim, targetDim);
-            // Gunakan format JPEG kualitas 0.75 agar ukuran teks sangat kecil
-            appSettings.customLogo = canvas.toDataURL('image/jpeg', 0.75);
+            appSettings.customLogo = canvas.toDataURL('image/jpeg', 0.6);
             document.getElementById('setting-logo-preview').innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" />`;
           };
           img.src = evt.target.result;
@@ -857,7 +816,7 @@
     }
 
     function resetToDefaultLogo() {
-      appSettings.customLogo = null;
+      appSettings.customLogo = "";
       document.getElementById('setting-logo-preview').innerHTML = `<i class="fa-solid fa-image text-slate-400 text-2xl"></i>`;
       document.getElementById('setting-logo-file').value = "";
       showToast("Logo dikembalikan ke animasi bawaan");
@@ -866,7 +825,8 @@
     function loadSettingsToForm() {
       document.getElementById('setting-studio-name').value = appSettings.studioName;
       document.getElementById('setting-studio-slogan').value = appSettings.studioSlogan;
-      document.getElementById('setting-admin-user').value = adminAuth.user;
+      document.getElementById('setting-coach-name').value = appSettings.coachNames;
+      document.getElementById('setting-admin-user').value = appSettings.adminUser;
       document.getElementById('setting-admin-pass').value = "";
       document.getElementById('setting-admin-pass-confirm').value = "";
       if (appSettings.customLogo) {
@@ -874,44 +834,27 @@
       }
     }
 
-    async function saveStudioSettings() {
+    // SIMPAN IDENTITAS SANGGAR & PASSWORD ADMIN LANGSUNG KE SHEET "Pengaturan"
+    function saveAllSettings() {
       const name = document.getElementById('setting-studio-name').value.trim();
       const slogan = document.getElementById('setting-studio-slogan').value.trim();
-      if (!name) return showToast("Nama sanggar wajib diisi", false);
-
-      appSettings.studioName = name;
-      appSettings.studioSlogan = slogan;
-      applySettingsToUI();
-
-      await syncToGoogleSheets("Menyimpan logo & identitas ke cloud...");
-      showToast("Identitas sanggar berhasil disimpan & disinkronkan!");
-    }
-
-    // UBAH PASSWORD ADMIN
-    async function saveAdminCredentials() {
+      const coach = document.getElementById('setting-coach-name').value.trim();
       const u = document.getElementById('setting-admin-user').value.trim();
       const p = document.getElementById('setting-admin-pass').value.trim();
       const pc = document.getElementById('setting-admin-pass-confirm').value.trim();
 
-      if (!u) return showToast("Username tidak boleh kosong", false);
-      if (p) {
-        if (p !== pc) return showToast("Konfirmasi password tidak cocok", false);
-        adminAuth.pass = p;
-      }
-      adminAuth.user = u;
+      if (!name) return showToast("Nama sanggar tidak boleh kosong!", false);
+      if (!u) return showToast("Username admin tidak boleh kosong!", false);
+      if (p && p !== pc) return showToast("Konfirmasi password baru tidak cocok!", false);
 
-      await syncToGoogleSheets("Memperbarui kata sandi admin ke cloud...");
-      showToast("Password admin berhasil diperbarui!");
-    }
+      appSettings.studioName = name;
+      appSettings.studioSlogan = slogan;
+      if (coach) appSettings.coachNames = coach;
+      appSettings.adminUser = u;
+      if (p) appSettings.adminPass = p;
 
-    async function promptEditCoach() {
-      const n = prompt("Masukkan nama pelatih sanggar:", appSettings.coachNames);
-      if (n !== null && n.trim() !== "") {
-        appSettings.coachNames = n.trim();
-        document.getElementById('coach-names-display').innerText = appSettings.coachNames;
-        await syncToGoogleSheets("Memperbarui nama pelatih...");
-        showToast("Nama pelatih berhasil diperbarui");
-      }
+      applySettingsToUI();
+      kirimKeGoogleSheet("settings", appSettings, "Menyimpan pengaturan ke Spreadsheet...");
     }
 
     function getSaturdaysInMonth(year, monthIndex) {
@@ -977,7 +920,7 @@
           if (val === "libur") color = "text-purple-600 font-bold text-xs";
 
           satCells += `
-            <td onclick="toggleAttendanceStatus('${periodKey}', '${memberName}', ${sIdx})" class="border border-slate-300 py-2 text-center cursor-pointer select-none hover:bg-pink-100/50 transition">
+            <td onclick="toggleAttendanceStatus('${currentAttYear}', '${currentAttMonth}', '${memberName}', ${sIdx})" class="border border-slate-300 py-2 text-center cursor-pointer select-none hover:bg-pink-100/50 transition">
               <span class="${color}">${val}</span>
             </td>
           `;
@@ -992,11 +935,13 @@
       });
     }
 
-    async function toggleAttendanceStatus(periodKey, memberName, satIdx) {
+    // SIMPAN ABSEN LANGSUNG KE TABEL "Absensi"
+    function toggleAttendanceStatus(tahun, bulan, memberName, satIdx) {
       if (!isAdminLoggedIn) {
         showToast("Absensi hanya dapat diubah oleh Admin!", false);
         return;
       }
+      const periodKey = `${tahun}-${bulan}`;
       const cycle = ["✓", "-", "libur"];
       const curr = attendanceData[periodKey][memberName][satIdx] || "-";
       let nIdx = (cycle.indexOf(curr) + 1) % cycle.length;
@@ -1004,10 +949,16 @@
 
       attendanceData[periodKey][memberName][satIdx] = cycle[nIdx];
       renderAttendanceTable();
-      await syncToGoogleSheets("Menyimpan absensi...");
+
+      kirimKeGoogleSheet("absensi", {
+        tahun: tahun,
+        bulan: bulan,
+        nama: memberName,
+        sabtu: attendanceData[periodKey][memberName]
+      }, "Menyimpan absen ke tabel...");
     }
 
-    // TABEL SPP DENGAN BADGE TEGAS
+    // TABEL SPP
     function renderSPPTable() {
       currentSPPYear = parseInt(document.getElementById('spp-year-select').value);
       document.getElementById('spp-table-heading-text').innerText = `SPP Tahun ${currentSPPYear} (12 Bulan Penuh)`;
@@ -1024,28 +975,21 @@
         let monthCells = "";
         for (let m = 0; m < 12; m++) {
           const key = `${currentSPPYear}-${m}`;
-          const rec = sppData[key] ? sppData[key][memberName] : null;
+          const valS = sppData[key] ? sppData[key][memberName] : null;
           let cellContent = `<span style="color:#94a3b8; font-weight:600;">-</span>`;
 
-          if (rec && typeof rec.sppPaid === 'number') {
-            const paid = rec.sppPaid;
-            const regFee = rec.regFee || 0;
-
-            if (paid >= STANDARD_SPP) {
+          if (valS && String(valS).trim() !== "" && String(valS).trim() !== "-") {
+            if (String(valS).includes("Lunas")) {
               cellContent = `
                 <div class="badge-lunas">
                   <div style="color:#065f46; font-weight:800; font-size:11px;">Lunas</div>
-                  <div style="color:#047857; font-size:9px; font-weight:600;">(${Math.round(paid/1000)}rb)</div>
-                  ${regFee > 0 ? `<div style="color:#be185d; font-size:8px; font-weight:700;">+Daftar ${Math.round(regFee/1000)}rb</div>` : ''}
+                  <div style="color:#047857; font-size:9px; font-weight:600;">(75rb)</div>
                 </div>
               `;
             } else {
-              const diff = STANDARD_SPP - paid;
               cellContent = `
                 <div class="badge-kurang">
-                  <div style="color:#92400e;">Bayar: ${Math.round(paid/1000)}rb</div>
-                  <div style="color:#dc2626; font-weight:800;">kurang ${Math.round(diff/1000)}rb</div>
-                  ${regFee > 0 ? `<div style="color:#be185d; font-size:8px; font-weight:700;">+Daftar ${Math.round(regFee/1000)}rb</div>` : ''}
+                  <div>${valS}</div>
                 </div>
               `;
             }
@@ -1073,33 +1017,21 @@
       if (!isAdminLoggedIn) return;
       activeSPPEdit = { memberName, monthIndex, year };
       const key = `${year}-${monthIndex}`;
-      const rec = sppData[key] ? sppData[key][memberName] : null;
+      const rec = sppData[key] ? sppData[key][memberName] : "";
 
       document.getElementById('modal-spp-member-name').innerText = memberName;
       document.getElementById('modal-spp-period-label').innerText = `Bulan: ${MONTH_NAMES[monthIndex]} ${year}`;
 
       const amountInput = document.getElementById('spp-input-amount');
-      const isNewCheck = document.getElementById('spp-is-new-member');
-      const regFeeInput = document.getElementById('spp-input-reg-fee');
-
-      if (rec) {
-        amountInput.value = rec.sppPaid;
-        isNewCheck.checked = !!rec.isNew;
-        regFeeInput.value = rec.regFee || "";
+      if (rec && String(rec).includes("Bayar:")) {
+        const match = rec.match(/\d+/);
+        amountInput.value = match ? parseInt(match[0]) * 1000 : 75000;
       } else {
         amountInput.value = "75000";
-        isNewCheck.checked = false;
-        regFeeInput.value = "";
       }
 
-      toggleRegFeeInput();
       calculateSPPDiff();
       openModal('modal-spp');
-    }
-
-    function toggleRegFeeInput() {
-      const isNew = document.getElementById('spp-is-new-member').checked;
-      document.getElementById('reg-fee-field').classList.toggle('hidden', !isNew);
     }
 
     function calculateSPPDiff() {
@@ -1115,34 +1047,50 @@
       }
     }
 
-    async function saveSPPRecord() {
+    // SIMPAN SPP LANGSUNG KE TABEL "SPP"
+    function saveSPPRecord() {
       const { memberName, monthIndex, year } = activeSPPEdit;
       const key = `${year}-${monthIndex}`;
       const amount = parseFloat(document.getElementById('spp-input-amount').value) || 0;
-      const isNew = document.getElementById('spp-is-new-member').checked;
-      const regFee = isNew ? (parseFloat(document.getElementById('spp-input-reg-fee').value) || 0) : 0;
+
+      let teksHasil = "Lunas (75rb)";
+      if (amount < STANDARD_SPP) {
+        const diff = STANDARD_SPP - amount;
+        teksHasil = `Bayar: ${Math.round(amount/1000)}rb, kurang ${Math.round(diff/1000)}rb`;
+      }
 
       if (!sppData[key]) sppData[key] = {};
-      sppData[key][memberName] = { sppPaid: amount, isNew: isNew, regFee: regFee };
+      sppData[key][memberName] = teksHasil;
 
       renderSPPTable();
       closeModal('modal-spp');
-      await syncToGoogleSheets("Menyimpan pembayaran SPP...");
-      showToast("Data pembayaran SPP tersimpan!");
+
+      kirimKeGoogleSheet("spp", {
+        tahun: year,
+        nama: memberName,
+        bulanIndex: monthIndex,
+        bayar: teksHasil
+      }, "Menulis kas SPP ke tabel...");
     }
 
-    async function deleteSPPRecord() {
+    function deleteSPPRecord() {
       const { memberName, monthIndex, year } = activeSPPEdit;
       const key = `${year}-${monthIndex}`;
       if (sppData[key] && sppData[key][memberName]) {
         delete sppData[key][memberName];
         renderSPPTable();
         closeModal('modal-spp');
-        await syncToGoogleSheets("Menghapus data SPP...");
-        showToast("Data SPP dihapus");
+
+        kirimKeGoogleSheet("spp", {
+          tahun: year,
+          nama: memberName,
+          bulanIndex: monthIndex,
+          bayar: ""
+        }, "Menghapus catatan SPP...");
       }
     }
 
+    // MEMBER CRUD KE TABEL "Member"
     function renderMemberList() {
       const container = document.getElementById('member-cards-container');
       container.innerHTML = "";
@@ -1189,7 +1137,7 @@
 
     function editMemberName(idx) { openMemberModal(idx); }
 
-    async function saveMember() {
+    function saveMember() {
       const input = document.getElementById('member-name-input');
       const hiddenId = document.getElementById('member-edit-id');
       const name = input.value.trim();
@@ -1197,9 +1145,7 @@
       if (!name) return showToast("Nama member tidak boleh kosong!", false);
 
       if (hiddenId.value !== "") {
-        const oldName = members[hiddenId.value];
         members[hiddenId.value] = name;
-        renameKeys(oldName, name);
       } else {
         members.push(name);
       }
@@ -1209,42 +1155,24 @@
       renderSPPTable();
       closeModal('modal-member');
 
-      await syncToGoogleSheets("Menyimpan daftar member...");
-      showToast("Data member berhasil disimpan!");
+      kirimKeGoogleSheet("members", members, "Menyimpan member ke tabel...");
     }
 
-    function renameKeys(oldName, newName) {
-      if (oldName === newName) return;
-      Object.keys(attendanceData).forEach(k => {
-        if (attendanceData[k][oldName]) {
-          attendanceData[k][newName] = attendanceData[k][oldName];
-          delete attendanceData[k][oldName];
-        }
-      });
-      Object.keys(sppData).forEach(k => {
-        if (sppData[k][oldName]) {
-          sppData[k][newName] = sppData[k][oldName];
-          delete sppData[k][oldName];
-        }
-      });
-    }
-
-    async function deleteMember(idx) {
+    function deleteMember(idx) {
       const target = members[idx];
-      if (confirm(`Hapus member "${target}"? Seluruh rekaman absen & SPP akan dihapus.`)) {
+      if (confirm(`Hapus member "${target}"?`)) {
         members.splice(idx, 1);
         renderMemberList();
         renderAttendanceTable();
         renderSPPTable();
-        await syncToGoogleSheets(`Menghapus member ${target}...`);
-        showToast(`Member ${target} telah dihapus`);
+        kirimKeGoogleSheet("members", members, "Menghapus member...");
       }
     }
 
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // DOWNLOAD GAMBAR SPP
+    // UNDUH GAMBAR
     async function downloadSPPImage() {
       showToast("Memproses gambar laporan SPP...", true);
       const target = document.getElementById('spp-export-wrapper');
@@ -1276,9 +1204,8 @@
         link.download = `Laporan_SPP_${cleanStudioName}_${currentSPPYear}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        showToast("Laporan SPP berhasil diunduh sebagai Gambar!");
+        showToast("Laporan SPP berhasil diunduh!");
       } catch (err) {
-        console.error(err);
         showToast("Gagal mengunduh gambar SPP.", false);
       }
     }
@@ -1304,7 +1231,7 @@
         link.download = `Absensi_${cleanStudioName}_${periodBadge}.png`;
         link.href = canvas.toDataURL('image/png');
         link.click();
-        showToast("Absensi berhasil diunduh sebagai Gambar!");
+        showToast("Absensi berhasil diunduh!");
       } catch (err) {
         showToast("Gagal mengunduh gambar absensi.", false);
       }
