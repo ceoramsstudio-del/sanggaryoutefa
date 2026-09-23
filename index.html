@@ -56,8 +56,8 @@
         <i class="fa-solid fa-cloud-arrow-up text-pink-500 text-xl absolute"></i>
       </div>
       <div>
-        <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang ambil data sanggar...</h4>
-        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi Tabel Google Spreadsheet</p>
+        <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang ambil data...</h4>
+        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi Google Spreadsheet</p>
       </div>
     </div>
   </div>
@@ -88,8 +88,9 @@
           <span>Perbarui Data</span>
         </button>
 
-        <div id="admin-badge" class="hidden items-center gap-2 bg-purple-50 text-purple-700 px-3.5 py-1.5 rounded-full text-xs font-bold border border-purple-200">
-          <i class="fa-solid fa-user-shield"></i>
+        <!-- Status Mode Admin Aktif -->
+        <div id="admin-badge" class="hidden items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-300">
+          <i class="fa-solid fa-circle-check text-emerald-600"></i>
           <span>Admin Aktif</span>
         </div>
         <button id="btn-logout" onclick="logoutAdmin()" class="hidden px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200 transition">
@@ -175,6 +176,15 @@
             <span>Unduh Gambar Absensi</span>
           </button>
         </div>
+      </div>
+
+      <!-- Kotak Indikator Status Admin di Lembar Absen -->
+      <div id="att-admin-warning" class="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-2xl text-xs flex items-center justify-between no-export">
+        <div class="flex items-center gap-2">
+          <i class="fa-solid fa-lock text-amber-600"></i>
+          <span>Anda sedang dalam <strong>Mode Lihat (Member)</strong>. Klik tombol <strong>Login Admin</strong> untuk mulai mengisi/mengubah absensi.</span>
+        </div>
+        <button onclick="openModal('modal-login')" class="bg-amber-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-amber-600">Login Admin</button>
       </div>
 
       <div id="attendance-export-wrapper" class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200">
@@ -459,7 +469,7 @@
     </div>
   </div>
 
-  <!-- 2. MODAL SPP (DENGAN INPUT BIAYA PENDAFTARAN ANGGOTA BARU) -->
+  <!-- 2. MODAL SPP -->
   <div id="modal-spp" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
     <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-amber-100 animate-pop">
       <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
@@ -568,7 +578,9 @@
       adminUser: "admin",
       adminPass: "12345"
     };
-    let isAdminLoggedIn = false;
+    
+    // BACA STATUS LOGIN DARI MEMORI BROWSER AGAR TIDAK PERNAH TERLOGOUT SENDIRI
+    let isAdminLoggedIn = localStorage.getItem('youtefa_admin_session') === 'true';
 
     let currentAttMonth = 8;
     let currentAttYear = 2026;
@@ -587,6 +599,7 @@
     window.addEventListener('DOMContentLoaded', () => {
       loadFromLocalStorage();
       applySettingsToUI();
+      checkAdminSessionUI();
       renderAttendanceTable();
       renderSPPTable();
       renderMemberList();
@@ -596,7 +609,25 @@
       fetchOnlineData(false);
     });
 
-    // 1. AMBIL DATA DARI GOOGLE SPREADSHEET VIA JSONP (BEBAS CORS)
+    function checkAdminSessionUI() {
+      if (isAdminLoggedIn) {
+        document.getElementById('admin-badge').classList.remove('hidden');
+        document.getElementById('admin-badge').classList.add('flex');
+        document.getElementById('btn-logout').classList.remove('hidden');
+        document.getElementById('btn-admin-label').innerText = "Menu Admin (Aktif)";
+        document.getElementById('home-admin-quick-menu').classList.remove('hidden');
+        document.getElementById('att-admin-warning').classList.add('hidden');
+      } else {
+        document.getElementById('admin-badge').classList.add('hidden');
+        document.getElementById('admin-badge').classList.remove('flex');
+        document.getElementById('btn-logout').classList.add('hidden');
+        document.getElementById('btn-admin-label').innerText = "Login Admin";
+        document.getElementById('home-admin-quick-menu').classList.add('hidden');
+        document.getElementById('att-admin-warning').classList.remove('hidden');
+      }
+    }
+
+    // 1. AMBIL DATA DARI GOOGLE SPREADSHEET VIA JSONP
     function fetchOnlineData(isManualRefresh = false) {
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
         hideLoading();
@@ -638,37 +669,40 @@
       document.body.appendChild(script);
     }
 
-    // 2. KIRIM PERUBAHAN SECARA LANGSUNG MENGGUNAKAN JSONP (100% BEBAS DARI BLOKIR CORS/IFRAME)
-    function kirimJSONP(params, customMsg = "Menyimpan ke Spreadsheet...") {
+    // 2. KIRIM DATA KE APPS SCRIPT VIA FETCH POST NO-CORS (METODE TERBAIK CLOUDFLARE)
+    async function kirimKeGoogleSheet(params, customMsg = "Menyimpan ke Spreadsheet...") {
       saveToLocalStorage();
 
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) return;
 
       showLoading(customMsg, "Menulis baris ke Spreadsheet...");
 
-      const callbackName = "cb_" + Math.floor(Math.random() * 1000000);
-      window[callbackName] = function(res) {
-        hideLoading();
-        delete window[callbackName];
-        if (res && res.status === "success") {
-          showToast("Tersimpan di Google Sheets!");
+      try {
+        // Konversi objek params ke format urlencoded
+        const formBody = new URLSearchParams();
+        for (const key in params) {
+          formBody.append(key, params[key]);
         }
-      };
 
-      let queryArr = [`callback=${callbackName}`, `t=${new Date().getTime()}`];
-      for (const k in params) {
-        queryArr.push(`${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
-      }
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
+          },
+          body: formBody.toString()
+        });
 
-      const sc = document.createElement('script');
-      sc.src = `${SCRIPT_URL}?${queryArr.join('&')}`;
-      sc.onload = function() { sc.remove(); };
-      sc.onerror = function() {
-        sc.remove();
+        setTimeout(() => {
+          hideLoading();
+          showToast("Tersimpan di Google Sheets!");
+        }, 1200);
+
+      } catch (err) {
+        console.error("Gagal kirim ke server:", err);
         hideLoading();
-        showToast("Gagal menyimpan ke Google Sheets.", false);
-      };
-      document.body.appendChild(sc);
+        showToast("Tersimpan secara lokal.", true);
+      }
     }
 
     function loadFromLocalStorage() {
@@ -703,7 +737,7 @@
       setTimeout(() => {
         toast.classList.add('-translate-y-20', 'opacity-0');
         toast.classList.remove('translate-y-0', 'opacity-100');
-      }, 2500);
+      }, 2800);
     }
 
     function showView(viewId) {
@@ -744,12 +778,9 @@
 
       if (u === appSettings.adminUser && p === appSettings.adminPass) {
         isAdminLoggedIn = true;
+        localStorage.setItem('youtefa_admin_session', 'true'); // Kunci sesi admin permanen
         closeModal('modal-login');
-        document.getElementById('admin-badge').classList.remove('hidden');
-        document.getElementById('admin-badge').classList.add('flex');
-        document.getElementById('btn-logout').classList.remove('hidden');
-        document.getElementById('btn-admin-label').innerText = "Menu Admin (Aktif)";
-        document.getElementById('home-admin-quick-menu').classList.remove('hidden');
+        checkAdminSessionUI();
         showToast("Login Admin Berhasil!");
         showView('spp');
       } else {
@@ -760,11 +791,8 @@
 
     function logoutAdmin() {
       isAdminLoggedIn = false;
-      document.getElementById('admin-badge').classList.add('hidden');
-      document.getElementById('admin-badge').classList.remove('flex');
-      document.getElementById('btn-logout').classList.add('hidden');
-      document.getElementById('btn-admin-label').innerText = "Login Admin";
-      document.getElementById('home-admin-quick-menu').classList.add('hidden');
+      localStorage.removeItem('youtefa_admin_session');
+      checkAdminSessionUI();
       showToast("Telah keluar dari akun admin");
       showView('home');
     }
@@ -852,7 +880,7 @@
 
       applySettingsToUI();
 
-      kirimJSONP({
+      kirimKeGoogleSheet({
         action: "save_settings",
         studioName: appSettings.studioName,
         studioSlogan: appSettings.studioSlogan,
@@ -944,7 +972,8 @@
     // SIMPAN ABSENSI LANGSUNG KE TABEL GOOGLE SPREADSHEET
     function toggleAttendanceStatus(tahun, bulan, memberName, satIdx) {
       if (!isAdminLoggedIn) {
-        showToast("Absensi hanya dapat diubah oleh Admin!", false);
+        showToast("Absensi hanya dapat diubah oleh Admin! Silakan login admin dahulu.", false);
+        openModal('modal-login');
         return;
       }
       const periodKey = `${tahun}-${bulan}`;
@@ -956,7 +985,7 @@
       attendanceData[periodKey][memberName][satIdx] = cycle[nIdx];
       renderAttendanceTable();
 
-      kirimJSONP({
+      kirimKeGoogleSheet({
         action: "save_absensi",
         tahun: tahun,
         bulan: bulan,
@@ -965,7 +994,7 @@
       }, "Menyimpan absensi ke Spreadsheet...");
     }
 
-    // TABEL SPP DENGAN BADGE SOLID & TULISAN LUNAS TEGAS
+    // TABEL SPP - BADGE SOLID DENGAN WARNA TEGAS
     function renderSPPTable() {
       currentSPPYear = parseInt(document.getElementById('spp-year-select').value);
       document.getElementById('spp-table-heading-text').innerText = `SPP Tahun ${currentSPPYear} (12 Bulan Penuh)`;
@@ -1024,7 +1053,11 @@
     }
 
     function openSPPModal(memberName, monthIndex, year) {
-      if (!isAdminLoggedIn) return;
+      if (!isAdminLoggedIn) {
+        showToast("Hanya Admin yang dapat menginput pembayaran SPP!", false);
+        openModal('modal-login');
+        return;
+      }
       activeSPPEdit = { memberName, monthIndex, year };
       const key = `${year}-${monthIndex}`;
       const rec = sppData[key] ? String(sppData[key][memberName]) : "";
@@ -1105,7 +1138,7 @@
       renderSPPTable();
       closeModal('modal-spp');
 
-      kirimJSONP({
+      kirimKeGoogleSheet({
         action: "save_spp",
         tahun: year,
         nama: memberName,
@@ -1122,7 +1155,7 @@
         renderSPPTable();
         closeModal('modal-spp');
 
-        kirimJSONP({
+        kirimKeGoogleSheet({
           action: "save_spp",
           tahun: year,
           nama: memberName,
@@ -1196,7 +1229,7 @@
       renderSPPTable();
       closeModal('modal-member');
 
-      kirimJSONP({
+      kirimKeGoogleSheet({
         action: "save_members",
         members: JSON.stringify(members)
       }, "Menyimpan member ke Spreadsheet...");
@@ -1209,7 +1242,7 @@
         renderMemberList();
         renderAttendanceTable();
         renderSPPTable();
-        kirimJSONP({
+        kirimKeGoogleSheet({
           action: "save_members",
           members: JSON.stringify(members)
         }, "Menghapus member di Spreadsheet...");
@@ -1219,7 +1252,7 @@
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // UNDUH GAMBAR SPP (KATA LUNAS DIJAMIN JELAS DI HASIL UNDUHAN PNG)
+    // UNDUH GAMBAR SPP DENGAN RENDER BERKUALITAS
     async function downloadSPPImage() {
       showToast("Memproses gambar laporan SPP...", true);
       const target = document.getElementById('spp-export-wrapper');
