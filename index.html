@@ -56,8 +56,8 @@
         <i class="fa-solid fa-cloud-arrow-up text-pink-500 text-xl absolute"></i>
       </div>
       <div>
-        <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang ambil data...</h4>
-        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi Google Spreadsheet</p>
+        <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang memproses...</h4>
+        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi ke Google Spreadsheet</p>
       </div>
     </div>
   </div>
@@ -88,7 +88,6 @@
           <span>Perbarui Data</span>
         </button>
 
-        <!-- Status Mode Admin Aktif -->
         <div id="admin-badge" class="hidden items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-300">
           <i class="fa-solid fa-circle-check text-emerald-600"></i>
           <span>Admin Aktif</span>
@@ -178,11 +177,11 @@
         </div>
       </div>
 
-      <!-- Kotak Indikator Status Admin di Lembar Absen -->
+      <!-- Warning info jika belum login -->
       <div id="att-admin-warning" class="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-2xl text-xs flex items-center justify-between no-export">
         <div class="flex items-center gap-2">
           <i class="fa-solid fa-lock text-amber-600"></i>
-          <span>Anda sedang dalam <strong>Mode Lihat (Member)</strong>. Klik tombol <strong>Login Admin</strong> untuk mulai mengisi/mengubah absensi.</span>
+          <span>Mode Hanya-Lihat. Klik tombol <strong>Login Admin</strong> untuk mengubah status absensi.</span>
         </div>
         <button onclick="openModal('modal-login')" class="bg-amber-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-amber-600">Login Admin</button>
       </div>
@@ -579,7 +578,7 @@
       adminPass: "12345"
     };
     
-    // BACA STATUS LOGIN DARI MEMORI BROWSER AGAR TIDAK PERNAH TERLOGOUT SENDIRI
+    // Status Admin disimpan permanen di memori browser
     let isAdminLoggedIn = localStorage.getItem('youtefa_admin_session') === 'true';
 
     let currentAttMonth = 8;
@@ -587,7 +586,7 @@
     let currentSPPYear = 2026;
     let activeSPPEdit = { memberName: "", monthIndex: 0, year: 2026 };
 
-    function showLoading(title = "Sedang ambil data sanggar...", desc = "Menghubungkan ke Spreadsheet") {
+    function showLoading(title = "Sedang memproses...", desc = "Sinkronisasi ke Google Spreadsheet") {
       document.getElementById('loading-title').innerText = title;
       document.getElementById('loading-desc').innerText = desc;
       document.getElementById('loading-overlay').classList.remove('hidden');
@@ -627,7 +626,7 @@
       }
     }
 
-    // 1. AMBIL DATA DARI GOOGLE SPREADSHEET VIA JSONP
+    // 1. AMBIL DATA DARI SPREADSHEET VIA JSONP
     function fetchOnlineData(isManualRefresh = false) {
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
         hideLoading();
@@ -669,40 +668,37 @@
       document.body.appendChild(script);
     }
 
-    // 2. KIRIM DATA KE APPS SCRIPT VIA FETCH POST NO-CORS (METODE TERBAIK CLOUDFLARE)
-    async function kirimKeGoogleSheet(params, customMsg = "Menyimpan ke Spreadsheet...") {
+    // 2. KIRIM DATA VIA SCRIPT JSONP MURNI (100% BEBAS DARI MASALAH CORS & IFRAME)
+    function kirimOnline(params, customMsg = "Menyimpan ke Spreadsheet...") {
       saveToLocalStorage();
 
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) return;
 
-      showLoading(customMsg, "Menulis baris ke Spreadsheet...");
+      showLoading(customMsg, "Menulis ke Google Sheets...");
 
-      try {
-        // Konversi objek params ke format urlencoded
-        const formBody = new URLSearchParams();
-        for (const key in params) {
-          formBody.append(key, params[key]);
-        }
-
-        await fetch(SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: {
-            "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8"
-          },
-          body: formBody.toString()
-        });
-
-        setTimeout(() => {
-          hideLoading();
-          showToast("Tersimpan di Google Sheets!");
-        }, 1200);
-
-      } catch (err) {
-        console.error("Gagal kirim ke server:", err);
+      const cbName = "cb_" + Math.floor(Math.random() * 10000000);
+      window[cbName] = function(res) {
         hideLoading();
-        showToast("Tersimpan secara lokal.", true);
+        delete window[cbName];
+        if (res && res.status === "success") {
+          showToast("Tersimpan di Google Sheets!");
+        }
+      };
+
+      const query = [`callback=${cbName}`, `t=${new Date().getTime()}`];
+      for (const k in params) {
+        query.push(`${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
       }
+
+      const sc = document.createElement('script');
+      sc.src = `${SCRIPT_URL}?${query.join('&')}`;
+      sc.onload = function() { sc.remove(); };
+      sc.onerror = function() {
+        sc.remove();
+        hideLoading();
+        showToast("Gagal menulis ke Google Sheets.", false);
+      };
+      document.body.appendChild(sc);
     }
 
     function loadFromLocalStorage() {
@@ -778,7 +774,7 @@
 
       if (u === appSettings.adminUser && p === appSettings.adminPass) {
         isAdminLoggedIn = true;
-        localStorage.setItem('youtefa_admin_session', 'true'); // Kunci sesi admin permanen
+        localStorage.setItem('youtefa_admin_session', 'true');
         closeModal('modal-login');
         checkAdminSessionUI();
         showToast("Login Admin Berhasil!");
@@ -880,7 +876,7 @@
 
       applySettingsToUI();
 
-      kirimKeGoogleSheet({
+      kirimOnline({
         action: "save_settings",
         studioName: appSettings.studioName,
         studioSlogan: appSettings.studioSlogan,
@@ -985,7 +981,7 @@
       attendanceData[periodKey][memberName][satIdx] = cycle[nIdx];
       renderAttendanceTable();
 
-      kirimKeGoogleSheet({
+      kirimOnline({
         action: "save_absensi",
         tahun: tahun,
         bulan: bulan,
@@ -1138,7 +1134,7 @@
       renderSPPTable();
       closeModal('modal-spp');
 
-      kirimKeGoogleSheet({
+      kirimOnline({
         action: "save_spp",
         tahun: year,
         nama: memberName,
@@ -1155,7 +1151,7 @@
         renderSPPTable();
         closeModal('modal-spp');
 
-        kirimKeGoogleSheet({
+        kirimOnline({
           action: "save_spp",
           tahun: year,
           nama: memberName,
@@ -1229,7 +1225,7 @@
       renderSPPTable();
       closeModal('modal-member');
 
-      kirimKeGoogleSheet({
+      kirimOnline({
         action: "save_members",
         members: JSON.stringify(members)
       }, "Menyimpan member ke Spreadsheet...");
@@ -1242,7 +1238,7 @@
         renderMemberList();
         renderAttendanceTable();
         renderSPPTable();
-        kirimKeGoogleSheet({
+        kirimOnline({
           action: "save_members",
           members: JSON.stringify(members)
         }, "Menghapus member di Spreadsheet...");
@@ -1252,7 +1248,7 @@
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // UNDUH GAMBAR SPP DENGAN RENDER BERKUALITAS
+    // UNDUH GAMBAR SPP
     async function downloadSPPImage() {
       showToast("Memproses gambar laporan SPP...", true);
       const target = document.getElementById('spp-export-wrapper');
