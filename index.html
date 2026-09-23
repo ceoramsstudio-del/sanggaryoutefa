@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Absensi & SPP Sanggar Tari</title>
+  <title>Sistem Absensi & SPP Sanggar Tari YOUTEFA</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
@@ -39,34 +39,37 @@
     ::-webkit-scrollbar { height: 8px; width: 8px; }
     ::-webkit-scrollbar-track { background: #F1F5F9; }
     ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    
     @keyframes popIn {
-      0% { transform: scale(0.9); opacity: 0; }
+      0% { transform: scale(0.92); opacity: 0; }
       100% { transform: scale(1); opacity: 1; }
     }
     .animate-pop { animation: popIn 0.22s ease-out forwards; }
 
-    /* Style Khusus Cetak/Ekspor SPP agar Teks Hijau & Merah Dijamin Terlihat di Gambar */
+    /* Style Khusus Cetak/Ekspor SPP agar Teks Hijau LUNAS dan Kurang Pasti Muncul di Gambar */
     .badge-lunas {
       background-color: #d1fae5 !important;
-      border: 1px solid #10b981 !important;
+      border: 1.5px solid #10b981 !important;
       color: #065f46 !important;
-      display: inline-block;
-      padding: 4px 6px;
-      border-radius: 8px;
-      font-weight: 800;
-      font-size: 11px;
-      line-height: 1.2;
+      display: inline-block !important;
+      padding: 3px 6px !important;
+      border-radius: 8px !important;
+      font-weight: 800 !important;
+      font-size: 11px !important;
+      line-height: 1.2 !important;
+      text-align: center !important;
     }
     .badge-kurang {
       background-color: #fef3c7 !important;
-      border: 1px solid #f59e0b !important;
+      border: 1.5px solid #f59e0b !important;
       color: #92400e !important;
-      display: inline-block;
-      padding: 4px 6px;
-      border-radius: 8px;
-      font-weight: 700;
-      font-size: 10px;
-      line-height: 1.2;
+      display: inline-block !important;
+      padding: 3px 5px !important;
+      border-radius: 8px !important;
+      font-weight: 700 !important;
+      font-size: 10px !important;
+      line-height: 1.2 !important;
+      text-align: center !important;
     }
   </style>
 </head>
@@ -86,28 +89,28 @@
     </div>
   </div>
 
-  <!-- ================= TOP TOAST ================= -->
+  <!-- ================= TOP TOAST NOTIFIKASI ================= -->
   <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
     <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
-    <span id="toast-msg">Pesan</span>
+    <span id="toast-msg">Pesan notifikasi</span>
   </div>
 
   <div class="max-w-7xl mx-auto">
     
-    <!-- ================= HEADER UTAMA ================= -->
+    <!-- ================= HEADER ATAS ================= -->
     <header class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-sm border border-pink-100 flex flex-wrap items-center justify-between gap-4 mb-6">
       <div class="flex items-center gap-4 cursor-pointer" onclick="showView('home')">
         <div id="top-logo-container" class="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md shadow-pink-200 overflow-hidden flex-shrink-0">
           <i class="fa-solid fa-person-dots-from-line text-2xl"></i>
         </div>
         <div>
-          <h1 id="app-studio-name" class="heading-font text-xl sm:text-2xl font-bold text-slate-800 tracking-wide">Sanggar Tari</h1>
+          <h1 id="app-studio-name" class="heading-font text-xl sm:text-2xl font-bold text-slate-800 tracking-wide">Sanggar Tari YOUTEFA</h1>
           <p id="app-studio-slogan" class="text-xs sm:text-sm text-pink-600 font-semibold">Tari Seni & Kreasi Tradisional Anak</p>
         </div>
       </div>
 
       <div class="flex items-center gap-2 sm:gap-3">
-        <button onclick="fetchOnlineData(true)" title="Sinkron Ulang Data" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+        <button onclick="fetchOnlineData(true)" title="Sinkron Ulang Data" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-2 transition">
           <i class="fa-solid fa-rotate text-xs"></i>
           <span>Perbarui Data</span>
         </button>
@@ -116,7 +119,7 @@
           <i class="fa-solid fa-user-shield"></i>
           <span>Admin Aktif</span>
         </div>
-        <button id="btn-logout" onclick="logoutAdmin()" class="hidden px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200 transition">
+        <button id="btn-logout" onclick="logoutAdmin()" class="hidden px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200 transition">
           <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
         </button>
       </div>
@@ -132,9 +135,10 @@
           <i class="fa-solid fa-hands-clapping text-4xl"></i>
         </div>
 
-        <h2 id="hero-studio-name" class="heading-font text-2xl sm:text-4xl font-extrabold text-slate-800 mb-2">Sanggar Tari</h2>
+        <h2 id="hero-studio-name" class="heading-font text-2xl sm:text-4xl font-extrabold text-slate-800 mb-2">Sanggar Tari YOUTEFA</h2>
         <p id="hero-studio-slogan" class="text-sm sm:text-base text-slate-600 mb-8 max-w-md mx-auto">Portal Presensi & Administrasi Pembelajaran Tari Anak-Anak</p>
 
+        <!-- Tombol Terbuka Member & Login Admin -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
           <button onclick="showView('attendance')" class="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-2xl shadow-lg shadow-pink-200 font-bold transition transform active:scale-95 text-base">
             <i class="fa-solid fa-calendar-check text-xl"></i>
@@ -147,6 +151,7 @@
           </button>
         </div>
 
+        <!-- Menu Cepat Admin (Hanya muncul jika sudah login) -->
         <div id="home-admin-quick-menu" class="hidden mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button onclick="showView('spp')" class="flex items-center justify-center gap-2 p-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold border border-amber-200">
             <i class="fa-solid fa-money-bill-wave text-amber-600"></i> Laporan SPP
@@ -208,7 +213,7 @@
               <i class="fa-solid fa-person-dots-from-line"></i>
             </div>
             <div>
-              <h2 id="att-card-title" class="heading-font text-xl font-bold text-slate-800">Sanggar Tari</h2>
+              <h2 id="att-card-title" class="heading-font text-xl font-bold text-slate-800">Sanggar Tari YOUTEFA</h2>
               <p class="text-xs text-pink-600 font-semibold">Laporan Kehadiran Member Tiap Hari Sabtu</p>
             </div>
           </div>
@@ -282,6 +287,7 @@
         </div>
       </div>
 
+      <!-- SPP EXPORT CANVAS WRAPPER (12 BULAN LENGKAP & KOTAK HIJAU ANTI BLANK) -->
       <div id="spp-export-wrapper" class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 overflow-x-auto">
         <div style="min-width: 1220px;">
           <div class="flex items-center justify-between border-b-2 border-slate-100 pb-5 mb-5">
@@ -290,7 +296,7 @@
                 <i class="fa-solid fa-receipt"></i>
               </div>
               <div>
-                <h2 id="spp-card-title" class="heading-font text-2xl font-bold text-slate-800">Sanggar Tari</h2>
+                <h2 id="spp-card-title" class="heading-font text-2xl font-bold text-slate-800">Sanggar Tari YOUTEFA</h2>
                 <p id="spp-card-slogan" class="text-xs text-slate-500 font-semibold">Rekapitulasi Keuangan Pembayaran Iuran SPP Murid</p>
               </div>
             </div>
@@ -344,7 +350,7 @@
       </div>
     </section>
 
-    <!-- ================= VIEW 4: MEMBERS ================= -->
+    <!-- ================= VIEW 4: MEMBERS (ADMIN ONLY) ================= -->
     <section id="view-members" class="hidden space-y-4">
       <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-pink-100">
         <div class="flex items-center gap-2">
@@ -364,7 +370,7 @@
       <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
         <div class="flex items-center justify-between mb-4">
           <p class="text-xs text-slate-500">Daftar semua murid aktif terdaftar di sanggar.</p>
-          <span id="member-badge-count" class="text-xs font-bold bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200">Member</span>
+          <span id="member-badge-count" class="text-xs font-bold bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200">26 Member</span>
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="member-cards-container"></div>
       </div>
@@ -559,11 +565,14 @@
     </div>
   </div>
 
-  <!-- ================= LOGIKA JAVASCRIPT ================= -->
+  <!-- ================= JAVASCRIPT ENGINE ================= -->
   <script>
-    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA DISINI:
+    // =========================================================================
+    // TEMPELKAN URL DARI GOOGLE APPS SCRIPT ANDA (/exec) DI SINI
+    // =========================================================================
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6-ASJ6Q_8I7rCAo-WVmmrx4OMbs7YJNTe0D4ZQ9ViuhqtLsMKgJZFR4-_76ovTaTHew/exec";
 
+    // 26 Member Asli Sanggar Tari YOUTEFA
     const DEFAULT_MEMBERS = [
       "Aca", "Ina", "Dewinda", "Agil", "Kanaya",
       "Alea", "Talea", "Shabira", "Gendis", "Keysa",
@@ -582,7 +591,7 @@
     let attendanceData = {};
     let sppData = {};
     let appSettings = {
-      studioName: "Sanggar Tari",
+      studioName: "Sanggar Tari YOUTEFA",
       studioSlogan: "Tari Seni & Kreasi Tradisional Anak",
       customLogo: null,
       coachNames: "Kak Raras & Kak Dewi"
@@ -590,7 +599,7 @@
     let adminAuth = { user: "admin", pass: "12345" };
     let isAdminLoggedIn = false;
 
-    let currentAttMonth = 8;
+    let currentAttMonth = 8; // September
     let currentAttYear = 2026;
     let currentSPPYear = 2026;
     let activeSPPEdit = { memberName: "", monthIndex: 0, year: 2026 };
@@ -612,27 +621,24 @@
       renderMemberList();
       showView('home');
 
-      // Ambil data terbaru dari cloud spreadsheet
-      await fetchOnlineData(false);
+      // Ambil data terbaru dari cloud spreadsheet via JSONP (Bebas CORS)
+      fetchOnlineData(false);
     });
 
-    // PENGAMBILAN DATA VIA GET (BEBAS CORS)
-    async function fetchOnlineData(isManualRefresh = false) {
+    // 1. MEMBACA DATA DARI GOOGLE APPS SCRIPT MENGGUNAKAN JSONP (ANTI BLOKIR CORS)
+    function fetchOnlineData(isManualRefresh = false) {
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
         hideLoading();
-        if (isManualRefresh) showToast("URL Script Google belum dimasukkan!", false);
+        if (isManualRefresh) showToast("URL Google Apps Script belum dimasukkan!", false);
         return;
       }
 
       showLoading("Sedang ambil data sanggar...", "Menghubungkan ke Google Spreadsheet");
 
-      try {
-        // Beri timestamp agar browser tidak memakai cache lama
-        const url = `${SCRIPT_URL}?t=${new Date().getTime()}`;
-        const response = await fetch(url, { redirect: "follow" });
-        const json = await response.json();
-
-        if (json.status === "success" && json.data) {
+      // Callback global penerima data
+      window.onSanggarDataReceived = function(json) {
+        hideLoading();
+        if (json && json.status === "success" && json.data) {
           const d = json.data;
           if (d.sanggar_members) members = JSON.parse(d.sanggar_members);
           if (d.sanggar_settings) appSettings = { ...appSettings, ...JSON.parse(d.sanggar_settings) };
@@ -648,23 +654,29 @@
 
           if (isManualRefresh) showToast("Data berhasil diperbarui dari Google Sheets!");
         }
-      } catch (err) {
-        console.error("Fetch online error:", err);
-        if (isManualRefresh) showToast("Gagal mengambil data dari Google Sheets.", false);
-      } finally {
+      };
+
+      const oldScript = document.getElementById('jsonp-fetcher');
+      if (oldScript) oldScript.remove();
+
+      const script = document.createElement('script');
+      script.id = 'jsonp-fetcher';
+      script.src = `${SCRIPT_URL}?callback=onSanggarDataReceived&t=${new Date().getTime()}`;
+      script.onerror = function() {
         hideLoading();
-      }
+        console.warn("Gagal menghubungi Google Apps Script via JSONP.");
+        if (isManualRefresh) showToast("Gagal terhubung ke Google Sheets.", false);
+      };
+      document.body.appendChild(script);
     }
 
-    // PENGIRIMAN DATA KE GOOGLE APPS SCRIPT (MENGGUNAKAN GET/POST TERBUKA)
+    // 2. MENYIMPAN DATA KE SPREADSHEET (NO-CORS AGAR TIDAK DIHENTIKAN OLEH CLOUDFLARE)
     async function syncToGoogleSheets(customMsg = "Menyimpan ke Google Spreadsheet...") {
       saveToLocalStorage();
 
-      if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
-        return;
-      }
+      if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) return;
 
-      showLoading(customMsg, "Sedang menulis ke Spreadsheet...");
+      showLoading(customMsg, "Sinkronisasi ke Cloud...");
 
       try {
         const payloadData = {
@@ -675,25 +687,30 @@
           sanggar_auth: adminAuth
         };
 
-        // Kirim via POST dengan redirect follow
-        await fetch(SCRIPT_URL, {
+        const paramPayload = encodeURIComponent(JSON.stringify(payloadData));
+        const targetUrl = `${SCRIPT_URL}?action=save_all&t=${new Date().getTime()}`;
+
+        // Kirim request POST mode no-cors
+        await fetch(targetUrl, {
           method: "POST",
-          mode: "no-cors", // Menjamin lolos dari CORS Cloudflare
+          mode: "no-cors",
           headers: { "Content-Type": "application/x-www-form-urlencoded" },
-          body: JSON.stringify({
-            action: "save_all",
-            allData: payloadData
-          })
+          body: `payload=${paramPayload}`
         });
 
-        // Alternatif backup kirim GET jika payload tidak terlalu besar
-        const backupUrl = `${SCRIPT_URL}?action=save_all&payload=${encodeURIComponent(JSON.stringify(payloadData))}&t=${new Date().getTime()}`;
-        await fetch(backupUrl, { method: "GET", redirect: "follow" }).catch(()=>{});
+        // Backup GET
+        const backupUrl = `${SCRIPT_URL}?action=save_all&payload=${paramPayload}&t=${new Date().getTime()}`;
+        fetch(backupUrl, { method: "GET", mode: "no-cors" }).catch(()=>{});
+
+        setTimeout(() => {
+          hideLoading();
+          showToast("Data tersimpan ke Cloud!");
+        }, 1200);
 
       } catch (err) {
         console.error("Sync error:", err);
-      } finally {
         hideLoading();
+        showToast("Tersimpan di perangkat lokal.", true);
       }
     }
 
@@ -995,7 +1012,7 @@
       await syncToGoogleSheets("Menyimpan absensi...");
     }
 
-    // SPP TABLE DENGAN BADGE TEGAS (MENGATASI KOTAK HIJAU KOSONG)
+    // SPP TABLE DENGAN BADGE TEGAS & GAYA INLINE ANTI KOTAK KOSONG
     function renderSPPTable() {
       currentSPPYear = parseInt(document.getElementById('spp-year-select').value);
       document.getElementById('spp-table-heading-text').innerText = `SPP Tahun ${currentSPPYear} (12 Bulan Penuh)`;
@@ -1020,10 +1037,10 @@
             const regFee = rec.regFee || 0;
 
             if (paid >= STANDARD_SPP) {
-              // Teks LUNAS dibuat tegas dengan style inline anti-blank di gambar
+              // Teks LUNAS tegas anti terpotong di gambar
               cellContent = `
                 <div class="badge-lunas">
-                  <div style="color:#065f46; font-weight:800;">Lunas</div>
+                  <div style="color:#065f46; font-weight:800; font-size:11px;">Lunas</div>
                   <div style="color:#047857; font-size:9px; font-weight:600;">(${Math.round(paid/1000)}rb)</div>
                   ${regFee > 0 ? `<div style="color:#be185d; font-size:8px; font-weight:700;">+Daftar ${Math.round(regFee/1000)}rb</div>` : ''}
                 </div>
@@ -1233,7 +1250,7 @@
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // DOWNLOAD GAMBAR SPP (DIJAMIN TULISAN LUNAS TERBACA JELAS)
+    // DOWNLOAD GAMBAR SPP (DILENGKAPI HOOK ONCLONE AGAR TULISAN LUNAS 100% PASTI MUNCUL)
     async function downloadSPPImage() {
       showToast("Memproses gambar laporan SPP...", true);
       const target = document.getElementById('spp-export-wrapper');
@@ -1248,7 +1265,6 @@
           scrollX: 0,
           scrollY: 0,
           onclone: function(clonedDoc) {
-            // Pastikan elemen cloned memiliki style inline tegas
             const lunasBadges = clonedDoc.querySelectorAll('.badge-lunas');
             lunasBadges.forEach(el => {
               el.style.backgroundColor = '#d1fae5';
