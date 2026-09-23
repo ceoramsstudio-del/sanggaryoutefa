@@ -1,1174 +1,1284 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanggar Tari Youtefa</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sistem Absensi & SPP Sanggar Tari</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;700;800&family=Cinzel:wght@700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <!-- html2canvas -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            fredoka: ['Fredoka', 'sans-serif'],
+            quicksand: ['Quicksand', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    :root {
-      --gold-primary: #f5b01e;
-      --gold-light: #fde882;
-      --gold-dark: #b87503;
-      --brown-deep: #1f0f04;
-      --brown-card: #2e1606;
-      --text-gold: #ffdf79;
-    }
-
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-family: 'Quicksand', sans-serif;
+      background: radial-gradient(circle at 10% 20%, #FFF5F7 0%, #F5F3FF 50%, #FFFDE7 100%);
       min-height: 100vh;
-      color: #333333;
-      background: radial-gradient(circle at 50% 15%, #b45309 0%, #78350f 30%, #451a03 65%, #1f0b02 100%);
-      background-attachment: fixed;
-      position: relative;
+      color: #334155;
     }
-
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: radial-gradient(rgba(245, 176, 30, 0.12) 1.5px, transparent 1.5px);
-      background-size: 24px 24px;
-      pointer-events: none;
-      z-index: 0;
+    .heading-font { font-family: 'Fredoka', sans-serif; }
+    ::-webkit-scrollbar { height: 8px; width: 8px; }
+    ::-webkit-scrollbar-track { background: #F1F5F9; }
+    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
-
-    .app-wrapper {
-      position: relative;
-      z-index: 1;
-      max-width: 680px;
-    }
-
-    .brand-title {
-      font-family: 'Cinzel', serif;
-      font-size: 1.8rem;
-      letter-spacing: 2px;
-      font-weight: 900;
-      background: linear-gradient(180deg, #fff7b2 0%, #f5b01e 50%, #c47600 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      text-shadow: 0 4px 15px rgba(245, 176, 30, 0.4);
-    }
-    .brand-subtitle {
-      color: #ffdf79;
-      font-size: 0.85rem;
-      letter-spacing: 1px;
-      font-weight: 600;
-      text-transform: uppercase;
-    }
-
-    .custom-card {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 20px;
-      border: 2px solid rgba(245, 176, 30, 0.4);
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-      backdrop-filter: blur(8px);
-    }
-
-    .header-card {
-      background: linear-gradient(135deg, #3d1b06 0%, #200d02 100%);
-      border: 2px solid var(--gold-primary);
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
-    }
-
-    .user-avatar-badge {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ffd05b, #b46b02);
-      color: #200d02;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.4rem;
-      font-weight: 800;
-      border: 3px solid #fff3b0;
-    }
-
-    .saldo-box {
-      background: linear-gradient(135deg, #fffcf5 0%, #fef3c7 100%);
-      border: 2px dashed #d97706;
-      border-radius: 16px;
-    }
-
-    .nav-tabs {
-      border-bottom: 2px solid rgba(245, 176, 30, 0.5);
-      gap: 6px;
-      overflow-x: auto;
-      flex-wrap: nowrap;
-      padding-bottom: 4px;
-    }
-    .nav-tabs .nav-item { flex-shrink: 0; }
-    .nav-tabs .nav-link {
-      color: #ffdca3;
-      border: none;
-      background: rgba(0, 0, 0, 0.25);
-      border-radius: 12px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      padding: 8px 14px;
-      transition: all 0.2s ease;
-    }
-    .nav-tabs .nav-link.active {
-      color: #240e02;
-      background: linear-gradient(180deg, #ffe083 0%, #f5af19 100%);
-      box-shadow: 0 4px 12px rgba(245, 175, 25, 0.4);
-    }
-
-    .btn-gold {
-      background: linear-gradient(180deg, #fcd34d 0%, #f59e0b 50%, #d97706 100%);
-      border: 1px solid #fef08a;
-      color: #2e1202;
-      font-weight: 800;
-      border-radius: 12px;
-      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.35);
-      transition: all 0.2s;
-    }
-    .btn-gold:hover {
-      background: linear-gradient(180deg, #fef08a 0%, #f59e0b 100%);
-      color: #1e0901;
-    }
-
-    .form-control, .form-select {
-      border-radius: 12px;
-      border: 1.5px solid #e5e7eb;
-      padding: 10px 14px;
-    }
-
-    .month-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-    .month-badge {
-      padding: 10px 6px;
-      border-radius: 10px;
-      text-align: center;
-      font-size: 0.82rem;
-      font-weight: 700;
-    }
-    .badge-lunas { background-color: #d1fae5; color: #065f46; border: 1.5px solid #a7f3d0; }
-    .badge-belum { background-color: #fee2e2; color: #991b1b; border: 1.5px solid #fecaca; }
-
-    .printable-area {
-      background: #ffffff;
-      padding: 22px;
-      border-radius: 16px;
-      border: 2px solid #f59e0b;
-    }
-
-    #loadingModal .modal-content {
-      background: linear-gradient(145deg, #3d1b06, #1f0b02);
-      border: 2px solid #f5b01e;
-      border-radius: 20px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.6);
-      color: #fff;
-    }
+    .animate-pop { animation: popIn 0.22s ease-out forwards; }
   </style>
 </head>
-<body>
+<body class="p-3 sm:p-6 md:p-8">
 
-<div class="container py-4 app-wrapper">
-
-  <!-- Header Brand -->
-  <div class="text-center mb-4">
-    <div class="brand-subtitle">Sistem Absensi dan SPP Digital</div>
-    <div class="brand-title">SANGGAR TARI YOUTEFA</div>
-    <div style="font-size: 0.8rem; color: #fde68a; letter-spacing: 0.5px;">Lestarikan Budaya, Tari Menghubungkan Kita</div>
+  <!-- ================= OVERLAY LOADING SANGGAR ================= -->
+  <div id="loading-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4 transition-opacity duration-300">
+    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 border border-pink-100 animate-pop max-w-xs text-center">
+      <div class="relative w-16 h-16 flex items-center justify-center">
+        <div class="w-16 h-16 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"></div>
+        <i class="fa-solid fa-cloud text-pink-500 text-xl absolute"></i>
+      </div>
+      <div>
+        <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang ambil data sanggar...</h4>
+        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Menghubungkan ke Google Drive</p>
+      </div>
+    </div>
   </div>
 
-  <!-- Form Login -->
-  <div id="section-login" class="custom-card p-4 mx-auto" style="max-width: 420px;">
-    <h5 class="text-center fw-bold mb-3" style="color: #451a03;">Masuk Member / Pelatih</h5>
-    <div class="mb-3">
-      <label class="form-label small fw-bold text-muted">NAMA LENGKAP</label>
-      <input type="text" id="login-name" class="form-control" placeholder="Masukkan nama Anda (cth: Aca)">
-    </div>
-    <div class="mb-3">
-      <label class="form-label small fw-bold text-muted">PIN</label>
-      <input type="password" id="login-pin" class="form-control" placeholder="PIN Anda">
-    </div>
-    <button class="btn btn-gold w-100 py-2 mt-2" onclick="handleLogin()">Buka Dashboard</button>
+  <!-- ================= TOP TOAST ================= -->
+  <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
+    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
+    <span id="toast-msg">Pesan</span>
   </div>
 
-  <!-- Dashboard App -->
-  <div id="section-app" class="d-none">
-
-    <!-- Card Profil Header -->
-    <div class="header-card p-3 mb-3 d-flex flex-row align-items-center justify-content-between">
-      <div class="d-flex align-items-center gap-3">
-        <div id="user-initial-badge" class="user-avatar-badge">M</div>
+  <div class="max-w-7xl mx-auto">
+    
+    <!-- ================= HEADER UTAMA ================= -->
+    <header class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-sm border border-pink-100 flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div class="flex items-center gap-4 cursor-pointer" onclick="showView('home')">
+        <div id="top-logo-container" class="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md shadow-pink-200 overflow-hidden flex-shrink-0">
+          <i class="fa-solid fa-person-dots-from-line text-2xl"></i>
+        </div>
         <div>
-          <h5 class="mb-0 text-white fw-bold" id="welcome-text">Halo, Member</h5>
-          <span class="badge" id="user-role-badge" style="background-color: var(--gold-primary); color: #2b1101; font-weight: 800;">Member</span>
-        </div>
-      </div>
-      <button class="btn btn-sm btn-outline-light rounded-pill px-3" onclick="logout()">Keluar</button>
-    </div>
-
-    <!-- Total Kas Sanggar (Admin Saja) -->
-    <div id="admin-saldo-container" class="saldo-box p-3 mb-3 d-none">
-      <div class="d-flex justify-content-between align-items-center">
-        <div>
-          <small class="text-muted fw-bold d-block">TOTAL KAS SANGGAR (ADMIN)</small>
-          <h3 class="text-dark fw-bold mb-0" id="display-saldo">Rp 0</h3>
-        </div>
-        <button class="btn btn-sm btn-outline-warning text-dark border-dark fw-bold" onclick="loadSummary(true)">Segarkan Kas</button>
-      </div>
-    </div>
-
-    <!-- Navigasi Tabs -->
-    <ul class="nav nav-tabs mb-3" id="tabNav">
-      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-absen">Absensi</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-rekap-absen" onclick="loadAbsensiReport()">Rekap Absen</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-iuran" onclick="loadMemberDues()">Iuran Saya</button></li>
-      <li class="nav-item" id="tab-btn-kas"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-kas">Input Kas</button></li>
-      <li class="nav-item" id="tab-btn-laporan"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-laporan">Laporan Uang SPP</button></li>
-      <li class="nav-item" id="tab-btn-jadwal"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-jadwal">+ Jadwal</button></li>
-      <li class="nav-item" id="tab-btn-addmember"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-addmember">+ Member</button></li>
-      <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-profile">Profil</button></li>
-    </ul>
-
-    <div class="tab-content">
-      <!-- 1. Tab Presensi -->
-      <div class="tab-pane fade show active" id="tab-absen">
-        <div class="custom-card p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold mb-0" style="color: #451a03;">Absensi Latihan Sanggar</h6>
-            <button class="btn btn-sm btn-outline-secondary" onclick="checkPresensiStatus(true)">Cek Jadwal Baru</button>
-          </div>
-          
-          <div id="absen-status-banner" class="alert alert-secondary py-2 mb-3 small fw-bold">
-            Memeriksa jadwal latihan...
-          </div>
-
-          <div id="absen-form-wrapper" class="p-3 bg-light rounded-3 border mb-3 d-none">
-            <div class="mb-3">
-              <label class="form-label small fw-bold text-muted">STATUS KEHADIRAN</label>
-              <select id="absen-status" class="form-select">
-                <option value="Hadir">Hadir</option>
-                <option value="Izin">Izin</option>
-                <option value="Sakit">Sakit</option>
-              </select>
-            </div>
-            <div class="mb-3">
-              <label class="form-label small fw-bold text-muted">CATATAN (OPSIONAL)</label>
-              <input type="text" id="absen-catatan" class="form-control" placeholder="Contoh: Datang tepat waktu">
-            </div>
-            <button class="btn btn-gold w-100 py-2" id="btn-submit-absen" onclick="submitAbsensi()">Kirim Presensi Sekarang</button>
-          </div>
-
-          <div class="mt-4">
-            <h6 class="fw-bold mb-2" style="font-size: 0.9rem; color: #78350f;">Jadwal Latihan Mendatang</h6>
-            <div id="upcoming-schedule-list" class="d-flex flex-column gap-2">
-              <div class="text-muted small py-2">Memuat jadwal...</div>
-            </div>
-          </div>
+          <h1 id="app-studio-name" class="heading-font text-xl sm:text-2xl font-bold text-slate-800 tracking-wide">Sanggar Tari Ceria</h1>
+          <p id="app-studio-slogan" class="text-xs sm:text-sm text-pink-600 font-semibold">Tari Seni & Kreasi Tradisional Anak</p>
         </div>
       </div>
 
-      <!-- 2. Tab Rekap Absensi -->
-      <div class="tab-pane fade" id="tab-rekap-absen">
-        <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Rekap Keaktifan Member</h6>
-          
-          <div class="row g-2 mb-3">
-            <div class="col-4">
-              <select id="rekap-filter-type" class="form-select form-select-sm" onchange="toggleRekapFilterInput()">
-                <option value="daily">Harian</option>
-                <option value="yearly">Tahunan</option>
-              </select>
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Status Cloud Sync Indicator -->
+        <button onclick="fetchOnlineData(true)" title="Sinkron Ulang Data" class="px-3 py-1.5 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-xl text-xs font-bold flex items-center gap-1.5 transition">
+          <i class="fa-solid fa-rotate text-xs"></i>
+          <span class="hidden sm:inline">Refresh Data</span>
+        </button>
+
+        <div id="admin-badge" class="hidden items-center gap-2 bg-purple-50 text-purple-700 px-3.5 py-1.5 rounded-full text-xs font-bold border border-purple-200">
+          <i class="fa-solid fa-user-shield"></i>
+          <span>Admin Aktif</span>
+        </div>
+        <button id="btn-logout" onclick="logoutAdmin()" class="hidden px-3.5 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200 transition">
+          <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
+        </button>
+      </div>
+    </header>
+
+    <!-- ================= VIEW 1: HOME ================= -->
+    <section id="view-home" class="py-4">
+      <div class="bg-white rounded-3xl p-6 sm:p-12 shadow-md border border-pink-100 text-center max-w-2xl mx-auto relative overflow-hidden">
+        <div class="absolute -top-10 -right-10 w-36 h-36 bg-pink-100 rounded-full blur-2xl opacity-60"></div>
+        <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-purple-100 rounded-full blur-2xl opacity-60"></div>
+        
+        <div id="hero-logo-container" class="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-3xl bg-gradient-to-tr from-pink-500 via-rose-400 to-amber-400 flex items-center justify-center text-white shadow-xl shadow-pink-200 mb-5 overflow-hidden">
+          <i class="fa-solid fa-hands-clapping text-4xl"></i>
+        </div>
+
+        <h2 id="hero-studio-name" class="heading-font text-2xl sm:text-4xl font-extrabold text-slate-800 mb-2">Sanggar Tari Ceria</h2>
+        <p id="hero-studio-slogan" class="text-sm sm:text-base text-slate-600 mb-8 max-w-md mx-auto">Portal Presensi & Administrasi Pembelajaran Tari Anak-Anak</p>
+
+        <!-- Tombol Terbuka Member & Login Admin -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
+          <button onclick="showView('attendance')" class="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-2xl shadow-lg shadow-pink-200 font-bold transition transform active:scale-95 text-base">
+            <i class="fa-solid fa-calendar-check text-xl"></i>
+            <span>Buka Absensi</span>
+          </button>
+
+          <button id="btn-home-admin" onclick="handleAdminBtnClick()" class="flex items-center justify-center gap-3 p-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl shadow-lg shadow-slate-300 font-bold transition transform active:scale-95 text-base">
+            <i class="fa-solid fa-lock text-xl text-amber-400"></i>
+            <span id="btn-admin-label">Login Admin</span>
+          </button>
+        </div>
+
+        <!-- Menu Tambahan Admin -->
+        <div id="home-admin-quick-menu" class="hidden mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <button onclick="showView('spp')" class="flex items-center justify-center gap-2 p-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold border border-amber-200">
+            <i class="fa-solid fa-money-bill-wave text-amber-600"></i> Laporan SPP
+          </button>
+          <button onclick="showView('members')" class="flex items-center justify-center gap-2 p-3 bg-purple-50 hover:bg-purple-100 text-purple-900 rounded-xl text-xs font-bold border border-purple-200">
+            <i class="fa-solid fa-users-gear text-purple-600"></i> Kelola Member
+          </button>
+          <button onclick="showView('settings')" class="flex items-center justify-center gap-2 p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold border border-slate-300">
+            <i class="fa-solid fa-sliders text-slate-600"></i> Pengaturan
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: ABSENSI ================= -->
+    <section id="view-attendance" class="hidden space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl shadow-sm border border-pink-100 no-export">
+        <div class="flex items-center gap-2">
+          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+          </button>
+          <span class="text-xs text-slate-400">|</span>
+          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Lembar Absensi Sabtu</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="select-month" onchange="changeAttendancePeriod()" class="text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none">
+            <option value="0">Januari</option>
+            <option value="1">Februari</option>
+            <option value="2">Maret</option>
+            <option value="3">April</option>
+            <option value="4">Mei</option>
+            <option value="5">Juni</option>
+            <option value="6">Juli</option>
+            <option value="7">Agustus</option>
+            <option value="8" selected>September</option>
+            <option value="9">Oktober</option>
+            <option value="10">November</option>
+            <option value="11">Desember</option>
+          </select>
+
+          <select id="select-year" onchange="changeAttendancePeriod()" class="text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none">
+            <option value="2025">2025</option>
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+
+          <button onclick="downloadAttendanceImage()" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-200 transition flex items-center gap-2">
+            <i class="fa-solid fa-camera"></i>
+            <span>Unduh Gambar Absensi</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="attendance-export-wrapper" class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between border-b-2 border-slate-100 pb-5 mb-5">
+          <div class="flex items-center gap-4">
+            <div id="att-card-logo" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 text-white flex items-center justify-center text-2xl shadow-sm overflow-hidden flex-shrink-0">
+              <i class="fa-solid fa-person-dots-from-line"></i>
             </div>
-            <div class="col-5" id="rekap-input-date-col">
-              <input type="date" id="rekap-filter-date" class="form-control form-select-sm">
-            </div>
-            <div class="col-5 d-none" id="rekap-input-year-col">
-              <input type="number" id="rekap-filter-year" class="form-control form-select-sm" value="2026">
-            </div>
-            <div class="col-3">
-              <button class="btn btn-dark btn-sm w-100 fw-bold" onclick="loadAbsensiReport(true)">Cari</button>
+            <div>
+              <h2 id="att-card-title" class="heading-font text-xl font-bold text-slate-800">Sanggar Tari Ceria</h2>
+              <p class="text-xs text-pink-600 font-semibold">Laporan Kehadiran Member Tiap Hari Sabtu</p>
             </div>
           </div>
-
-          <div class="row text-center mb-3 g-2">
-            <div class="col-4">
-              <div class="p-2 border rounded bg-light">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Hadir</small>
-                <strong class="text-success" id="rekap-count-hadir">0</strong>
-              </div>
+          <div class="text-right">
+            <div id="att-period-badge" class="heading-font inline-block bg-pink-50 text-pink-700 text-base font-bold px-4 py-1.5 rounded-2xl border border-pink-200">
+              Sep-26
             </div>
-            <div class="col-4">
-              <div class="p-2 border rounded bg-light">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Izin</small>
-                <strong class="text-warning" id="rekap-count-izin">0</strong>
-              </div>
-            </div>
-            <div class="col-4">
-              <div class="p-2 border rounded bg-light">
-                <small class="text-muted d-block" style="font-size:0.75rem;">Sakit</small>
-                <strong class="text-danger" id="rekap-count-sakit">0</strong>
-              </div>
-            </div>
+            <p class="text-[10px] text-slate-400 mt-1">Status Terverifikasi</p>
           </div>
+        </div>
 
-          <table class="table table-sm" style="font-size: 0.8rem;">
-            <thead class="table-light">
-              <tr><th>Waktu</th><th>Nama</th><th class="text-end">Status</th></tr>
+        <div class="overflow-x-auto">
+          <table class="w-full border-collapse border border-slate-300 text-sm">
+            <thead>
+              <tr class="bg-amber-100/70 text-slate-800">
+                <th rowspan="2" class="border border-slate-300 px-3 py-2 w-12 text-center heading-font">No</th>
+                <th rowspan="2" class="border border-slate-300 px-4 py-2 text-left min-w-[160px] heading-font">Nama Member</th>
+                <th id="att-header-period" colspan="4" class="border border-slate-300 px-3 py-2 text-center heading-font text-base bg-pink-100/70 text-pink-900">
+                  Sep-26
+                </th>
+              </tr>
+              <tr id="att-saturday-subheaders" class="bg-amber-50 text-slate-700 text-xs"></tr>
             </thead>
-            <tbody id="rekap-absen-tbody">
-              <tr><td colspan="3" class="text-center text-muted py-3">Klik tombol Cari</td></tr>
-            </tbody>
+            <tbody id="att-table-body"></tbody>
           </table>
         </div>
-      </div>
 
-      <!-- 3. Tab Iuran Saya (Dengan Cache Storage & Tombol Refresh) -->
-      <div class="tab-pane fade" id="tab-iuran">
-        <div class="custom-card p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold mb-0" style="color: #451a03;">Kartu Iuran Bulanan</h6>
-            <div class="d-flex gap-2">
-              <button class="btn btn-sm btn-outline-warning text-dark border-dark fw-bold" onclick="loadMemberDues(true)">Segarkan Data</button>
-              <select id="dues-year-select" class="form-select form-select-sm" style="width: 90px;" onchange="loadMemberDues()">
-                <option value="2025">2025</option>
-                <option value="2026" selected>2026</option>
-                <option value="2027">2027</option>
-              </select>
-            </div>
+        <div class="mt-6 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-700">Pelatih :</span>
+            <span id="coach-names-display" class="font-bold text-pink-600">Kak Raras & Kak Dewi</span>
+            <button id="btn-edit-coach" onclick="promptEditCoach()" class="no-export hidden text-slate-400 hover:text-slate-600 ml-1">
+              <i class="fa-solid fa-pen-to-square"></i>
+            </button>
           </div>
-
-          <div id="print-iuran-area" class="printable-area mb-3">
-            <div class="text-center border-bottom border-warning pb-2 mb-3">
-              <h5 class="mb-0 fw-bold" style="color: #78350f; font-family: 'Cinzel', serif;">SANGGAR TARI YOUTEFA</h5>
-              <small class="text-muted">Bukti Pembayaran Iuran Member</small>
-            </div>
-            <div class="mb-2">
-              <div>Nama: <strong id="print-member-name" class="text-dark">-</strong></div>
-              <div>ID: <strong id="print-member-id">-</strong> | Tahun: <strong id="print-member-year">-</strong></div>
-            </div>
-            <div class="alert alert-warning py-2 my-2 small border-0" style="background-color: #fef3c7; color: #92400e;">
-              Status Terbayar: <strong id="dues-paid-until">-</strong>
-            </div>
-
-            <!-- Pesan Info Sedang Mengambil Data -->
-            <div id="dues-loading-info" class="text-muted small text-center my-2 d-none">
-              <div class="spinner-border spinner-border-sm text-warning me-1"></div> Data sedang diambil dari server...
-            </div>
-
-            <div class="month-grid my-3" id="months-container">
-              <!-- Render 12 Bulan -->
-            </div>
-            <div class="text-end text-muted" style="font-size: 0.75rem;">
-              Dicetak pada: <span id="dues-print-date"></span>
-            </div>
+          <div class="text-slate-400 text-[11px]">
+            <span>Keterangan: </span>
+            <span class="font-bold text-emerald-600">✓ = Hadir</span>, 
+            <span class="font-bold text-slate-600">- = Absen</span>, 
+            <span class="font-bold text-purple-600">libur = Libur Latihan</span>
           </div>
-          <button class="btn btn-gold w-100" onclick="exportToImage('print-iuran-area', 'Kartu-Iuran')">Unduh Gambar Kartu Iuran (.PNG)</button>
         </div>
       </div>
+    </section>
 
-      <!-- 4. Tab Input Kas -->
-      <div class="tab-pane fade" id="tab-kas">
-        <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Catat Pemasukan / Pengeluaran</h6>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">TIPE TRANSAKSI</label>
-            <select id="kas-tipe" class="form-select">
-              <option value="Pemasukan">Pemasukan</option>
-              <option value="Pengeluaran">Pengeluaran</option>
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">KATEGORI</label>
-            <select id="kas-kategori" class="form-select" onchange="toggleIuranFields()">
-              <option value="Iuran Bulanan">Iuran Bulanan</option>
-              <option value="Donasi / Kasual">Donasi / Kasual</option>
-              <option value="Operasional & Perlengkapan">Operasional & Perlengkapan</option>
+    <!-- ================= VIEW 3: SPP (ADMIN ONLY) ================= -->
+    <section id="view-spp" class="hidden space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl shadow-sm border border-pink-100 no-export">
+        <div class="flex items-center gap-2">
+          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+          </button>
+          <span class="text-xs text-slate-400">|</span>
+          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Laporan & Kas SPP Bulanan</span>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-2">
+          <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
+            <span class="text-xs font-bold text-slate-500">Tahun:</span>
+            <select id="spp-year-select" onchange="renderSPPTable()" class="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer">
+              <option value="2025">2025</option>
+              <option value="2026" selected>2026</option>
+              <option value="2027">2027</option>
             </select>
           </div>
 
-          <div id="iuran-extra-fields" class="p-3 bg-light rounded-3 mb-3 border">
-            <label class="form-label small fw-bold text-muted">NAMA MEMBER YANG MEMBAYAR</label>
-            <input type="text" id="kas-target-member" list="list-member-datalist" class="form-control mb-2" placeholder="Ketik nama member...">
-            <datalist id="list-member-datalist"></datalist>
-
-            <div class="row g-2">
-              <div class="col-6">
-                <select id="kas-target-month" class="form-select">
-                  <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
-                  <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-                  <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
-                  <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-                </select>
-              </div>
-              <div class="col-6">
-                <input type="number" id="kas-target-year" class="form-control" value="2026">
-              </div>
-            </div>
-          </div>
-
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">JUMLAH (RP)</label>
-            <input type="number" id="kas-jumlah" class="form-control" placeholder="Contoh: 75000">
-          </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">KETERANGAN</label>
-            <input type="text" id="kas-keterangan" class="form-control" placeholder="Opsional">
-          </div>
-          <button class="btn btn-gold w-100 py-2" id="btn-submit-kas" onclick="submitKas()">Simpan Transaksi</button>
+          <button onclick="downloadSPPImage()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200 transition flex items-center gap-2">
+            <i class="fa-solid fa-camera"></i>
+            <span>Unduh Laporan SPP (Gambar)</span>
+          </button>
         </div>
       </div>
 
-      <!-- 5. Tab Laporan Kas Bulanan (Dengan Cache Storage & Tombol Refresh) -->
-      <div class="tab-pane fade" id="tab-laporan">
-        <div class="custom-card p-4">
-          <div class="d-flex justify-content-between align-items-center mb-3">
-            <h6 class="fw-bold mb-0" style="color: #451a03;">Laporan Keuangan Bulanan</h6>
-            <button class="btn btn-sm btn-outline-warning text-dark border-dark fw-bold" onclick="loadMonthlyReport(true)">Segarkan Laporan</button>
-          </div>
-
-          <div class="row g-2 mb-3">
-            <div class="col-6">
-              <select id="laporan-bulan" class="form-select">
-                <option value="1">Januari</option><option value="2">Februari</option><option value="3">Maret</option>
-                <option value="4">April</option><option value="5">Mei</option><option value="6">Juni</option>
-                <option value="7">Juli</option><option value="8">Agustus</option><option value="9">September</option>
-                <option value="10">Oktober</option><option value="11">November</option><option value="12">Desember</option>
-              </select>
-            </div>
-            <div class="col-3">
-              <input type="number" id="laporan-tahun" class="form-control" value="2026">
-            </div>
-            <div class="col-3">
-              <button class="btn btn-outline-dark fw-bold w-100" onclick="loadMonthlyReport(true)">Cari</button>
-            </div>
-          </div>
-
-          <div id="print-laporan-area" class="printable-area mb-3">
-            <div class="text-center border-bottom border-warning pb-2 mb-3">
-              <h5 class="mb-0 fw-bold" style="color: #78350f; font-family: 'Cinzel', serif;">LAPORAN SPP SANGGAR YOUTEFA</h5>
-              <small class="text-muted" id="laporan-periode-text">Periode: -</small>
-            </div>
-            <div class="row text-center mb-3">
-              <div class="col-4">
-                <small class="text-muted d-block fw-bold">Pemasukan</small>
-                <strong class="text-success" id="rep-masuk">Rp 0</strong>
+      <!-- SPP CANVAS FULL 12 BULAN & LEBAR PASTI -->
+      <div id="spp-export-wrapper" class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 overflow-x-auto">
+        <div style="min-width: 1220px;">
+          <div class="flex items-center justify-between border-b-2 border-slate-100 pb-5 mb-5">
+            <div class="flex items-center gap-4">
+              <div id="spp-card-logo" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 text-white flex items-center justify-center text-2xl shadow-sm overflow-hidden flex-shrink-0">
+                <i class="fa-solid fa-receipt"></i>
               </div>
-              <div class="col-4">
-                <small class="text-muted d-block fw-bold">Pengeluaran</small>
-                <strong class="text-danger" id="rep-keluar">Rp 0</strong>
-              </div>
-              <div class="col-4">
-                <small class="text-muted d-block fw-bold">Saldo Bersih</small>
-                <strong class="text-primary" id="rep-bersih">Rp 0</strong>
+              <div>
+                <h2 id="spp-card-title" class="heading-font text-2xl font-bold text-slate-800">Sanggar Tari Ceria</h2>
+                <p id="spp-card-slogan" class="text-xs text-slate-500 font-semibold">Rekapitulasi Keuangan Pembayaran Iuran SPP Murid</p>
               </div>
             </div>
 
-            <!-- Pesan Info Sedang Mengambil Laporan -->
-            <div id="laporan-loading-info" class="text-muted small text-center my-2 d-none">
-              <div class="spinner-border spinner-border-sm text-warning me-1"></div> Data sedang diambil dari server...
-            </div>
-
-            <table class="table table-sm" style="font-size: 0.8rem;">
-              <thead class="table-light">
-                <tr><th>Tgl</th><th>Keterangan</th><th class="text-end">Jumlah</th></tr>
-              </thead>
-              <tbody id="rep-transaksi-tbody">
-                <tr><td colspan="3" class="text-center text-muted py-3">Pilih filter dan klik Cari</td></tr>
-              </tbody>
-            </table>
-            <div class="text-end text-muted mt-2" style="font-size: 0.75rem;">
-              Dicetak: <span id="laporan-print-date"></span>
+            <div class="flex items-center gap-3">
+              <div class="text-right px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-2xl">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Standar SPP</div>
+                <div class="heading-font text-base font-bold text-emerald-800">Rp 75.000 <span class="text-xs font-normal">/ bln</span></div>
+              </div>
+              <div class="text-right px-4 py-2 bg-pink-50 border border-pink-200 rounded-2xl">
+                <div class="text-[10px] font-bold uppercase tracking-wider text-pink-600">Total Murid</div>
+                <div id="spp-total-members" class="heading-font text-base font-bold text-pink-800">25 Anak</div>
+              </div>
             </div>
           </div>
-          <button class="btn btn-gold w-100" onclick="exportToImage('print-laporan-area', 'Laporan-Kas')">Unduh Laporan (.PNG)</button>
+
+          <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 text-white py-2.5 px-4 rounded-t-2xl text-center heading-font font-bold text-base shadow-sm tracking-wide">
+            <span id="spp-table-heading-text">SPP Tahun 2026 (12 Bulan Penuh)</span>
+          </div>
+
+          <table class="w-full border-collapse border border-slate-300 text-xs">
+            <thead>
+              <tr class="bg-amber-100 text-slate-800 font-bold">
+                <th class="border border-slate-300 px-3 py-3 w-12 text-center heading-font" style="width: 48px;">No</th>
+                <th class="border border-slate-300 px-4 py-3 text-left heading-font" style="width: 170px; min-width: 170px;">Nama Member</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Januari</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Februari</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Maret</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">April</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Mei</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Juni</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Juli</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Agustus</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">September</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Oktober</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">November</th>
+                <th class="border border-slate-300 px-2 py-3 text-center w-[80px]">Desember</th>
+              </tr>
+            </thead>
+            <tbody id="spp-table-body"></tbody>
+          </table>
+
+          <div class="mt-6 pt-4 border-t border-dashed border-amber-200 flex items-center justify-between text-xs text-slate-500 font-medium">
+            <div>
+              <span>Status Data: </span>
+              <span class="font-bold text-amber-700">Tervalidasi Bendahara Sanggar</span>
+            </div>
+            <div id="spp-print-date" class="text-slate-400 text-[11px]">Dicetak tanggal: -</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 4: MEMBERS (ADMIN ONLY) ================= -->
+    <section id="view-members" class="hidden space-y-4">
+      <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-pink-100">
+        <div class="flex items-center gap-2">
+          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+          </button>
+          <span class="text-xs text-slate-400">|</span>
+          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Kelola Anggota Sanggar</span>
+        </div>
+
+        <button onclick="openMemberModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200 transition flex items-center gap-2">
+          <i class="fa-solid fa-user-plus"></i>
+          <span>Tambah Member</span>
+        </button>
+      </div>
+
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-4">
+          <p class="text-xs text-slate-500">Daftar semua murid aktif terdaftar di sanggar.</p>
+          <span id="member-badge-count" class="text-xs font-bold bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200">25 Member</span>
+        </div>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="member-cards-container"></div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 5: SETTINGS ================= -->
+    <section id="view-settings" class="hidden space-y-4">
+      <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-pink-100">
+        <div class="flex items-center gap-2">
+          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
+            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
+          </button>
+          <span class="text-xs text-slate-400">|</span>
+          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Pengaturan Identitas & Akun</span>
         </div>
       </div>
 
-      <!-- 6. Tab Atur Jadwal Latihan -->
-      <div class="tab-pane fade" id="tab-jadwal">
-        <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Tetapkan Jadwal Latihan</h6>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">TANGGAL LATIHAN</label>
-            <input type="date" id="jadwal-tgl" class="form-control">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- 1. Identitas Sanggar & Foto Logo -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+          <h3 class="heading-font text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <i class="fa-solid fa-paintbrush text-pink-500"></i>
+            <span>Ubah Logo & Nama Sanggar</span>
+          </h3>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Sanggar</label>
+            <input type="text" id="setting-studio-name" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-pink-500" />
           </div>
-          <div class="row g-2 mb-3">
-            <div class="col-6">
-              <label class="form-label small fw-bold text-muted">JAM MULAI</label>
-              <input type="time" id="jadwal-mulai" class="form-control" value="09:00">
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Slogan / Deskripsi Singkat</label>
+            <input type="text" id="setting-studio-slogan" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-pink-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Upload Foto Logo Sendiri</label>
+            <div class="flex items-center gap-4">
+              <div id="setting-logo-preview" class="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
+                <i class="fa-solid fa-image text-slate-400 text-2xl"></i>
+              </div>
+              <div class="space-y-1">
+                <input type="file" id="setting-logo-file" accept="image/*" onchange="handleLogoUpload(event)" class="text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer" />
+                <button onclick="resetToDefaultLogo()" class="text-[11px] text-rose-500 hover:underline block font-semibold">Gunakan Logo Animasi Bawaan</button>
+              </div>
             </div>
-            <div class="col-6">
-              <label class="form-label small fw-bold text-muted">JAM SELESAI</label>
-              <input type="time" id="jadwal-selesai" class="form-control" value="12:00">
-            </div>
           </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">KETERANGAN LATIHAN</label>
-            <input type="text" id="jadwal-ket" class="form-control" placeholder="Contoh: Latihan Tari Saman & Piring">
+
+          <div class="pt-2">
+            <button onclick="saveStudioSettings()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-200 transition">
+              Simpan Identitas Sanggar
+            </button>
           </div>
-          <button class="btn btn-gold w-100 py-2" id="btn-save-jadwal" onclick="submitJadwal()">Buka Jadwal Latihan</button>
+        </div>
+
+        <!-- 2. Ubah Kata Sandi Admin -->
+        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
+          <h3 class="heading-font text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
+            <i class="fa-solid fa-key text-purple-600"></i>
+            <span>Ubah Kata Sandi Admin</span>
+          </h3>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Username Admin</label>
+            <input type="text" id="setting-admin-user" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Password Baru</label>
+            <input type="password" id="setting-admin-pass" placeholder="Ketik kata sandi baru" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold text-slate-600 mb-1">Ulangi Password Baru</label>
+            <input type="password" id="setting-admin-pass-confirm" placeholder="Ulangi kata sandi baru" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500" />
+          </div>
+
+          <div class="pt-2">
+            <button onclick="saveAdminCredentials()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200 transition">
+              Simpan Password Baru
+            </button>
+          </div>
         </div>
       </div>
+    </section>
 
-      <!-- 7. Tab Tambah Member -->
-      <div class="tab-pane fade" id="tab-addmember">
-        <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Pendaftaran Anggota Baru</h6>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">ID MEMBER</label>
-            <input type="text" id="new-id" class="form-control" placeholder="Contoh: M003">
-          </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">NAMA LENGKAP</label>
-            <input type="text" id="new-nama" class="form-control" placeholder="Nama Anggota">
-          </div>
-          <div class="row g-2 mb-3">
-            <div class="col-6">
-              <label class="form-label small fw-bold text-muted">ROLE</label>
-              <select id="new-role" class="form-select">
-                <option value="Member">Member</option>
-                <option value="Admin">Admin</option>
-              </select>
-            </div>
-            <div class="col-6">
-              <label class="form-label small fw-bold text-muted">PIN (4-6 DIGIT)</label>
-              <input type="password" id="new-pin" class="form-control" placeholder="PIN">
-            </div>
-          </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">NOMOR TELEPON/WHATSAPP</label>
-            <input type="tel" id="new-telp" class="form-control" placeholder="0812xxxxxxxx">
-          </div>
-          <button class="btn btn-gold w-100 py-2" id="btn-add-member" onclick="submitAddMember()">Daftarkan Anggota</button>
-        </div>
-      </div>
-
-      <!-- 8. Tab Profil -->
-      <div class="tab-pane fade" id="tab-profile">
-        <div class="custom-card p-4">
-          <h6 class="fw-bold mb-3" style="color: #451a03;">Data Akun Saya</h6>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">NAMA LENGKAP</label>
-            <input type="text" id="edit-nama" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">NOMOR TELEPON / WA</label>
-            <input type="tel" id="edit-telp" class="form-control">
-          </div>
-          <div class="mb-3">
-            <label class="form-label small fw-bold text-muted">GANTI PIN (KOSONGKAN JIKA TIDAK DIUBAH)</label>
-            <input type="password" id="edit-pin" class="form-control" placeholder="PIN Baru">
-          </div>
-          <button class="btn btn-gold w-100 py-2" id="btn-update-profile" onclick="submitUpdateProfile()">Simpan Perubahan</button>
-        </div>
-      </div>
-
-    </div>
   </div>
 
-</div>
+  <!-- ================= MODALS ================= -->
+  <!-- 1. LOGIN ADMIN -->
+  <div id="modal-login" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-pink-100 animate-pop">
+      <div class="text-center mb-5">
+        <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl shadow-inner mb-3">
+          <i class="fa-solid fa-shield-cat"></i>
+        </div>
+        <h3 class="heading-font text-xl font-bold text-slate-800">Login Administrator</h3>
+        <p class="text-xs text-slate-500">Khusus Pengelola & Pelatih Sanggar</p>
+      </div>
 
-<!-- Modal Loading Tematik -->
-<div class="modal fade" id="loadingModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-  <div class="modal-dialog modal-dialog-centered" style="max-width: 380px;">
-    <div class="modal-content p-4 text-center">
-      <div class="spinner-border text-warning mb-3 mx-auto" style="width: 3rem; height: 3rem;" role="status"></div>
-      <h6 class="fw-bold text-warning mb-2" id="loading-member-name">Menyiapkan Portal...</h6>
-      <p class="small text-light mb-0" id="loading-msg">Tunggu ya, kita lagi persiapkan sanggarnya...</p>
-    </div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-  // API URL DEPLOYMENT APPS SCRIPT
-  const API_URL = "https://script.google.com/macros/s/AKfycbxpJmycQVRzYiLakV57QKDm7Hb7rOqemXYpF4FB8eWr-WnejygSiMWt8qgyw5e0F9Mj/exec";
-
-  const MONTH_NAMES = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
-  let currentUser = null;
-  let loadingModalInstance = null;
-
-  document.addEventListener("DOMContentLoaded", () => {
-    loadingModalInstance = new bootstrap.Modal(document.getElementById("loadingModal"));
-    const today = new Date().toISOString().split('T')[0];
-    document.getElementById("rekap-filter-date").value = today;
-    document.getElementById("jadwal-tgl").value = today;
-
-    // Otomatis cek session login di memory perangkat
-    const savedUser = localStorage.getItem("sanggar_user");
-    if (savedUser) {
-      try {
-        currentUser = JSON.parse(savedUser);
-        setupDashboard();
-      } catch (e) {
-        localStorage.removeItem("sanggar_user");
-      }
-    }
-  });
-
-  async function callApi(payload, isPost = true) {
-    let response;
-    if (isPost) {
-      response = await fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "text/plain;charset=utf-8" },
-        body: JSON.stringify(payload),
-        redirect: "follow"
-      });
-    } else {
-      const qs = new URLSearchParams(payload).toString();
-      response = await fetch(`${API_URL}?${qs}`, {
-        method: "GET",
-        redirect: "follow"
-      });
-    }
-
-    const rawText = await response.text();
-    try {
-      return JSON.parse(rawText);
-    } catch (err) {
-      console.error("Respon bukan JSON:", rawText);
-      throw new Error("Gagal parsing respon server.");
-    }
-  }
-
-  async function handleLogin() {
-    const username = document.getElementById("login-name").value.trim();
-    const pin = document.getElementById("login-pin").value.trim();
-    if (!username || !pin) return alert("Silakan masukkan Nama Lengkap dan PIN");
-
-    document.getElementById("loading-member-name").innerText = `Hai ${username}!`;
-    document.getElementById("loading-msg").innerText = "Tunggu ya, kita lagi persiapkan sanggarnya...";
-    loadingModalInstance.show();
-
-    try {
-      const res = await callApi({ action: "login", username, pin });
-      if (res.success) {
-        currentUser = res.user;
-        localStorage.setItem("sanggar_user", JSON.stringify(currentUser));
-        setupDashboard();
-      } else {
-        alert(res.message);
-      }
-    } catch (e) {
-      alert("Gagal terhubung: " + e.message);
-    } finally {
-      loadingModalInstance.hide();
-    }
-  }
-
-  function setupDashboard() {
-    document.getElementById("section-login").classList.add("d-none");
-    document.getElementById("section-app").classList.remove("d-none");
-
-    document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
-    document.getElementById("user-role-badge").innerText = currentUser.role;
-    document.getElementById("user-initial-badge").innerText = currentUser.nama.charAt(0).toUpperCase();
-
-    document.getElementById("edit-nama").value = currentUser.nama;
-    document.getElementById("edit-telp").value = currentUser.telepon || "";
-
-    const now = new Date();
-    document.getElementById("laporan-bulan").value = now.getMonth() + 1;
-    document.getElementById("laporan-tahun").value = now.getFullYear();
-
-    const isAdmin = currentUser.role === "Admin";
-
-    const saldoBox = document.getElementById("admin-saldo-container");
-    if (isAdmin) {
-      saldoBox.classList.remove("d-none");
-      loadSummary();
-      loadMemberListForInput();
-      loadMonthlyReport();
-    } else {
-      saldoBox.classList.add("d-none");
-    }
-
-    document.getElementById("tab-btn-kas").style.display = isAdmin ? "block" : "none";
-    document.getElementById("tab-btn-laporan").style.display = isAdmin ? "block" : "none";
-    document.getElementById("tab-btn-jadwal").style.display = isAdmin ? "block" : "none";
-    document.getElementById("tab-btn-addmember").style.display = isAdmin ? "block" : "none";
-
-    checkPresensiStatus();
-    loadMemberDues();
-    loadAbsensiReport();
-  }
-
-  // 1. Cek Jadwal Presensi & Render Mendatang (Dukungan Cache Lokal)
-  async function checkPresensiStatus(forceRefresh = false) {
-    const banner = document.getElementById("absen-status-banner");
-    const formWrapper = document.getElementById("absen-form-wrapper");
-    const scheduleContainer = document.getElementById("upcoming-schedule-list");
-
-    const cacheKey = "cache_jadwal_" + currentUser.memberId;
-    if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        renderJadwalUI(JSON.parse(cached));
-      }
-    }
-
-    try {
-      const res = await callApi({ action: "getJadwalToday", memberId: currentUser.memberId }, false);
-      localStorage.setItem(cacheKey, JSON.stringify(res));
-      renderJadwalUI(res);
-    } catch (e) {
-      if (!localStorage.getItem(cacheKey)) {
-        banner.className = "alert alert-warning py-2 mb-3 small";
-        banner.innerText = "Gagal memuat status latihan.";
-      }
-    }
-  }
-
-  function renderJadwalUI(res) {
-    const banner = document.getElementById("absen-status-banner");
-    const formWrapper = document.getElementById("absen-form-wrapper");
-    const scheduleContainer = document.getElementById("upcoming-schedule-list");
-
-    if (res.isOpen) {
-      banner.className = "alert alert-success py-2 mb-3 small fw-bold";
-      banner.innerText = res.message;
-      if (formWrapper) formWrapper.classList.remove("d-none");
-    } else {
-      banner.className = res.alreadyPresent ? "alert alert-success py-2 mb-3 small fw-bold" : "alert alert-danger py-2 mb-3 small fw-bold";
-      banner.innerText = res.message;
-      if (formWrapper) formWrapper.classList.add("d-none");
-    }
-
-    if (!res.upcoming || res.upcoming.length === 0) {
-      scheduleContainer.innerHTML = `<div class="text-muted small p-2 border rounded bg-light">Belum ada jadwal latihan mendatang.</div>`;
-      return;
-    }
-
-    scheduleContainer.innerHTML = "";
-    res.upcoming.forEach(item => {
-      const parts = String(item.tanggal).split("-");
-      let dateDisplay = item.tanggal;
-      if (parts.length === 3) {
-        const d = new Date(Number(parts[0]), Number(parts[1]) - 1, Number(parts[2]));
-        dateDisplay = d.toLocaleDateString("id-ID", {
-          weekday: "long",
-          day: "numeric",
-          month: "short",
-          year: "numeric"
-        });
-      }
-
-      const isToday = item.isToday;
-      const card = document.createElement("div");
-      card.className = `p-3 rounded-3 border d-flex justify-content-between align-items-center mb-2 ${isToday ? 'border-warning bg-warning bg-opacity-10' : 'bg-white'}`;
-      card.innerHTML = `
+      <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
         <div>
-          <div class="fw-bold text-dark" style="font-size: 0.9rem;">
-            ${dateDisplay} ${isToday ? '<span class="badge bg-warning text-dark ms-1">Hari Ini</span>' : ''}
+          <label class="block text-xs font-bold text-slate-600 mb-1">Username</label>
+          <input type="text" id="login-username" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500" placeholder="admin" />
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
+          <input type="password" id="login-password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500" placeholder="•••••" />
+        </div>
+        <p id="login-error-msg" class="text-xs text-rose-500 font-bold hidden"></p>
+        <div class="pt-2 flex gap-2">
+          <button type="button" onclick="closeModal('modal-login')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
+          <button type="submit" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200">Masuk</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. MODAL SPP -->
+  <div id="modal-spp" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-amber-100 animate-pop">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
+        <div>
+          <span class="text-[10px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">Form Transaksi Kas</span>
+          <h3 id="modal-spp-member-name" class="heading-font text-lg font-bold text-slate-800 mt-1">Nama Member</h3>
+          <p id="modal-spp-period-label" class="text-xs text-slate-500">Bulan: Januari 2026</p>
+        </div>
+        <button onclick="closeModal('modal-spp')" class="text-slate-400 hover:text-slate-600">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
+      </div>
+
+      <div class="space-y-4">
+        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center justify-between text-xs">
+          <span class="text-slate-600">Tarif Wajib SPP Bulanan:</span>
+          <span class="font-bold text-slate-800">Rp 75.000</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">Pembayaran SPP: Rp.</label>
+          <div class="relative">
+            <span class="absolute left-3.5 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
+            <input type="number" id="spp-input-amount" step="1000" placeholder="75000" class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 font-bold text-slate-800 text-sm focus:outline-none focus:border-amber-500" oninput="calculateSPPDiff()" />
           </div>
-          <div class="text-muted small">${item.keterangan || 'Latihan Rutin'}</div>
+          <p id="spp-calc-status" class="text-xs font-bold mt-1.5 text-emerald-600">Status: Menunggu input...</p>
         </div>
-        <div class="text-end">
-          <span class="badge bg-dark">${item.jamMulai} - ${item.jamSelesai} WIB</span>
+
+        <div class="p-3 bg-pink-50/60 rounded-xl border border-pink-100 space-y-2">
+          <div class="flex items-center gap-2">
+            <input type="checkbox" id="spp-is-new-member" onchange="toggleRegFeeInput()" class="w-4 h-4 rounded text-pink-500 focus:ring-pink-400" />
+            <label for="spp-is-new-member" class="text-xs font-bold text-pink-800 cursor-pointer">
+              Member Baru (Ada Biaya Pendaftaran)
+            </label>
+          </div>
+
+          <div id="reg-fee-field" class="hidden pt-1">
+            <label class="block text-[11px] font-bold text-pink-700 mb-1">Pendaftaran: Rp.</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2 text-pink-400 font-bold text-xs">Rp</span>
+              <input type="number" id="spp-input-reg-fee" step="1000" placeholder="50000" class="w-full pl-9 pr-3 py-1.5 rounded-lg border border-pink-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-pink-500" />
+            </div>
+          </div>
         </div>
-      `;
-      scheduleContainer.appendChild(card);
-    });
-  }
 
-  // 2. Load Kartu Iuran 12 Bulan (Dengan Cache Lokal & Solusi Bug Grid)
-  async function loadMemberDues(forceRefresh = false) {
-    if (!currentUser) return;
-    const selectedYear = document.getElementById("dues-year-select").value;
-    const container = document.getElementById("months-container");
-    const loadingInfo = document.getElementById("dues-loading-info");
+        <div class="flex gap-2 pt-2">
+          <button onclick="deleteSPPRecord()" class="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200">Hapus</button>
+          <button onclick="closeModal('modal-spp')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
+          <button onclick="saveSPPRecord()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200">Simpan Data</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    document.getElementById("print-member-name").innerText = currentUser.nama;
-    document.getElementById("print-member-id").innerText = currentUser.memberId;
-    document.getElementById("print-member-year").innerText = selectedYear;
-    document.getElementById("dues-print-date").innerText = new Date().toLocaleDateString('id-ID');
+  <!-- 3. MODAL MEMBER -->
+  <div id="modal-member" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-purple-100 animate-pop">
+      <div class="text-center mb-4">
+        <h3 id="modal-member-title" class="heading-font text-lg font-bold text-slate-800">Tambah Member Baru</h3>
+        <p class="text-xs text-slate-500">Masukkan nama anak yang terdaftar di sanggar</p>
+      </div>
 
-    const cacheKey = `cache_dues_${currentUser.memberId}_${selectedYear}`;
+      <div class="space-y-3">
+        <input type="hidden" id="member-edit-id" value="" />
+        <div>
+          <label class="block text-xs font-bold text-slate-600 mb-1">Nama Panggilan / Lengkap</label>
+          <input type="text" id="member-name-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500 capitalize" placeholder="Contoh: Cantika" />
+        </div>
 
-    // 1. Tampilkan dari Cache Lokal bila ada
-    if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        renderDuesUI(JSON.parse(cached));
-      }
-    }
+        <div class="flex gap-2 pt-2">
+          <button onclick="closeModal('modal-member')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
+          <button onclick="saveMember()" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200">Simpan</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    loadingInfo.classList.remove("d-none");
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // =========================================================================
+    // TEMPELKAN URL DARI GOOGLE APPS SCRIPT ANDA DI SINI
+    // =========================================================================
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6-ASJ6Q_8I7rCAo-WVmmrx4OMbs7YJNTe0D4ZQ9ViuhqtLsMKgJZFR4-_76ovTaTHew/exec";
 
-    try {
-      const res = await callApi({ action: "getMemberDues", memberId: currentUser.memberId, year: selectedYear }, false);
-      loadingInfo.classList.add("d-none");
-      if (res.success) {
-        localStorage.setItem(cacheKey, JSON.stringify(res));
-        renderDuesUI(res);
-      }
-    } catch (e) {
-      loadingInfo.classList.add("d-none");
-      if (!localStorage.getItem(cacheKey)) {
-        container.innerHTML = "<div class='text-danger small text-center py-2'>Gagal memuat status iuran. Klik tombol 'Segarkan Data'.</div>";
-      }
-    }
-  }
+    const DEFAULT_MEMBERS = [
+      "Aca", "Ina", "Dewinda", "Agil", "Kanaya",
+      "Alea", "Talea", "Shabira", "Gendis", "Keysa",
+      "Adiva", "Sheena", "Darby", "Ryka", "Nikeisha",
+      "Jovita", "Sabrina", "Anin", "Delana", "Haiva",
+      "Nindi", "Aurel", "Afifah", "Liva", "Bila"
+    ];
 
-  function renderDuesUI(res) {
-    const container = document.getElementById("months-container");
-    document.getElementById("dues-paid-until").innerText = res.lastPaidUntil || "Belum ada pembayaran";
-    container.innerHTML = "";
+    const MONTH_NAMES = [
+      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+    ];
+    const STANDARD_SPP = 75000;
 
-    const paidList = res.monthsPaid || [];
-    MONTH_NAMES.forEach((month, index) => {
-      const isPaid = !!paidList[index];
-      const card = document.createElement("div");
-      card.className = `month-badge ${isPaid ? "badge-lunas" : "badge-belum"}`;
-      card.innerHTML = `<div>${month}</div><small style="font-size:0.75rem;">${isPaid ? "Lunas" : "Belum"}</small>`;
-      container.appendChild(card);
-    });
-  }
-
-  // 3. Load Laporan Bulanan (Dengan Cache Lokal & Notifikasi "Data sedang diambil...")
-  async function loadMonthlyReport(forceRefresh = false) {
-    const m = Number(document.getElementById("laporan-bulan").value);
-    const y = Number(document.getElementById("laporan-tahun").value);
-    const loadingInfo = document.getElementById("laporan-loading-info");
-
-    const cacheKey = `cache_report_${m}_${y}`;
-
-    if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        renderReportUI(JSON.parse(cached));
-      }
-    }
-
-    loadingInfo.classList.remove("d-none");
-
-    try {
-      const res = await callApi({ action: "getMonthlyReport", month: m, year: y }, false);
-      loadingInfo.classList.add("d-none");
-      if (res.success) {
-        localStorage.setItem(cacheKey, JSON.stringify(res));
-        renderReportUI(res);
-      }
-    } catch (err) {
-      loadingInfo.classList.add("d-none");
-      if (!localStorage.getItem(cacheKey)) {
-        document.getElementById("rep-transaksi-tbody").innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat laporan. Klik Segarkan Laporan.</td></tr>`;
-      }
-    }
-  }
-
-  function renderReportUI(res) {
-    const m = Number(document.getElementById("laporan-bulan").value);
-    const y = Number(document.getElementById("laporan-tahun").value);
-    const tbody = document.getElementById("rep-transaksi-tbody");
-
-    document.getElementById("laporan-periode-text").innerText = `Periode: ${MONTH_NAMES[m - 1]} ${y}`;
-    document.getElementById("laporan-print-date").innerText = new Date().toLocaleDateString('id-ID');
-    document.getElementById("rep-masuk").innerText = formatRupiah(res.totalMasuk || 0);
-    document.getElementById("rep-keluar").innerText = formatRupiah(res.totalKeluar || 0);
-    document.getElementById("rep-bersih").innerText = formatRupiah(res.saldoBersih || 0);
-
-    if (!res.transaksi || res.transaksi.length === 0) {
-      tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Tidak ada transaksi di periode ini</td></tr>`;
-      return;
-    }
-
-    tbody.innerHTML = "";
-    res.transaksi.forEach(t => {
-      const isMasuk = String(t.tipe).toLowerCase() === "pemasukan";
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="align-middle">${t.tanggal}</td>
-        <td>
-          <strong class="text-dark">${t.kategori}</strong>
-          <div class="text-muted" style="font-size: 0.75rem;">${t.keteranganDetail}</div>
-        </td>
-        <td class="text-end align-middle ${isMasuk ? 'text-success' : 'text-danger'} fw-bold">
-          ${isMasuk ? '+' : '-'}${formatRupiah(t.jumlah)}
-        </td>
-      `;
-      tbody.appendChild(tr);
-    });
-  }
-
-  // 4. Rekap Absensi
-  async function loadAbsensiReport(forceRefresh = false) {
-    const type = document.getElementById("rekap-filter-type").value;
-    const date = document.getElementById("rekap-filter-date").value;
-    const year = document.getElementById("rekap-filter-year").value;
-    const tbody = document.getElementById("rekap-absen-tbody");
-
-    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">Memuat data rekap...</td></tr>`;
-
-    const payload = {
-      action: "getAbsensiReport",
-      filterType: type,
-      date: date,
-      year: year
+    // STATE
+    let members = [...DEFAULT_MEMBERS];
+    let attendanceData = {};
+    let sppData = {};
+    let appSettings = {
+      studioName: "Sanggar Tari Ceria",
+      studioSlogan: "Tari Seni & Kreasi Tradisional Anak",
+      customLogo: null,
+      coachNames: "Kak Raras & Kak Dewi"
     };
+    let adminAuth = { user: "admin", pass: "12345" };
+    let isAdminLoggedIn = false;
 
-    if (currentUser.role !== "Admin") {
-      payload.memberId = currentUser.memberId;
+    let currentAttMonth = 8;
+    let currentAttYear = 2026;
+    let currentSPPYear = 2026;
+    let activeSPPEdit = { memberName: "", monthIndex: 0, year: 2026 };
+
+    // LOADING OVERLAY CONTROLLER
+    function showLoading(title = "Sedang ambil data sanggar...", desc = "Menghubungkan ke Google Drive") {
+      document.getElementById('loading-title').innerText = title;
+      document.getElementById('loading-desc').innerText = desc;
+      document.getElementById('loading-overlay').classList.remove('hidden');
+    }
+    function hideLoading() {
+      document.getElementById('loading-overlay').classList.add('hidden');
     }
 
-    try {
-      const res = await callApi(payload, false);
-      if (res.success) {
-        document.getElementById("rekap-count-hadir").innerText = res.hadir;
-        document.getElementById("rekap-count-izin").innerText = res.izin;
-        document.getElementById("rekap-count-sakit").innerText = res.sakit;
+    // INIT
+    window.addEventListener('DOMContentLoaded', async () => {
+      // Ambil cache lokal dulu agar tampilan langsung terbuka
+      loadFromLocalStorage();
+      applySettingsToUI();
+      renderAttendanceTable();
+      renderSPPTable();
+      renderMemberList();
+      showView('home');
 
-        if (!res.records || res.records.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted py-3">Tidak ada data absensi</td></tr>`;
-          return;
+      // Ambil data terbaru dari Google Sheets online
+      await fetchOnlineData(false);
+    });
+
+    // AMBIL DATA DARI GOOGLE APPS SCRIPT
+    async function fetchOnlineData(isManualRefresh = false) {
+      if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
+        hideLoading();
+        if (isManualRefresh) showToast("URL Google Apps Script belum dipasang!", false);
+        return;
+      }
+
+      showLoading("Sedang ambil data sanggar...", "Menyinkronkan data member, absensi & SPP");
+
+      try {
+        const response = await fetch(SCRIPT_URL);
+        const json = await response.json();
+
+        if (json.status === "success" && json.data) {
+          const d = json.data;
+          if (d.sanggar_members) members = JSON.parse(d.sanggar_members);
+          if (d.sanggar_settings) appSettings = { ...appSettings, ...JSON.parse(d.sanggar_settings) };
+          if (d.sanggar_att_db) attendanceData = JSON.parse(d.sanggar_att_db);
+          if (d.sanggar_spp_db) sppData = JSON.parse(d.sanggar_spp_db);
+          if (d.sanggar_auth) adminAuth = JSON.parse(d.sanggar_auth);
+
+          // Simpan ke cache lokal perangkat
+          saveToLocalStorage();
+
+          // Refresh UI
+          applySettingsToUI();
+          renderAttendanceTable();
+          renderSPPTable();
+          renderMemberList();
+
+          if (isManualRefresh) showToast("Data berhasil diperbarui dari server!");
+        }
+      } catch (err) {
+        console.error("Gagal sinkron data online:", err);
+        if (isManualRefresh) showToast("Gagal mengambil data dari Google Sheets.", false);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // SIMPAN DATA KE GOOGLE SHEETS
+    async function syncToGoogleSheets(customMsg = "Menyimpan data ke server sanggar...") {
+      saveToLocalStorage(); // simpan lokal dulu
+
+      if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
+        return;
+      }
+
+      showLoading(customMsg, "Mohon tunggu sebentar...");
+
+      try {
+        const payload = {
+          action: "save_all",
+          allData: {
+            sanggar_members: members,
+            sanggar_settings: appSettings,
+            sanggar_att_db: attendanceData,
+            sanggar_spp_db: sppData,
+            sanggar_auth: adminAuth
+          }
+        };
+
+        await fetch(SCRIPT_URL, {
+          method: "POST",
+          headers: { "Content-Type": "text/plain;charset=utf-8" },
+          body: JSON.stringify(payload)
+        });
+
+      } catch (err) {
+        console.error("Gagal simpan ke online:", err);
+        showToast("Tersimpan di HP (Gagal kirim ke Google Sheets)", false);
+      } finally {
+        hideLoading();
+      }
+    }
+
+    // LOCAL STORAGE CACHE
+    function loadFromLocalStorage() {
+      const m = localStorage.getItem('sanggar_members');
+      if (m) members = JSON.parse(m);
+      const s = localStorage.getItem('sanggar_settings');
+      if (s) appSettings = { ...appSettings, ...JSON.parse(s) };
+      const a = localStorage.getItem('sanggar_att_db');
+      if (a) attendanceData = JSON.parse(a);
+      const sp = localStorage.getItem('sanggar_spp_db');
+      if (sp) sppData = JSON.parse(sp);
+      const au = localStorage.getItem('sanggar_auth');
+      if (au) adminAuth = JSON.parse(au);
+    }
+
+    function saveToLocalStorage() {
+      localStorage.setItem('sanggar_members', JSON.stringify(members));
+      localStorage.setItem('sanggar_settings', JSON.stringify(appSettings));
+      localStorage.setItem('sanggar_att_db', JSON.stringify(attendanceData));
+      localStorage.setItem('sanggar_spp_db', JSON.stringify(sppData));
+      localStorage.setItem('sanggar_auth', JSON.stringify(adminAuth));
+    }
+
+    // UI HELPER
+    function showToast(msg, isSuccess = true) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toast-msg');
+      const toastIcon = document.getElementById('toast-icon');
+
+      toastMsg.innerText = msg;
+      toastIcon.className = isSuccess ? "fa-solid fa-circle-check text-emerald-400 text-xl" : "fa-solid fa-circle-exclamation text-rose-400 text-xl";
+
+      toast.classList.remove('-translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.add('-translate-y-20', 'opacity-0');
+        toast.classList.remove('translate-y-0', 'opacity-100');
+      }, 2500);
+    }
+
+    function showView(viewId) {
+      ['home', 'attendance', 'spp', 'members', 'settings'].forEach(v => {
+        const el = document.getElementById(`view-${v}`);
+        if (el) el.classList.add('hidden');
+      });
+
+      if ((viewId === 'spp' || viewId === 'members' || viewId === 'settings') && !isAdminLoggedIn) {
+        showToast("Halaman dikunci! Login admin dahulu.", false);
+        openModal('modal-login');
+        document.getElementById('view-home').classList.remove('hidden');
+        return;
+      }
+
+      const activeEl = document.getElementById(`view-${viewId}`);
+      if (activeEl) {
+        activeEl.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      if (viewId === 'attendance') renderAttendanceTable();
+      else if (viewId === 'spp') renderSPPTable();
+      else if (viewId === 'members') renderMemberList();
+      else if (viewId === 'settings') loadSettingsToForm();
+    }
+
+    // ADMIN AUTH
+    function handleAdminBtnClick() {
+      if (isAdminLoggedIn) showView('spp');
+      else openModal('modal-login');
+    }
+
+    function handleLoginSubmit(e) {
+      e.preventDefault();
+      const u = document.getElementById('login-username').value.trim();
+      const p = document.getElementById('login-password').value.trim();
+      const err = document.getElementById('login-error-msg');
+
+      if (u === adminAuth.user && p === adminAuth.pass) {
+        isAdminLoggedIn = true;
+        closeModal('modal-login');
+        document.getElementById('admin-badge').classList.remove('hidden');
+        document.getElementById('admin-badge').classList.add('flex');
+        document.getElementById('btn-logout').classList.remove('hidden');
+        document.getElementById('btn-edit-coach').classList.remove('hidden');
+        document.getElementById('btn-admin-label').innerText = "Menu Admin (Aktif)";
+        document.getElementById('home-admin-quick-menu').classList.remove('hidden');
+        showToast("Login Admin Berhasil!");
+        showView('spp');
+      } else {
+        err.innerText = "Username atau password salah!";
+        err.classList.remove('hidden');
+      }
+    }
+
+    function logoutAdmin() {
+      isAdminLoggedIn = false;
+      document.getElementById('admin-badge').classList.add('hidden');
+      document.getElementById('admin-badge').classList.remove('flex');
+      document.getElementById('btn-logout').classList.add('hidden');
+      document.getElementById('btn-edit-coach').classList.add('hidden');
+      document.getElementById('btn-admin-label').innerText = "Login Admin";
+      document.getElementById('home-admin-quick-menu').classList.add('hidden');
+      showToast("Telah keluar dari akun admin");
+      showView('home');
+    }
+
+    // LOGO & IDENTITAS SANGGAR
+    function applySettingsToUI() {
+      document.getElementById('app-studio-name').innerText = appSettings.studioName;
+      document.getElementById('hero-studio-name').innerText = appSettings.studioName;
+      document.getElementById('att-card-title').innerText = appSettings.studioName;
+      document.getElementById('spp-card-title').innerText = appSettings.studioName;
+
+      document.getElementById('app-studio-slogan').innerText = appSettings.studioSlogan;
+      document.getElementById('hero-studio-slogan').innerText = appSettings.studioSlogan;
+      document.getElementById('coach-names-display').innerText = appSettings.coachNames;
+
+      const logos = ['top-logo-container', 'hero-logo-container', 'att-card-logo', 'spp-card-logo'];
+      logos.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        if (appSettings.customLogo) {
+          el.innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" alt="Logo" />`;
+        } else {
+          el.innerHTML = `<i class="fa-solid fa-person-dots-from-line"></i>`;
+        }
+      });
+    }
+
+    function handleLogoUpload(e) {
+      const file = e.target.files[0];
+      if (file) {
+        // Kompres logo jika terlalu besar agar ringan di simpan ke spreadsheet
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            const maxW = 200;
+            const scale = maxW / img.width;
+            canvas.width = maxW;
+            canvas.height = img.height * scale;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            appSettings.customLogo = canvas.toDataURL('image/jpeg', 0.8);
+            document.getElementById('setting-logo-preview').innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" />`;
+          };
+          img.src = evt.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function resetToDefaultLogo() {
+      appSettings.customLogo = null;
+      document.getElementById('setting-logo-preview').innerHTML = `<i class="fa-solid fa-image text-slate-400 text-2xl"></i>`;
+      document.getElementById('setting-logo-file').value = "";
+      showToast("Logo dikembalikan ke animasi bawaan");
+    }
+
+    function loadSettingsToForm() {
+      document.getElementById('setting-studio-name').value = appSettings.studioName;
+      document.getElementById('setting-studio-slogan').value = appSettings.studioSlogan;
+      document.getElementById('setting-admin-user').value = adminAuth.user;
+      document.getElementById('setting-admin-pass').value = "";
+      document.getElementById('setting-admin-pass-confirm').value = "";
+      if (appSettings.customLogo) {
+        document.getElementById('setting-logo-preview').innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" />`;
+      }
+    }
+
+    async function saveStudioSettings() {
+      const name = document.getElementById('setting-studio-name').value.trim();
+      const slogan = document.getElementById('setting-studio-slogan').value.trim();
+      if (!name) return showToast("Nama sanggar wajib diisi", false);
+
+      appSettings.studioName = name;
+      appSettings.studioSlogan = slogan;
+      applySettingsToUI();
+
+      await syncToGoogleSheets("Menyimpan logo & identitas ke server...");
+      showToast("Identitas sanggar berhasil disimpan & disinkronkan!");
+    }
+
+    async function saveAdminCredentials() {
+      const u = document.getElementById('setting-admin-user').value.trim();
+      const p = document.getElementById('setting-admin-pass').value.trim();
+      const pc = document.getElementById('setting-admin-pass-confirm').value.trim();
+
+      if (!u) return showToast("Username tidak boleh kosong", false);
+      if (p) {
+        if (p !== pc) return showToast("Konfirmasi password tidak cocok", false);
+        adminAuth.pass = p;
+      }
+      adminAuth.user = u;
+
+      await syncToGoogleSheets("Memperbarui kata sandi admin...");
+      showToast("Password admin berhasil diperbarui!");
+    }
+
+    async function promptEditCoach() {
+      const n = prompt("Masukkan nama pelatih sanggar:", appSettings.coachNames);
+      if (n !== null && n.trim() !== "") {
+        appSettings.coachNames = n.trim();
+        document.getElementById('coach-names-display').innerText = appSettings.coachNames;
+        await syncToGoogleSheets("Memperbarui nama pelatih...");
+        showToast("Nama pelatih berhasil diperbarui");
+      }
+    }
+
+    // SATURDAY CALCULATION
+    function getSaturdaysInMonth(year, monthIndex) {
+      const saturdays = [];
+      const d = new Date(year, monthIndex, 1);
+      while (d.getMonth() === monthIndex) {
+        if (d.getDay() === 6) saturdays.push(new Date(d));
+        d.setDate(d.getDate() + 1);
+      }
+      return saturdays;
+    }
+
+    function formatShortDate(d) {
+      const day = String(d.getDate()).padStart(2, '0');
+      const m = d.toLocaleString('id-ID', { month: 'short' });
+      return `${day}-${m}`;
+    }
+
+    // ABSENSI TABLE
+    function changeAttendancePeriod() {
+      currentAttMonth = parseInt(document.getElementById('select-month').value);
+      currentAttYear = parseInt(document.getElementById('select-year').value);
+      renderAttendanceTable();
+    }
+
+    function renderAttendanceTable() {
+      const saturdays = getSaturdaysInMonth(currentAttYear, currentAttMonth);
+      const periodKey = `${currentAttYear}-${currentAttMonth}`;
+      const mStr = new Date(currentAttYear, currentAttMonth, 1).toLocaleString('id-ID', { month: 'short' });
+      const yStr = String(currentAttYear).slice(-2);
+      const periodLabel = `${mStr}-${yStr}`;
+
+      document.getElementById('att-period-badge').innerText = periodLabel;
+      document.getElementById('att-header-period').innerText = periodLabel;
+      document.getElementById('att-header-period').setAttribute('colspan', saturdays.length);
+
+      const subRow = document.getElementById('att-saturday-subheaders');
+      subRow.innerHTML = "";
+      saturdays.forEach((sat, idx) => {
+        const th = document.createElement('th');
+        th.className = "border border-slate-300 px-2 py-2 text-center min-w-[70px]";
+        th.innerHTML = `<div>Sabtu ${idx + 1}</div><div class="text-[10px] font-normal text-slate-500">${formatShortDate(sat)}</div>`;
+        subRow.appendChild(th);
+      });
+
+      if (!attendanceData[periodKey]) attendanceData[periodKey] = {};
+
+      const tbody = document.getElementById('att-table-body');
+      tbody.innerHTML = "";
+
+      members.forEach((memberName, idx) => {
+        if (!attendanceData[periodKey][memberName]) {
+          attendanceData[periodKey][memberName] = Array(saturdays.length).fill("-");
         }
 
-        tbody.innerHTML = "";
-        res.records.forEach(r => {
-          let badgeColor = "bg-success";
-          if (r.keterangan === "Izin") badgeColor = "bg-warning text-dark";
-          if (r.keterangan === "Sakit") badgeColor = "bg-danger";
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-pink-50/40 transition";
 
-          const tr = document.createElement("tr");
-          tr.innerHTML = `
-            <td>${r.tanggal}</td>
-            <td><strong>${r.nama}</strong><br><small class="text-muted">${r.catatan}</small></td>
-            <td class="text-end"><span class="badge ${badgeColor}">${r.keterangan}</span></td>
+        let satCells = "";
+        saturdays.forEach((_, sIdx) => {
+          const val = attendanceData[periodKey][memberName][sIdx] || "-";
+          let color = "text-slate-400";
+          if (val === "✓") color = "text-emerald-600 font-bold";
+          if (val === "libur") color = "text-purple-600 font-bold text-xs";
+
+          satCells += `
+            <td onclick="toggleAttendanceStatus('${periodKey}', '${memberName}', ${sIdx})" class="border border-slate-300 py-2.5 text-center cursor-pointer select-none hover:bg-pink-100/50 transition">
+              <span class="${color}">${val}</span>
+            </td>
           `;
-          tbody.appendChild(tr);
         });
-      }
-    } catch (e) {
-      tbody.innerHTML = `<tr><td colspan="3" class="text-danger text-center">Gagal memuat rekap absensi</td></tr>`;
-    }
-  }
 
-  function toggleRekapFilterInput() {
-    const type = document.getElementById("rekap-filter-type").value;
-    if (type === "daily") {
-      document.getElementById("rekap-input-date-col").classList.remove("d-none");
-      document.getElementById("rekap-input-year-col").classList.add("d-none");
-    } else {
-      document.getElementById("rekap-input-date-col").classList.add("d-none");
-      document.getElementById("rekap-input-year-col").classList.remove("d-none");
-    }
-  }
-
-  async function submitAbsensi() {
-    const status = document.getElementById("absen-status").value;
-    const catatan = document.getElementById("absen-catatan").value;
-    const btn = document.getElementById("btn-submit-absen");
-    btn.disabled = true;
-    btn.innerText = "Mengirim...";
-
-    try {
-      const res = await callApi({
-        action: "submitAbsen",
-        memberId: currentUser.memberId,
-        nama: currentUser.nama,
-        keterangan: status,
-        catatan: catatan
+        tr.innerHTML = `
+          <td class="border border-slate-300 py-2 text-center font-bold text-slate-600">${idx + 1}</td>
+          <td class="border border-slate-300 px-4 py-2 font-bold text-slate-800 capitalize">${memberName}</td>
+          ${satCells}
+        `;
+        tbody.appendChild(tr);
       });
-      alert(res.message);
-      checkPresensiStatus(true);
-      loadAbsensiReport(true);
-    } catch (e) {
-      alert("Error: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Kirim Presensi Sekarang";
-    }
-  }
-
-  async function submitKas() {
-    const tipe = document.getElementById("kas-tipe").value;
-    const kategori = document.getElementById("kas-kategori").value;
-    const jumlah = document.getElementById("kas-jumlah").value;
-    const keterangan = document.getElementById("kas-keterangan").value;
-    const btn = document.getElementById("btn-submit-kas");
-
-    let namaInput = currentUser.nama;
-    let targetYear = "";
-    let targetMonth = "";
-
-    if (kategori === "Iuran Bulanan") {
-      namaInput = document.getElementById("kas-target-member").value.trim();
-      targetYear = document.getElementById("kas-target-year").value;
-      targetMonth = document.getElementById("kas-target-month").value;
-      if (!namaInput) return alert("Harap isi Nama Member yang membayar iuran");
     }
 
-    if (!jumlah || Number(jumlah) <= 0) return alert("Masukkan jumlah kas yang valid");
-
-    btn.disabled = true;
-    btn.innerText = "Menyimpan...";
-
-    try {
-      const res = await callApi({
-        action: "submitKas",
-        namaInput: namaInput,
-        tipe, kategori, jumlah, keterangan,
-        tahunIuran: targetYear, bulanIuran: targetMonth
-      });
-      alert(res.message);
-      document.getElementById("kas-target-member").value = "";
-      document.getElementById("kas-jumlah").value = "";
-      document.getElementById("kas-keterangan").value = "";
-      
-      // Bersihkan cache agar data terbaru langsung ditarik
-      localStorage.clear();
-      localStorage.setItem("sanggar_user", JSON.stringify(currentUser));
-      
-      if (currentUser.role === "Admin") {
-        loadSummary(true);
-        loadMonthlyReport(true);
+    async function toggleAttendanceStatus(periodKey, memberName, satIdx) {
+      if (!isAdminLoggedIn) {
+        showToast("Absensi hanya dapat diubah oleh Admin!", false);
+        return;
       }
-    } catch (e) { alert("Error: " + e.message); } 
-    finally { btn.disabled = false; btn.innerText = "Simpan Transaksi"; }
-  }
+      const cycle = ["✓", "-", "libur"];
+      const curr = attendanceData[periodKey][memberName][satIdx] || "-";
+      let nIdx = (cycle.indexOf(curr) + 1) % cycle.length;
+      if (nIdx === -1) nIdx = 0;
 
-  async function submitJadwal() {
-    const tanggal = document.getElementById("jadwal-tgl").value;
-    const jamMulai = document.getElementById("jadwal-mulai").value;
-    const jamSelesai = document.getElementById("jadwal-selesai").value;
-    const keterangan = document.getElementById("jadwal-ket").value.trim();
-    const btn = document.getElementById("btn-save-jadwal");
-
-    if (!tanggal || !jamMulai || !jamSelesai) return alert("Harap lengkapi tanggal dan jam latihan!");
-
-    btn.disabled = true;
-    btn.innerText = "Menyimpan...";
-
-    try {
-      const res = await callApi({ action: "setJadwal", tanggal, jamMulai, jamSelesai, keterangan });
-      alert(res.message);
-      checkPresensiStatus(true);
-    } catch (e) {
-      alert("Gagal membuat jadwal: " + e.message);
-    } finally {
-      btn.disabled = false;
-      btn.innerText = "Buka Jadwal Latihan";
+      attendanceData[periodKey][memberName][satIdx] = cycle[nIdx];
+      renderAttendanceTable();
+      await syncToGoogleSheets("Menyimpan absensi...");
     }
-  }
 
-  async function loadMemberListForInput() {
-    try {
-      const res = await callApi({ action: "getMembers" }, false);
-      if (res.success && res.members) {
-        const datalist = document.getElementById("list-member-datalist");
-        datalist.innerHTML = "";
-        res.members.forEach(m => {
-          const opt = document.createElement("option");
-          opt.value = m.nama;
-          datalist.appendChild(opt);
+    // SPP TABLE
+    function renderSPPTable() {
+      currentSPPYear = parseInt(document.getElementById('spp-year-select').value);
+      document.getElementById('spp-table-heading-text').innerText = `SPP Tahun ${currentSPPYear} (12 Bulan Penuh)`;
+      document.getElementById('spp-total-members').innerText = `${members.length} Anak`;
+      document.getElementById('spp-print-date').innerText = `Dicetak tanggal: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
+
+      const tbody = document.getElementById('spp-table-body');
+      tbody.innerHTML = "";
+
+      members.forEach((memberName, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-amber-50/50 transition border-b border-slate-200";
+
+        let monthCells = "";
+        for (let m = 0; m < 12; m++) {
+          const key = `${currentSPPYear}-${m}`;
+          const rec = sppData[key] ? sppData[key][memberName] : null;
+          let cellContent = `<span class="text-slate-300 font-semibold">-</span>`;
+
+          if (rec && typeof rec.sppPaid === 'number') {
+            const paid = rec.sppPaid;
+            const regFee = rec.regFee || 0;
+
+            if (paid >= STANDARD_SPP) {
+              cellContent = `
+                <div class="inline-block bg-emerald-50 text-emerald-800 border border-emerald-300 px-2 py-1 rounded-lg text-[11px] font-bold leading-tight">
+                  <div>Lunas</div>
+                  <div class="text-[9px] font-normal text-emerald-600">(${Math.round(paid/1000)}rb)</div>
+                  ${regFee > 0 ? `<div class="text-[9px] text-pink-600">+Daftar ${Math.round(regFee/1000)}rb</div>` : ''}
+                </div>
+              `;
+            } else {
+              const diff = STANDARD_SPP - paid;
+              cellContent = `
+                <div class="inline-block bg-amber-50 text-amber-900 border border-amber-300 px-2 py-1 rounded-lg text-[10px] font-bold leading-tight shadow-sm">
+                  <div>Bayar: ${Math.round(paid/1000)}rb</div>
+                  <div class="text-rose-600 font-extrabold">kurang ${Math.round(diff/1000)}rb</div>
+                  ${regFee > 0 ? `<div class="text-[9px] text-pink-600">+Daftar ${Math.round(regFee/1000)}rb</div>` : ''}
+                </div>
+              `;
+            }
+          }
+
+          monthCells += `
+            <td onclick="openSPPModal('${memberName}', ${m}, ${currentSPPYear})" class="border border-slate-300 p-1.5 text-center cursor-pointer hover:bg-amber-100/50 transition">
+              ${cellContent}
+            </td>
+          `;
+        }
+
+        tr.innerHTML = `
+          <td class="border border-slate-300 py-2.5 text-center font-bold text-slate-600" style="width: 48px;">${idx + 1}</td>
+          <td class="border border-slate-300 px-4 py-2.5 font-bold text-slate-900 text-left capitalize bg-slate-50/50" style="width: 170px; min-width: 170px;">
+            ${memberName}
+          </td>
+          ${monthCells}
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openSPPModal(memberName, monthIndex, year) {
+      if (!isAdminLoggedIn) return;
+      activeSPPEdit = { memberName, monthIndex, year };
+      const key = `${year}-${monthIndex}`;
+      const rec = sppData[key] ? sppData[key][memberName] : null;
+
+      document.getElementById('modal-spp-member-name').innerText = memberName;
+      document.getElementById('modal-spp-period-label').innerText = `Bulan: ${MONTH_NAMES[monthIndex]} ${year}`;
+
+      const amountInput = document.getElementById('spp-input-amount');
+      const isNewCheck = document.getElementById('spp-is-new-member');
+      const regFeeInput = document.getElementById('spp-input-reg-fee');
+
+      if (rec) {
+        amountInput.value = rec.sppPaid;
+        isNewCheck.checked = !!rec.isNew;
+        regFeeInput.value = rec.regFee || "";
+      } else {
+        amountInput.value = "75000";
+        isNewCheck.checked = false;
+        regFeeInput.value = "";
+      }
+
+      toggleRegFeeInput();
+      calculateSPPDiff();
+      openModal('modal-spp');
+    }
+
+    function toggleRegFeeInput() {
+      const isNew = document.getElementById('spp-is-new-member').checked;
+      document.getElementById('reg-fee-field').classList.toggle('hidden', !isNew);
+    }
+
+    function calculateSPPDiff() {
+      const val = parseFloat(document.getElementById('spp-input-amount').value) || 0;
+      const calc = document.getElementById('spp-calc-status');
+      if (val >= STANDARD_SPP) {
+        calc.className = "text-xs font-bold mt-1.5 text-emerald-600";
+        calc.innerText = `Status: Lunas (${Math.round(val/1000)}rb)`;
+      } else {
+        const diff = STANDARD_SPP - val;
+        calc.className = "text-xs font-bold mt-1.5 text-rose-600";
+        calc.innerText = `Status: Bayar: ${Math.round(val/1000)}rb, kurang ${Math.round(diff/1000)}rb`;
+      }
+    }
+
+    async function saveSPPRecord() {
+      const { memberName, monthIndex, year } = activeSPPEdit;
+      const key = `${year}-${monthIndex}`;
+      const amount = parseFloat(document.getElementById('spp-input-amount').value) || 0;
+      const isNew = document.getElementById('spp-is-new-member').checked;
+      const regFee = isNew ? (parseFloat(document.getElementById('spp-input-reg-fee').value) || 0) : 0;
+
+      if (!sppData[key]) sppData[key] = {};
+      sppData[key][memberName] = { sppPaid: amount, isNew: isNew, regFee: regFee };
+
+      renderSPPTable();
+      closeModal('modal-spp');
+      await syncToGoogleSheets("Menyimpan pembayaran SPP...");
+      showToast("Data pembayaran SPP tersimpan!");
+    }
+
+    async function deleteSPPRecord() {
+      const { memberName, monthIndex, year } = activeSPPEdit;
+      const key = `${year}-${monthIndex}`;
+      if (sppData[key] && sppData[key][memberName]) {
+        delete sppData[key][memberName];
+        renderSPPTable();
+        closeModal('modal-spp');
+        await syncToGoogleSheets("Menghapus data SPP...");
+        showToast("Data SPP dihapus");
+      }
+    }
+
+    // MEMBER CRUD
+    function renderMemberList() {
+      const container = document.getElementById('member-cards-container');
+      container.innerHTML = "";
+      document.getElementById('member-badge-count').innerText = `${members.length} Member`;
+
+      members.forEach((name, idx) => {
+        const card = document.createElement('div');
+        card.className = "flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl";
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <span class="w-7 h-7 rounded-xl bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center">${idx + 1}</span>
+            <span class="font-bold text-slate-800 capitalize">${name}</span>
+          </div>
+          <div class="flex items-center gap-1">
+            <button onclick="editMemberName(${idx})" class="p-1.5 text-slate-400 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition">
+              <i class="fa-solid fa-pen text-xs"></i>
+            </button>
+            <button onclick="deleteMember(${idx})" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition">
+              <i class="fa-solid fa-trash-can text-xs"></i>
+            </button>
+          </div>
+        `;
+        container.appendChild(card);
+      });
+    }
+
+    function openMemberModal(idx = null) {
+      const title = document.getElementById('modal-member-title');
+      const input = document.getElementById('member-name-input');
+      const hiddenId = document.getElementById('member-edit-id');
+
+      if (idx !== null) {
+        title.innerText = "Edit Nama Member";
+        input.value = members[idx];
+        hiddenId.value = idx;
+      } else {
+        title.innerText = "Tambah Member Baru";
+        input.value = "";
+        hiddenId.value = "";
+      }
+      openModal('modal-member');
+      setTimeout(() => input.focus(), 150);
+    }
+
+    function editMemberName(idx) { openMemberModal(idx); }
+
+    async function saveMember() {
+      const input = document.getElementById('member-name-input');
+      const hiddenId = document.getElementById('member-edit-id');
+      const name = input.value.trim();
+
+      if (!name) return showToast("Nama member tidak boleh kosong!", false);
+
+      if (hiddenId.value !== "") {
+        const oldName = members[hiddenId.value];
+        members[hiddenId.value] = name;
+        renameKeys(oldName, name);
+      } else {
+        members.push(name);
+      }
+
+      renderMemberList();
+      renderAttendanceTable();
+      renderSPPTable();
+      closeModal('modal-member');
+
+      await syncToGoogleSheets("Menyimpan daftar member...");
+      showToast("Data member berhasil disimpan!");
+    }
+
+    function renameKeys(oldName, newName) {
+      if (oldName === newName) return;
+      Object.keys(attendanceData).forEach(k => {
+        if (attendanceData[k][oldName]) {
+          attendanceData[k][newName] = attendanceData[k][oldName];
+          delete attendanceData[k][oldName];
+        }
+      });
+      Object.keys(sppData).forEach(k => {
+        if (sppData[k][oldName]) {
+          sppData[k][newName] = sppData[k][oldName];
+          delete sppData[k][oldName];
+        }
+      });
+    }
+
+    async function deleteMember(idx) {
+      const target = members[idx];
+      if (confirm(`Hapus member "${target}"? Seluruh rekaman absen & SPP akan dihapus.`)) {
+        members.splice(idx, 1);
+        renderMemberList();
+        renderAttendanceTable();
+        renderSPPTable();
+        await syncToGoogleSheets(`Menghapus member ${target}...`);
+        showToast(`Member ${target} telah dihapus`);
+      }
+    }
+
+    // MODAL CONTROL
+    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    // DOWNLOAD GAMBAR LENGKAP
+    async function downloadSPPImage() {
+      showToast("Memproses gambar laporan SPP...", true);
+      const target = document.getElementById('spp-export-wrapper');
+
+      try {
+        const canvas = await html2canvas(target, {
+          scale: 2.2,
+          backgroundColor: '#FFFFFF',
+          useCORS: true,
+          logging: false,
+          windowWidth: 1400,
+          scrollX: 0,
+          scrollY: 0,
+          ignoreElements: function(el) {
+            return el.classList && el.classList.contains('no-export');
+          }
         });
-      }
-    } catch (err) { console.error(err); }
-  }
 
-  async function loadSummary(forceRefresh = false) {
-    const cacheKey = "cache_summary_kas";
-    if (!forceRefresh) {
-      const cached = localStorage.getItem(cacheKey);
-      if (cached) {
-        document.getElementById("display-saldo").innerText = formatRupiah(Number(cached));
+        const link = document.createElement('a');
+        link.download = `Laporan_SPP_${appSettings.studioName.replace(/\s+/g, '_')}_${currentSPPYear}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast("Laporan SPP berhasil diunduh sebagai Gambar!");
+      } catch (err) {
+        showToast("Gagal mengunduh gambar SPP.", false);
       }
     }
 
-    try {
-      const res = await callApi({ action: "getSummary" }, false);
-      if (res.success) {
-        localStorage.setItem(cacheKey, res.saldo);
-        document.getElementById("display-saldo").innerText = formatRupiah(res.saldo);
+    async function downloadAttendanceImage() {
+      showToast("Memproses gambar absensi...", true);
+      const target = document.getElementById('attendance-export-wrapper');
+
+      try {
+        const canvas = await html2canvas(target, {
+          scale: 2.2,
+          backgroundColor: '#FFFFFF',
+          useCORS: true,
+          logging: false,
+          ignoreElements: function(el) {
+            return el.classList && el.classList.contains('no-export');
+          }
+        });
+
+        const periodBadge = document.getElementById('att-period-badge').innerText;
+        const link = document.createElement('a');
+        link.download = `Absensi_${appSettings.studioName.replace(/\s+/g, '_')}_${periodBadge}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast("Absensi berhasil diunduh sebagai Gambar!");
+      } catch (err) {
+        showToast("Gagal mengunduh gambar absensi.", false);
       }
-    } catch (err) { console.error(err); }
-  }
-
-  async function submitAddMember() {
-    const memberId = document.getElementById("new-id").value.trim();
-    const nama = document.getElementById("new-nama").value.trim();
-    const role = document.getElementById("new-role").value;
-    const pin = document.getElementById("new-pin").value.trim();
-    const telepon = document.getElementById("new-telp").value.trim();
-    const btn = document.getElementById("btn-add-member");
-
-    if (!memberId || !nama || !pin) return alert("ID, Nama, dan PIN wajib diisi");
-
-    btn.disabled = true;
-    btn.innerText = "Mendaftarkan...";
-
-    try {
-      const res = await callApi({ action: "addMember", memberId, nama, role, pin, telepon });
-      alert(res.message);
-      if (res.success) {
-        document.getElementById("new-id").value = "";
-        document.getElementById("new-nama").value = "";
-        document.getElementById("new-pin").value = "";
-        document.getElementById("new-telp").value = "";
-        loadMemberListForInput();
-      }
-    } catch (e) { alert("Error: " + e.message); } 
-    finally { btn.disabled = false; btn.innerText = "Daftarkan Anggota"; }
-  }
-
-  async function submitUpdateProfile() {
-    const nama = document.getElementById("edit-nama").value.trim();
-    const pin = document.getElementById("edit-pin").value.trim();
-    const telepon = document.getElementById("edit-telp").value.trim();
-    const btn = document.getElementById("btn-update-profile");
-
-    btn.disabled = true;
-    btn.innerText = "Menyimpan...";
-
-    try {
-      const res = await callApi({ action: "updateProfile", memberId: currentUser.memberId, nama, pin, telepon });
-      alert(res.message);
-      if (res.success) {
-        currentUser = res.user;
-        localStorage.setItem("sanggar_user", JSON.stringify(currentUser));
-        document.getElementById("welcome-text").innerText = `Halo, ${currentUser.nama}`;
-        document.getElementById("user-initial-badge").innerText = currentUser.nama.charAt(0).toUpperCase();
-        document.getElementById("edit-pin").value = "";
-      }
-    } catch (e) { alert("Error: " + e.message); } 
-    finally { btn.disabled = false; btn.innerText = "Simpan Perubahan"; }
-  }
-
-  function exportToImage(elementId, filePrefix) {
-    const element = document.getElementById(elementId);
-    html2canvas(element, { scale: 2 }).then(canvas => {
-      const link = document.createElement("a");
-      link.download = `${filePrefix}-${new Date().getTime()}.png`;
-      link.href = canvas.toDataURL("image/png");
-      link.click();
-    });
-  }
-
-  function toggleIuranFields() {
-    const kategori = document.getElementById("kas-kategori").value;
-    document.getElementById("iuran-extra-fields").style.display = (kategori === "Iuran Bulanan") ? "block" : "none";
-  }
-
-  function formatRupiah(angka) {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(angka);
-  }
-
-  function logout() {
-    currentUser = null;
-    localStorage.clear();
-    document.getElementById("login-name").value = "";
-    document.getElementById("login-pin").value = "";
-    document.getElementById("section-app").classList.add("d-none");
-    document.getElementById("section-login").classList.remove("d-none");
-  }
-</script>
+    }
+  </script>
 </body>
 </html>
