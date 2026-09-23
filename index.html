@@ -48,28 +48,21 @@
 </head>
 <body class="p-3 sm:p-6 md:p-8">
 
-  <!-- FORM TERSEMBUNYI UNTUK PENGIRIMAN DATA ANTI-CORS TANPA BATAS KUOTA -->
-  <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
-  <form id="sync_form" method="POST" target="hidden_iframe" style="display:none;">
-    <input type="hidden" name="tipe" id="sync_form_tipe" value="" />
-    <input type="hidden" name="data" id="sync_form_data" value="" />
-  </form>
-
   <!-- ================= LOADING OVERLAY ================= -->
   <div id="loading-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4 transition-opacity duration-300">
     <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 border border-pink-100 animate-pop max-w-xs text-center">
       <div class="relative w-16 h-16 flex items-center justify-center">
         <div class="w-16 h-16 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"></div>
-        <i class="fa-solid fa-table text-pink-500 text-xl absolute"></i>
+        <i class="fa-solid fa-cloud-arrow-up text-pink-500 text-xl absolute"></i>
       </div>
       <div>
         <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang ambil data sanggar...</h4>
-        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Membaca Tabel Google Spreadsheet</p>
+        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi Tabel Google Spreadsheet</p>
       </div>
     </div>
   </div>
 
-  <!-- ================= TOAST ================= -->
+  <!-- ================= TOAST NOTIFIKASI ================= -->
   <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
     <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
     <span id="toast-msg">Pesan</span>
@@ -199,7 +192,7 @@
             <div id="att-period-badge" class="heading-font inline-block bg-pink-50 text-pink-700 text-base font-bold px-4 py-1.5 rounded-2xl border border-pink-200">
               Sep-26
             </div>
-            <p class="text-[10px] text-slate-400 mt-1">Terekam di Spreadsheet</p>
+            <p class="text-[10px] text-slate-400 mt-1">Tersinkron di Spreadsheet</p>
           </div>
         </div>
 
@@ -495,7 +488,7 @@
           <p id="spp-calc-status" class="text-xs font-bold mt-1.5 text-emerald-600">Status: Menunggu input...</p>
         </div>
 
-        <!-- CEKLIS ANGGOTA BARU (BAYAR PENDAFTARAN) -->
+        <!-- CEKLIS ANGGOTA BARU -->
         <div class="p-3 bg-pink-50/70 rounded-xl border border-pink-200 space-y-2">
           <div class="flex items-center gap-2">
             <input type="checkbox" id="spp-is-new-member" onchange="toggleRegFeeInput()" class="w-4 h-4 rounded text-pink-600 focus:ring-pink-400 cursor-pointer" />
@@ -582,7 +575,7 @@
     let currentSPPYear = 2026;
     let activeSPPEdit = { memberName: "", monthIndex: 0, year: 2026 };
 
-    function showLoading(title = "Sedang ambil data sanggar...", desc = "Membaca Tabel Google Spreadsheet") {
+    function showLoading(title = "Sedang ambil data sanggar...", desc = "Menghubungkan ke Spreadsheet") {
       document.getElementById('loading-title').innerText = title;
       document.getElementById('loading-desc').innerText = desc;
       document.getElementById('loading-overlay').classList.remove('hidden');
@@ -599,15 +592,15 @@
       renderMemberList();
       showView('home');
 
-      // Ambil data langsung dari Tabel Spreadsheet Google
+      // Ambil data langsung dari Google Spreadsheet
       fetchOnlineData(false);
     });
 
-    // 1. BACA DATA DARI TABEL GOOGLE SPREADSHEET VIA JSONP
+    // 1. AMBIL DATA DARI GOOGLE SPREADSHEET VIA JSONP (BEBAS CORS)
     function fetchOnlineData(isManualRefresh = false) {
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
         hideLoading();
-        if (isManualRefresh) showToast("URL Google Apps Script belum dimasukkan!", false);
+        if (isManualRefresh) showToast("URL Apps Script belum dimasukkan!", false);
         return;
       }
 
@@ -645,30 +638,37 @@
       document.body.appendChild(script);
     }
 
-    // 2. KIRIM DATA KE GOOGLE APPS SCRIPT VIA FORM POST TERSEMBUNYI (100% BEBAS DARI BLOKIR CORS)
-    function kirimKeGoogleSheet(tipe, dataObj, customMsg = "Menyimpan ke Spreadsheet...") {
+    // 2. KIRIM PERUBAHAN SECARA LANGSUNG MENGGUNAKAN JSONP (100% BEBAS DARI BLOKIR CORS/IFRAME)
+    function kirimJSONP(params, customMsg = "Menyimpan ke Spreadsheet...") {
       saveToLocalStorage();
 
       if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) return;
 
-      showLoading(customMsg, "Menulis baris ke Google Sheets...");
+      showLoading(customMsg, "Menulis baris ke Spreadsheet...");
 
-      try {
-        const form = document.getElementById('sync_form');
-        form.action = SCRIPT_URL;
-        document.getElementById('sync_form_tipe').value = tipe;
-        document.getElementById('sync_form_data').value = JSON.stringify(dataObj);
-        form.submit();
-
-        setTimeout(() => {
-          hideLoading();
-          showToast("Tersimpan di Google Sheets!");
-        }, 1200);
-      } catch(err) {
-        console.error(err);
+      const callbackName = "cb_" + Math.floor(Math.random() * 1000000);
+      window[callbackName] = function(res) {
         hideLoading();
-        showToast("Tersimpan secara lokal di browser.", true);
+        delete window[callbackName];
+        if (res && res.status === "success") {
+          showToast("Tersimpan di Google Sheets!");
+        }
+      };
+
+      let queryArr = [`callback=${callbackName}`, `t=${new Date().getTime()}`];
+      for (const k in params) {
+        queryArr.push(`${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
       }
+
+      const sc = document.createElement('script');
+      sc.src = `${SCRIPT_URL}?${queryArr.join('&')}`;
+      sc.onload = function() { sc.remove(); };
+      sc.onerror = function() {
+        sc.remove();
+        hideLoading();
+        showToast("Gagal menyimpan ke Google Sheets.", false);
+      };
+      document.body.appendChild(sc);
     }
 
     function loadFromLocalStorage() {
@@ -851,7 +851,16 @@
       if (p) appSettings.adminPass = p;
 
       applySettingsToUI();
-      kirimKeGoogleSheet("settings", appSettings, "Menyimpan pengaturan ke Spreadsheet...");
+
+      kirimJSONP({
+        action: "save_settings",
+        studioName: appSettings.studioName,
+        studioSlogan: appSettings.studioSlogan,
+        coachNames: appSettings.coachNames,
+        customLogo: appSettings.customLogo,
+        adminUser: appSettings.adminUser,
+        adminPass: appSettings.adminPass
+      }, "Menyimpan pengaturan ke Spreadsheet...");
     }
 
     function getSaturdaysInMonth(year, monthIndex) {
@@ -932,6 +941,7 @@
       });
     }
 
+    // SIMPAN ABSENSI LANGSUNG KE TABEL GOOGLE SPREADSHEET
     function toggleAttendanceStatus(tahun, bulan, memberName, satIdx) {
       if (!isAdminLoggedIn) {
         showToast("Absensi hanya dapat diubah oleh Admin!", false);
@@ -946,15 +956,16 @@
       attendanceData[periodKey][memberName][satIdx] = cycle[nIdx];
       renderAttendanceTable();
 
-      kirimKeGoogleSheet("absensi", {
+      kirimJSONP({
+        action: "save_absensi",
         tahun: tahun,
         bulan: bulan,
         nama: memberName,
-        sabtu: attendanceData[periodKey][memberName]
-      }, "Menyimpan absen ke tabel...");
+        sabtu: JSON.stringify(attendanceData[periodKey][memberName])
+      }, "Menyimpan absensi ke Spreadsheet...");
     }
 
-    // TABEL SPP - BADGE LUNAS & KURANG DENGAN WARNA TEGAS (ANTI-BLANK DI GAMBAR)
+    // TABEL SPP DENGAN BADGE SOLID & TULISAN LUNAS TEGAS
     function renderSPPTable() {
       currentSPPYear = parseInt(document.getElementById('spp-year-select').value);
       document.getElementById('spp-table-heading-text').innerText = `SPP Tahun ${currentSPPYear} (12 Bulan Penuh)`;
@@ -978,16 +989,16 @@
             const isLunas = String(valS).includes("Lunas");
             if (isLunas) {
               cellContent = `
-                <div style="background-color:#d1fae5; border:1.5px solid #10b981; color:#046c4e; border-radius:6px; padding:3px 2px; font-weight:800; font-size:11px; line-height:1.2; text-align:center;">
-                  <span style="color:#046c4e; font-weight:800; display:block;">LUNAS</span>
+                <div style="background-color:#d1fae5; border:1.5px solid #10b981; border-radius:6px; padding:3px 2px; line-height:1.2; text-align:center;">
+                  <span style="color:#046c4e; font-weight:800; font-size:11px; display:block;">LUNAS</span>
                   <span style="color:#065f46; font-size:9px; font-weight:700; display:block;">(75rb)</span>
-                  ${String(valS).includes("+Daftar") ? `<span style="color:#9d174d; font-size:8px; font-weight:800; display:block;">${valS.split("+Daftar")[1] ? '+Daftar' + valS.split("+Daftar")[1] : '+Daftar'}</span>` : ''}
+                  ${String(valS).includes("+Daftar") ? `<span style="color:#9d174d; font-size:8px; font-weight:800; display:block;">${valS.split("+Daftar")[1] ? '+Daftar ' + valS.split("+Daftar")[1] : '+Daftar'}</span>` : ''}
                 </div>
               `;
             } else {
               cellContent = `
-                <div style="background-color:#fef3c7; border:1.5px solid #f59e0b; color:#92400e; border-radius:6px; padding:3px 2px; font-weight:700; font-size:9px; line-height:1.2; text-align:center;">
-                  <span style="color:#92400e; display:block;">${valS.split('+Daftar')[0]}</span>
+                <div style="background-color:#fef3c7; border:1.5px solid #f59e0b; border-radius:6px; padding:3px 2px; line-height:1.2; text-align:center;">
+                  <span style="color:#92400e; font-size:9px; font-weight:700; display:block;">${valS.split('+Daftar')[0]}</span>
                   ${String(valS).includes("+Daftar") ? `<span style="color:#9d174d; font-size:8px; font-weight:800; display:block;">+Daftar ${valS.split('+Daftar')[1] || ''}</span>` : ''}
                 </div>
               `;
@@ -1070,6 +1081,7 @@
       }
     }
 
+    // SIMPAN SPP LANGSUNG KE TABEL GOOGLE SPREADSHEET
     function saveSPPRecord() {
       const { memberName, monthIndex, year } = activeSPPEdit;
       const key = `${year}-${monthIndex}`;
@@ -1093,12 +1105,13 @@
       renderSPPTable();
       closeModal('modal-spp');
 
-      kirimKeGoogleSheet("spp", {
+      kirimJSONP({
+        action: "save_spp",
         tahun: year,
         nama: memberName,
         bulanIndex: monthIndex,
         bayar: teksHasil
-      }, "Menulis kas SPP ke tabel...");
+      }, "Menulis kas SPP ke Spreadsheet...");
     }
 
     function deleteSPPRecord() {
@@ -1109,12 +1122,13 @@
         renderSPPTable();
         closeModal('modal-spp');
 
-        kirimKeGoogleSheet("spp", {
+        kirimJSONP({
+          action: "save_spp",
           tahun: year,
           nama: memberName,
           bulanIndex: monthIndex,
           bayar: ""
-        }, "Menghapus catatan SPP...");
+        }, "Menghapus catatan SPP di Spreadsheet...");
       }
     }
 
@@ -1182,7 +1196,10 @@
       renderSPPTable();
       closeModal('modal-member');
 
-      kirimKeGoogleSheet("members", members, "Menyimpan member ke tabel...");
+      kirimJSONP({
+        action: "save_members",
+        members: JSON.stringify(members)
+      }, "Menyimpan member ke Spreadsheet...");
     }
 
     function deleteMember(idx) {
@@ -1192,14 +1209,17 @@
         renderMemberList();
         renderAttendanceTable();
         renderSPPTable();
-        kirimKeGoogleSheet("members", members, "Menghapus member...");
+        kirimJSONP({
+          action: "save_members",
+          members: JSON.stringify(members)
+        }, "Menghapus member di Spreadsheet...");
       }
     }
 
     function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // UNDUH GAMBAR SPP (DIJAMIN KATA LUNAS MUNCUL DI GAMBAR PNG)
+    // UNDUH GAMBAR SPP (KATA LUNAS DIJAMIN JELAS DI HASIL UNDUHAN PNG)
     async function downloadSPPImage() {
       showToast("Memproses gambar laporan SPP...", true);
       const target = document.getElementById('spp-export-wrapper');
