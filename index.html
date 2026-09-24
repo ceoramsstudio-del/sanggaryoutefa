@@ -3,1307 +3,347 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Absensi & SPP Sanggar Tari YOUTEFA</title>
-  <!-- Tailwind CSS -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@500;600;700;800&display=swap" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  <!-- html2canvas -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          fontFamily: {
-            fredoka: ['Fredoka', 'sans-serif'],
-            quicksand: ['Quicksand', 'sans-serif']
-          }
-        }
-      }
-    }
-  </script>
-
+  <title>Sistem Absensi Hari Sabtu</title>
   <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --primary: #2563eb;
+      --border: #e2e8f0;
+      --hadir-bg: #dcfce7;
+      --hadir-text: #15803d;
+      --absen-bg: #fee2e2;
+      --absen-text: #b91c1c;
+      --libur-bg: #dbeafe;
+      --libur-text: #1d4ed8;
+    }
     body {
-      font-family: 'Quicksand', sans-serif;
-      background: radial-gradient(circle at 10% 20%, #FFF5F7 0%, #F5F3FF 50%, #FFFDE7 100%);
-      min-height: 100vh;
-      color: #334155;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      margin: 0;
+      padding: 16px;
+      color: #1e293b;
     }
-    .heading-font { font-family: 'Fredoka', sans-serif; }
-    ::-webkit-scrollbar { height: 8px; width: 8px; }
-    ::-webkit-scrollbar-track { background: #F1F5F9; }
-    ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-    @keyframes popIn {
-      0% { transform: scale(0.92); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
+    .container {
+      max-width: 950px;
+      margin: auto;
+      background: var(--card);
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
     }
-    .animate-pop { animation: popIn 0.22s ease-out forwards; }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .badge-jadwal {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .actions {
+      display: flex;
+      gap: 8px;
+    }
+    button {
+      background: var(--primary);
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    button:hover { opacity: 0.9; }
+    .table-responsive {
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 10px 12px;
+    }
+    th {
+      background: #f1f5f9;
+      font-size: 13px;
+    }
+    .cell-absen {
+      cursor: pointer;
+      text-align: center;
+      font-weight: 500;
+      border-radius: 4px;
+      transition: all 0.2s;
+    }
+    .cell-absen:hover { filter: brightness(0.95); }
+    .status-hadir {
+      background-color: var(--hadir-bg);
+      color: var(--hadir-text);
+    }
+    .status-absen {
+      background-color: var(--absen-bg);
+      color: var(--absen-text);
+    }
+    .status-libur {
+      background-color: var(--libur-bg);
+      color: var(--libur-text);
+    }
+    .status-kosong {
+      background: #f8fafc;
+      color: #94a3b8;
+    }
+    /* Modal Popup */
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.4);
+      align-items: center;
+      justify-content: center;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 400px;
+    }
+    .modal-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 15px;
+    }
+    .btn-hadir { background: #16a34a; }
+    .btn-tidak-masuk { background: #dc2626; }
+    .btn-libur { background: #2563eb; }
+    .btn-batal { background: #64748b; }
   </style>
 </head>
-<body class="p-3 sm:p-6 md:p-8">
+<body>
 
-  <!-- ================= LOADING OVERLAY ================= -->
-  <div id="loading-overlay" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex flex-col items-center justify-center gap-4 transition-opacity duration-300">
-    <div class="bg-white p-6 sm:p-8 rounded-3xl shadow-2xl flex flex-col items-center gap-4 border border-pink-100 animate-pop max-w-xs text-center">
-      <div class="relative w-16 h-16 flex items-center justify-center">
-        <div class="w-16 h-16 border-4 border-pink-200 border-t-pink-500 rounded-full animate-spin"></div>
-        <i class="fa-solid fa-cloud-arrow-up text-pink-500 text-xl absolute"></i>
-      </div>
-      <div>
-        <h4 id="loading-title" class="heading-font text-base font-bold text-slate-800">Sedang memproses...</h4>
-        <p id="loading-desc" class="text-xs text-slate-500 mt-1">Sinkronisasi ke Google Spreadsheet</p>
-      </div>
+<div class="container">
+  <div class="header">
+    <div>
+      <h2 style="margin:0 0 4px 0;">Presensi Hari Sabtu</h2>
+      <div id="labelBulan" style="font-weight: 600; color: #64748b;"></div>
+    </div>
+    <div class="badge-jadwal">
+      Jadwal: Sabtu | 09:00 - 12:00 WIB
+    </div>
+    <div class="actions">
+      <button onclick="bukaModalMember()">+ Kelola Member</button>
     </div>
   </div>
 
-  <!-- ================= TOAST NOTIFIKASI ================= -->
-  <div id="toast" class="fixed top-5 right-5 z-50 transform -translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white font-semibold px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3">
-    <i id="toast-icon" class="fa-solid fa-circle-check text-emerald-400 text-xl"></i>
-    <span id="toast-msg">Pesan</span>
+  <div class="table-responsive">
+    <table id="tabelAbsen">
+      <thead>
+        <tr id="headerRow"></tr>
+      </thead>
+      <tbody id="bodyRow">
+        <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
+      </tbody>
+    </table>
   </div>
+</div>
 
-  <div class="max-w-7xl mx-auto">
-    
-    <!-- ================= HEADER UTAMA ================= -->
-    <header class="bg-white/95 backdrop-blur-md rounded-3xl p-4 sm:p-5 shadow-sm border border-pink-100 flex flex-wrap items-center justify-between gap-4 mb-6">
-      <div class="flex items-center gap-4 cursor-pointer" onclick="showView('home')">
-        <div id="top-logo-container" class="w-14 h-14 rounded-2xl flex items-center justify-center bg-gradient-to-tr from-pink-500 to-rose-400 text-white shadow-md shadow-pink-200 overflow-hidden flex-shrink-0">
-          <i class="fa-solid fa-person-dots-from-line text-2xl"></i>
-        </div>
-        <div>
-          <h1 id="app-studio-name" class="heading-font text-xl sm:text-2xl font-bold text-slate-800 tracking-wide">Sanggar Tari YOUTEFA</h1>
-          <p id="app-studio-slogan" class="text-xs sm:text-sm text-pink-600 font-semibold">Tari Seni & Kreasi Tradisional Anak</p>
-        </div>
-      </div>
-
-      <div class="flex items-center gap-2 sm:gap-3">
-        <button onclick="fetchOnlineData(true)" title="Sinkron Ulang Data" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold flex items-center gap-2 transition">
-          <i class="fa-solid fa-rotate text-xs"></i>
-          <span>Perbarui Data</span>
-        </button>
-
-        <div id="admin-badge" class="hidden items-center gap-2 bg-emerald-50 text-emerald-700 px-3.5 py-1.5 rounded-full text-xs font-bold border border-emerald-300">
-          <i class="fa-solid fa-circle-check text-emerald-600"></i>
-          <span>Admin Aktif</span>
-        </div>
-        <button id="btn-logout" onclick="logoutAdmin()" class="hidden px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200 transition">
-          <i class="fa-solid fa-right-from-bracket mr-1"></i> Keluar
-        </button>
-      </div>
-    </header>
-
-    <!-- ================= VIEW 1: HOME ================= -->
-    <section id="view-home" class="py-4">
-      <div class="bg-white rounded-3xl p-6 sm:p-12 shadow-md border border-pink-100 text-center max-w-2xl mx-auto relative overflow-hidden">
-        <div class="absolute -top-10 -right-10 w-36 h-36 bg-pink-100 rounded-full blur-2xl opacity-60"></div>
-        <div class="absolute -bottom-10 -left-10 w-36 h-36 bg-purple-100 rounded-full blur-2xl opacity-60"></div>
-        
-        <div id="hero-logo-container" class="w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-3xl bg-gradient-to-tr from-pink-500 via-rose-400 to-amber-400 flex items-center justify-center text-white shadow-xl shadow-pink-200 mb-5 overflow-hidden">
-          <i class="fa-solid fa-hands-clapping text-4xl"></i>
-        </div>
-
-        <h2 id="hero-studio-name" class="heading-font text-2xl sm:text-4xl font-extrabold text-slate-800 mb-2">Sanggar Tari YOUTEFA</h2>
-        <p id="hero-studio-slogan" class="text-sm sm:text-base text-slate-600 mb-8 max-w-md mx-auto">Portal Presensi & Administrasi Pembelajaran Tari Anak-Anak</p>
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-md mx-auto">
-          <button onclick="showView('attendance')" class="flex items-center justify-center gap-3 p-4 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-2xl shadow-lg shadow-pink-200 font-bold transition transform active:scale-95 text-base">
-            <i class="fa-solid fa-calendar-check text-xl"></i>
-            <span>Buka Absensi</span>
-          </button>
-
-          <button id="btn-home-admin" onclick="handleAdminBtnClick()" class="flex items-center justify-center gap-3 p-4 bg-slate-800 hover:bg-slate-900 text-white rounded-2xl shadow-lg shadow-slate-300 font-bold transition transform active:scale-95 text-base">
-            <i class="fa-solid fa-lock text-xl text-amber-400"></i>
-            <span id="btn-admin-label">Login Admin</span>
-          </button>
-        </div>
-
-        <div id="home-admin-quick-menu" class="hidden mt-8 pt-6 border-t border-slate-100 grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <button onclick="showView('spp')" class="flex items-center justify-center gap-2 p-3 bg-amber-50 hover:bg-amber-100 text-amber-900 rounded-xl text-xs font-bold border border-amber-200">
-            <i class="fa-solid fa-money-bill-wave text-amber-600"></i> Laporan SPP
-          </button>
-          <button onclick="showView('members')" class="flex items-center justify-center gap-2 p-3 bg-purple-50 hover:bg-purple-100 text-purple-900 rounded-xl text-xs font-bold border border-purple-200">
-            <i class="fa-solid fa-users-gear text-purple-600"></i> Kelola Member
-          </button>
-          <button onclick="showView('settings')" class="flex items-center justify-center gap-2 p-3 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-xl text-xs font-bold border border-slate-300">
-            <i class="fa-solid fa-sliders text-slate-600"></i> Pengaturan
-          </button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= VIEW 2: ABSENSI ================= -->
-    <section id="view-attendance" class="hidden space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl shadow-sm border border-pink-100 no-export">
-        <div class="flex items-center gap-2">
-          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
-          </button>
-          <span class="text-xs text-slate-400">|</span>
-          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Lembar Absensi Sabtu</span>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <select id="select-month" onchange="changeAttendancePeriod()" class="text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none">
-            <option value="0">Januari</option>
-            <option value="1">Februari</option>
-            <option value="2">Maret</option>
-            <option value="3">April</option>
-            <option value="4">Mei</option>
-            <option value="5">Juni</option>
-            <option value="6">Juli</option>
-            <option value="7">Agustus</option>
-            <option value="8" selected>September</option>
-            <option value="9">Oktober</option>
-            <option value="10">November</option>
-            <option value="11">Desember</option>
-          </select>
-
-          <select id="select-year" onchange="changeAttendancePeriod()" class="text-xs font-bold px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-slate-700 focus:outline-none">
-            <option value="2025">2025</option>
-            <option value="2026" selected>2026</option>
-            <option value="2027">2027</option>
-          </select>
-
-          <button onclick="downloadAttendanceImage()" class="px-4 py-2 bg-gradient-to-r from-pink-500 to-rose-500 hover:from-pink-600 hover:to-rose-600 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-200 transition flex items-center gap-2">
-            <i class="fa-solid fa-camera"></i>
-            <span>Unduh Gambar Absensi</span>
-          </button>
-        </div>
-      </div>
-
-      <!-- Warning info jika belum login -->
-      <div id="att-admin-warning" class="bg-amber-50 border border-amber-200 text-amber-800 p-3 rounded-2xl text-xs flex items-center justify-between no-export">
-        <div class="flex items-center gap-2">
-          <i class="fa-solid fa-lock text-amber-600"></i>
-          <span>Mode Hanya-Lihat. Klik tombol <strong>Login Admin</strong> untuk mengubah status absensi.</span>
-        </div>
-        <button onclick="openModal('modal-login')" class="bg-amber-500 text-white px-3 py-1 rounded-xl font-bold hover:bg-amber-600">Login Admin</button>
-      </div>
-
-      <div id="attendance-export-wrapper" class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between border-b-2 border-slate-100 pb-5 mb-5">
-          <div class="flex items-center gap-4">
-            <div id="att-card-logo" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-pink-500 to-rose-400 text-white flex items-center justify-center text-2xl shadow-sm overflow-hidden flex-shrink-0">
-              <i class="fa-solid fa-person-dots-from-line"></i>
-            </div>
-            <div>
-              <h2 id="att-card-title" class="heading-font text-xl font-bold text-slate-800">Sanggar Tari YOUTEFA</h2>
-              <p class="text-xs text-pink-600 font-semibold">Laporan Kehadiran Member Tiap Hari Sabtu</p>
-            </div>
-          </div>
-          <div class="text-right">
-            <div id="att-period-badge" class="heading-font inline-block bg-pink-50 text-pink-700 text-base font-bold px-4 py-1.5 rounded-2xl border border-pink-200">
-              Sep-26
-            </div>
-            <p class="text-[10px] text-slate-400 mt-1">Tersinkron di Spreadsheet</p>
-          </div>
-        </div>
-
-        <div class="overflow-x-auto">
-          <table class="w-full border-collapse border border-slate-300 text-sm">
-            <thead>
-              <tr class="bg-amber-100/70 text-slate-800">
-                <th rowspan="2" class="border border-slate-300 px-3 py-2 w-12 text-center heading-font">No</th>
-                <th rowspan="2" class="border border-slate-300 px-4 py-2 text-left min-w-[160px] heading-font">Nama Member</th>
-                <th id="att-header-period" colspan="4" class="border border-slate-300 px-3 py-2 text-center heading-font text-base bg-pink-100/70 text-pink-900">
-                  Sep-26
-                </th>
-              </tr>
-              <tr id="att-saturday-subheaders" class="bg-amber-50 text-slate-700 text-xs"></tr>
-            </thead>
-            <tbody id="att-table-body"></tbody>
-          </table>
-        </div>
-
-        <div class="mt-6 pt-4 border-t border-slate-200 flex flex-wrap items-center justify-between gap-3 text-xs">
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-slate-700">Pelatih :</span>
-            <span id="coach-names-display" class="font-bold text-pink-600">Kak Raras & Kak Dewi</span>
-          </div>
-          <div class="text-slate-400 text-[11px]">
-            <span>Keterangan: </span>
-            <span class="font-bold text-emerald-600">✓ = Hadir</span>, 
-            <span class="font-bold text-slate-600">- = Absen</span>, 
-            <span class="font-bold text-purple-600">libur = Libur Latihan</span>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= VIEW 3: SPP (ADMIN ONLY) ================= -->
-    <section id="view-spp" class="hidden space-y-4">
-      <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl shadow-sm border border-pink-100 no-export">
-        <div class="flex items-center gap-2">
-          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
-          </button>
-          <span class="text-xs text-slate-400">|</span>
-          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Laporan & Kas SPP Bulanan</span>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-2">
-          <div class="flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl">
-            <span class="text-xs font-bold text-slate-500">Tahun:</span>
-            <select id="spp-year-select" onchange="renderSPPTable()" class="bg-transparent text-xs font-bold text-slate-800 focus:outline-none cursor-pointer">
-              <option value="2025">2025</option>
-              <option value="2026" selected>2026</option>
-              <option value="2027">2027</option>
-            </select>
-          </div>
-
-          <button onclick="downloadSPPImage()" class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200 transition flex items-center gap-2">
-            <i class="fa-solid fa-camera"></i>
-            <span>Unduh Laporan SPP (Gambar)</span>
-          </button>
-        </div>
-      </div>
-
-      <div id="spp-export-wrapper" class="bg-white p-6 sm:p-8 rounded-3xl shadow-sm border border-slate-200 overflow-x-auto">
-        <div style="min-width: 1240px;">
-          <div class="flex items-center justify-between border-b-2 border-slate-100 pb-5 mb-5">
-            <div class="flex items-center gap-4">
-              <div id="spp-card-logo" class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-amber-500 to-orange-400 text-white flex items-center justify-center text-2xl shadow-sm overflow-hidden flex-shrink-0">
-                <i class="fa-solid fa-receipt"></i>
-              </div>
-              <div>
-                <h2 id="spp-card-title" class="heading-font text-2xl font-bold text-slate-800">Sanggar Tari YOUTEFA</h2>
-                <p id="spp-card-slogan" class="text-xs text-slate-500 font-semibold">Rekapitulasi Keuangan Pembayaran Iuran SPP Murid</p>
-              </div>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <div class="text-right px-4 py-2 bg-emerald-50 border border-emerald-200 rounded-2xl">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-emerald-600">Standar SPP</div>
-                <div class="heading-font text-base font-bold text-emerald-800">Rp 75.000 <span class="text-xs font-normal">/ bln</span></div>
-              </div>
-              <div class="text-right px-4 py-2 bg-pink-50 border border-pink-200 rounded-2xl">
-                <div class="text-[10px] font-bold uppercase tracking-wider text-pink-600">Total Murid</div>
-                <div id="spp-total-members" class="heading-font text-base font-bold text-pink-800">26 Anak</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-gradient-to-r from-amber-500 via-orange-500 to-amber-500 text-white py-2.5 px-4 rounded-t-2xl text-center heading-font font-bold text-base shadow-sm tracking-wide">
-            <span id="spp-table-heading-text">SPP Tahun 2026 (12 Bulan Penuh)</span>
-          </div>
-
-          <table class="w-full border-collapse border border-slate-300 text-xs">
-            <thead>
-              <tr class="bg-amber-100 text-slate-800 font-bold">
-                <th class="border border-slate-300 px-3 py-3 w-12 text-center heading-font" style="width: 48px;">No</th>
-                <th class="border border-slate-300 px-4 py-3 text-left heading-font" style="width: 170px; min-width: 170px;">Nama Member</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Januari</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Februari</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Maret</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">April</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Mei</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Juni</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Juli</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Agustus</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">September</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Oktober</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">November</th>
-                <th class="border border-slate-300 px-2 py-3 text-center w-[82px]">Desember</th>
-              </tr>
-            </thead>
-            <tbody id="spp-table-body"></tbody>
-          </table>
-
-          <div class="mt-6 pt-4 border-t border-dashed border-amber-200 flex items-center justify-between text-xs text-slate-500 font-medium">
-            <div>
-              <span>Status Data: </span>
-              <span class="font-bold text-amber-700">Tervalidasi Bendahara Sanggar</span>
-            </div>
-            <div id="spp-print-date" class="text-slate-400 text-[11px]">Dicetak tanggal: -</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- ================= VIEW 4: MEMBERS ================= -->
-    <section id="view-members" class="hidden space-y-4">
-      <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-pink-100">
-        <div class="flex items-center gap-2">
-          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
-          </button>
-          <span class="text-xs text-slate-400">|</span>
-          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Kelola Anggota Sanggar</span>
-        </div>
-
-        <button onclick="openMemberModal()" class="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200 transition flex items-center gap-2">
-          <i class="fa-solid fa-user-plus"></i>
-          <span>Tambah Member</span>
-        </button>
-      </div>
-
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between mb-4">
-          <p class="text-xs text-slate-500">Daftar semua murid aktif terdaftar di sanggar (Tersimpan di Sheet "Member").</p>
-          <span id="member-badge-count" class="text-xs font-bold bg-purple-50 text-purple-700 px-3 py-1 rounded-full border border-purple-200">26 Member</span>
-        </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="member-cards-container"></div>
-      </div>
-    </section>
-
-    <!-- ================= VIEW 5: SETTINGS ================= -->
-    <section id="view-settings" class="hidden space-y-4">
-      <div class="flex items-center justify-between bg-white p-4 rounded-2xl shadow-sm border border-pink-100">
-        <div class="flex items-center gap-2">
-          <button onclick="showView('home')" class="px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold transition">
-            <i class="fa-solid fa-arrow-left mr-1"></i> Menu Utama
-          </button>
-          <span class="text-xs text-slate-400">|</span>
-          <span class="heading-font text-base sm:text-lg font-bold text-slate-800">Pengaturan Identitas & Akun</span>
-        </div>
-      </div>
-
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
-          <h3 class="heading-font text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <i class="fa-solid fa-paintbrush text-pink-500"></i>
-            <span>Ubah Logo & Nama Sanggar</span>
-          </h3>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Sanggar</label>
-            <input type="text" id="setting-studio-name" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-pink-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Slogan / Deskripsi Singkat</label>
-            <input type="text" id="setting-studio-slogan" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-pink-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Nama Pelatih</label>
-            <input type="text" id="setting-coach-name" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-pink-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Upload Foto Logo Sendiri</label>
-            <div class="flex items-center gap-4">
-              <div id="setting-logo-preview" class="w-16 h-16 rounded-2xl bg-slate-100 border border-slate-200 flex items-center justify-center overflow-hidden flex-shrink-0">
-                <i class="fa-solid fa-image text-slate-400 text-2xl"></i>
-              </div>
-              <div class="space-y-1">
-                <input type="file" id="setting-logo-file" accept="image/*" onchange="handleLogoUpload(event)" class="text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-pink-50 file:text-pink-700 hover:file:bg-pink-100 cursor-pointer" />
-                <button onclick="resetToDefaultLogo()" class="text-[11px] text-rose-500 hover:underline block font-semibold">Gunakan Logo Bawaan</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="pt-2">
-            <button onclick="saveAllSettings()" class="w-full py-2.5 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold shadow-md shadow-pink-200 transition">
-              Simpan Identitas Sanggar
-            </button>
-          </div>
-        </div>
-
-        <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 space-y-4">
-          <h3 class="heading-font text-base font-bold text-slate-800 border-b border-slate-100 pb-3 flex items-center gap-2">
-            <i class="fa-solid fa-key text-purple-600"></i>
-            <span>Ubah Kata Sandi Admin</span>
-          </h3>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Username Admin</label>
-            <input type="text" id="setting-admin-user" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Password Baru</label>
-            <input type="password" id="setting-admin-pass" placeholder="Ketik kata sandi baru" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500" />
-          </div>
-
-          <div>
-            <label class="block text-xs font-bold text-slate-600 mb-1">Ulangi Password Baru</label>
-            <input type="password" id="setting-admin-pass-confirm" placeholder="Ulangi kata sandi baru" class="w-full text-sm font-semibold px-4 py-2.5 rounded-xl border border-slate-200 focus:outline-none focus:border-purple-500" />
-          </div>
-
-          <div class="pt-2">
-            <button onclick="saveAllSettings()" class="w-full py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200 transition">
-              Simpan Password Baru
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-  </div>
-
-  <!-- ================= MODALS ================= -->
-  <!-- 1. LOGIN ADMIN -->
-  <div id="modal-login" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-pink-100 animate-pop">
-      <div class="text-center mb-5">
-        <div class="w-16 h-16 mx-auto rounded-2xl bg-purple-50 text-purple-600 flex items-center justify-center text-2xl shadow-inner mb-3">
-          <i class="fa-solid fa-shield-cat"></i>
-        </div>
-        <h3 class="heading-font text-xl font-bold text-slate-800">Login Administrator</h3>
-        <p class="text-xs text-slate-500">Khusus Pengelola & Pelatih Sanggar</p>
-      </div>
-
-      <form onsubmit="handleLoginSubmit(event)" class="space-y-3">
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Username</label>
-          <input type="text" id="login-username" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500" placeholder="admin" />
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Password</label>
-          <input type="password" id="login-password" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500" placeholder="•••••" />
-        </div>
-        <p id="login-error-msg" class="text-xs text-rose-500 font-bold hidden"></p>
-        <div class="pt-2 flex gap-2">
-          <button type="button" onclick="closeModal('modal-login')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
-          <button type="submit" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200">Masuk</button>
-        </div>
-      </form>
+<!-- Modal Pilihan Absensi -->
+<div class="modal" id="modalAbsen">
+  <div class="modal-box">
+    <h3 style="margin-top:0;" id="modalTitle">Pilih Kehadiran</h3>
+    <p id="modalSub" style="color:#64748b; font-size:14px; margin-bottom:12px;"></p>
+    <div class="modal-buttons">
+      <button class="btn-hadir" onclick="kirimAbsen('Hadir')">✔ Hadir</button>
+      <button class="btn-tidak-masuk" onclick="kirimAbsen('Absen')">✖ Tidak Masuk (Absen)</button>
+      <button class="btn-libur" onclick="kirimAbsen('Libur')">🏖️ Hari Libur</button>
+      <button class="btn-batal" onclick="tutupModal('modalAbsen')">Batal</button>
     </div>
   </div>
+</div>
 
-  <!-- 2. MODAL SPP -->
-  <div id="modal-spp" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-3xl p-6 shadow-2xl border border-amber-100 animate-pop">
-      <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-        <div>
-          <span class="text-[10px] uppercase font-bold tracking-wider text-amber-600 bg-amber-50 px-2 py-0.5 rounded-md">Form Transaksi Kas</span>
-          <h3 id="modal-spp-member-name" class="heading-font text-lg font-bold text-slate-800 mt-1">Nama Member</h3>
-          <p id="modal-spp-period-label" class="text-xs text-slate-500">Bulan: Januari 2026</p>
-        </div>
-        <button onclick="closeModal('modal-spp')" class="text-slate-400 hover:text-slate-600">
-          <i class="fa-solid fa-xmark text-lg"></i>
-        </button>
-      </div>
-
-      <div class="space-y-4">
-        <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 flex items-center justify-between text-xs">
-          <span class="text-slate-600">Tarif Wajib SPP Bulanan:</span>
-          <span class="font-bold text-slate-800">Rp 75.000</span>
-        </div>
-
-        <div>
-          <label class="block text-xs font-bold text-slate-700 mb-1">Pembayaran SPP: Rp.</label>
-          <div class="relative">
-            <span class="absolute left-3.5 top-2.5 text-slate-400 font-bold text-sm">Rp</span>
-            <input type="number" id="spp-input-amount" step="1000" placeholder="75000" class="w-full pl-11 pr-4 py-2.5 rounded-xl border border-slate-300 font-bold text-slate-800 text-sm focus:outline-none focus:border-amber-500" oninput="calculateSPPDiff()" />
-          </div>
-          <p id="spp-calc-status" class="text-xs font-bold mt-1.5 text-emerald-600">Status: Menunggu input...</p>
-        </div>
-
-        <!-- CEKLIS ANGGOTA BARU -->
-        <div class="p-3 bg-pink-50/70 rounded-xl border border-pink-200 space-y-2">
-          <div class="flex items-center gap-2">
-            <input type="checkbox" id="spp-is-new-member" onchange="toggleRegFeeInput()" class="w-4 h-4 rounded text-pink-600 focus:ring-pink-400 cursor-pointer" />
-            <label for="spp-is-new-member" class="text-xs font-bold text-pink-900 cursor-pointer select-none">
-              Anggota Baru (+ Biaya Pendaftaran)
-            </label>
-          </div>
-
-          <div id="reg-fee-field" class="hidden pt-1">
-            <label class="block text-[11px] font-bold text-pink-800 mb-1">Pendaftaran: Rp.</label>
-            <div class="relative">
-              <span class="absolute left-3 top-2 text-pink-400 font-bold text-xs">Rp</span>
-              <input type="number" id="spp-input-reg-fee" step="1000" placeholder="50000" class="w-full pl-9 pr-3 py-1.5 rounded-lg border border-pink-200 text-xs font-bold text-slate-800 focus:outline-none focus:border-pink-500" />
-            </div>
-          </div>
-        </div>
-
-        <div class="flex gap-2 pt-2">
-          <button onclick="deleteSPPRecord()" class="px-3.5 py-2.5 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-xl text-xs font-bold border border-rose-200">Hapus</button>
-          <button onclick="closeModal('modal-spp')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
-          <button onclick="saveSPPRecord()" class="flex-1 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold shadow-md shadow-amber-200">Simpan Data</button>
-        </div>
-      </div>
+<!-- Modal Tambah/Edit Member -->
+<div class="modal" id="modalMember">
+  <div class="modal-box">
+    <h3 style="margin-top:0;">Tambah Member</h3>
+    <input type="text" id="memberNama" placeholder="Nama Lengkap" style="width:100%; padding:8px; box-sizing:border-box; margin-bottom:10px;" />
+    <div style="display:flex; gap:8px;">
+      <button onclick="simpanMember()">Simpan</button>
+      <button class="btn-batal" onclick="tutupModal('modalMember')">Tutup</button>
     </div>
   </div>
+</div>
 
-  <!-- 3. MODAL MEMBER -->
-  <div id="modal-member" class="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
-    <div class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl border border-purple-100 animate-pop">
-      <div class="text-center mb-4">
-        <h3 id="modal-member-title" class="heading-font text-lg font-bold text-slate-800">Tambah Member Baru</h3>
-        <p class="text-xs text-slate-500">Tersimpan ke Tab "Member"</p>
-      </div>
+<script>
+  // GANTI DENGAN URL APPS SCRIPT ANDA
+  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6-ASJ6Q_8I7rCAo-WVmmrx4OMbs7YJNTe0D4ZQ9ViuhqtLsMKgJZFR4-_76ovTaTHew/exec";
 
-      <div class="space-y-3">
-        <input type="hidden" id="member-edit-id" value="" />
-        <div>
-          <label class="block text-xs font-bold text-slate-600 mb-1">Nama Panggilan / Lengkap</label>
-          <input type="text" id="member-name-input" required class="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-semibold focus:outline-none focus:border-purple-500 capitalize" placeholder="Contoh: Cantika" />
-        </div>
+  let dataSaturdays = [];
+  let currentMembers = [];
+  let currentAttendance = {};
+  let selectedContext = null;
 
-        <div class="flex gap-2 pt-2">
-          <button onclick="closeModal('modal-member')" class="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl text-xs font-bold">Batal</button>
-          <button onclick="saveMember()" class="flex-1 py-2.5 bg-purple-600 hover:bg-purple-700 text-white rounded-xl text-xs font-bold shadow-md shadow-purple-200">Simpan</button>
-        </div>
-      </div>
-    </div>
-  </div>
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
 
-  <!-- ================= JAVASCRIPT LOGIC ================= -->
-  <script>
-    // MASUKKAN URL GOOGLE APPS SCRIPT ANDA (/exec) DI SINI:
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycby6-ASJ6Q_8I7rCAo-WVmmrx4OMbs7YJNTe0D4ZQ9ViuhqtLsMKgJZFR4-_76ovTaTHew/exec";
-
-    const DEFAULT_MEMBERS = [
-      "Aca", "Ina", "Dewinda", "Agil", "Kanaya",
-      "Alea", "Talea", "Shabira", "Gendis", "Keysa",
-      "Adiva", "Sheena", "Darby", "Ryka", "Nikeisha",
-      "Jovita", "Sabrina", "Anin", "Delana", "Haiva",
-      "Nindi", "Aurel", "Afifah", "Liva", "Bila", "Vhia"
-    ];
-
-    const MONTH_NAMES = [
-      "Januari", "Februari", "Maret", "April", "Mei", "Juni",
-      "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-    ];
-    const STANDARD_SPP = 75000;
-
-    let members = [...DEFAULT_MEMBERS];
-    let attendanceData = {};
-    let sppData = {};
-    let appSettings = {
-      studioName: "Sanggar Tari YOUTEFA",
-      studioSlogan: "Tari Seni & Kreasi Tradisional Anak",
-      customLogo: "",
-      coachNames: "Kak Raras & Kak Dewi",
-      adminUser: "admin",
-      adminPass: "12345"
-    };
-    
-    // Status Admin disimpan permanen di memori browser
-    let isAdminLoggedIn = localStorage.getItem('youtefa_admin_session') === 'true';
-
-    let currentAttMonth = 8;
-    let currentAttYear = 2026;
-    let currentSPPYear = 2026;
-    let activeSPPEdit = { memberName: "", monthIndex: 0, year: 2026 };
-
-    function showLoading(title = "Sedang memproses...", desc = "Sinkronisasi ke Google Spreadsheet") {
-      document.getElementById('loading-title').innerText = title;
-      document.getElementById('loading-desc').innerText = desc;
-      document.getElementById('loading-overlay').classList.remove('hidden');
+  // Hitung semua hari Sabtu dalam bulan aktif
+  function getSaturdaysInMonth(year, month) {
+    const dates = [];
+    const date = new Date(year, month, 1);
+    while (date.getMonth() === month) {
+      if (date.getDay() === 6) {
+        dates.push(new Date(date));
+      }
+      date.setDate(date.getDate() + 1);
     }
-    function hideLoading() {
-      document.getElementById('loading-overlay').classList.add('hidden');
+    return dates;
+  }
+
+  async function loadData() {
+    dataSaturdays = getSaturdaysInMonth(currentYear, currentMonth);
+    const namaBulan = now.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
+    document.getElementById("labelBulan").innerText = namaBulan;
+
+    try {
+      const res = await fetch(`${SCRIPT_URL}?action=getData&month=${currentMonth}&year=${currentYear}`);
+      const data = await res.json();
+      if (data.status === "success") {
+        currentMembers = data.members;
+        currentAttendance = data.attendance;
+        renderTable();
+      }
+    } catch (err) {
+      alert("Gagal memuat data dari Spreadsheet: " + err.message);
     }
+  }
 
-    window.addEventListener('DOMContentLoaded', () => {
-      loadFromLocalStorage();
-      applySettingsToUI();
-      checkAdminSessionUI();
-      renderAttendanceTable();
-      renderSPPTable();
-      renderMemberList();
-      showView('home');
-
-      // Ambil data langsung dari Google Spreadsheet
-      fetchOnlineData(false);
+  function renderTable() {
+    // 1. Render Header
+    const header = document.getElementById("headerRow");
+    let hHtml = `<th style="width: 40px;">No</th><th>Nama</th>`;
+    dataSaturdays.forEach((sat, idx) => {
+      const tgl = sat.getDate();
+      hHtml += `<th style="text-align:center;">Sabtu ke-${idx+1}<br><small style="font-weight:normal;">(${tgl})</small></th>`;
     });
+    header.innerHTML = hHtml;
 
-    function checkAdminSessionUI() {
-      if (isAdminLoggedIn) {
-        document.getElementById('admin-badge').classList.remove('hidden');
-        document.getElementById('admin-badge').classList.add('flex');
-        document.getElementById('btn-logout').classList.remove('hidden');
-        document.getElementById('btn-admin-label').innerText = "Menu Admin (Aktif)";
-        document.getElementById('home-admin-quick-menu').classList.remove('hidden');
-        document.getElementById('att-admin-warning').classList.add('hidden');
-      } else {
-        document.getElementById('admin-badge').classList.add('hidden');
-        document.getElementById('admin-badge').classList.remove('flex');
-        document.getElementById('btn-logout').classList.add('hidden');
-        document.getElementById('btn-admin-label').innerText = "Login Admin";
-        document.getElementById('home-admin-quick-menu').classList.add('hidden');
-        document.getElementById('att-admin-warning').classList.remove('hidden');
-      }
+    // 2. Render Body
+    const body = document.getElementById("bodyRow");
+    if (!currentMembers.length) {
+      body.innerHTML = `<tr><td colspan="${2 + dataSaturdays.length}" style="text-align:center;">Belum ada member.</td></tr>`;
+      return;
     }
 
-    // 1. AMBIL DATA DARI SPREADSHEET VIA JSONP
-    function fetchOnlineData(isManualRefresh = false) {
-      if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) {
-        hideLoading();
-        if (isManualRefresh) showToast("URL Apps Script belum dimasukkan!", false);
-        return;
-      }
+    let bHtml = "";
+    currentMembers.forEach((m, idx) => {
+      bHtml += `<tr><td>${idx + 1}</td><td><strong>${m.nama}</strong></td>`;
+      dataSaturdays.forEach((sat, sIdx) => {
+        const dateKey = sat.toISOString().split("T")[0];
+        const key = `${m.id}_${dateKey}`;
+        const status = currentAttendance[key] || "";
 
-      showLoading("Sedang ambil data sanggar...", "Membaca Tab Sheet Google Drive");
+        let cls = "status-kosong";
+        let label = "—";
 
-      window.onSanggarDataReceived = function(json) {
-        hideLoading();
-        if (json && json.status === "success" && json.data) {
-          const d = json.data;
-          if (d.settings && Object.keys(d.settings).length > 0) appSettings = { ...appSettings, ...d.settings };
-          if (d.members && d.members.length > 0) members = d.members;
-          if (d.absensi) attendanceData = d.absensi;
-          if (d.spp) sppData = d.spp;
-
-          saveToLocalStorage();
-          applySettingsToUI();
-          renderAttendanceTable();
-          renderSPPTable();
-          renderMemberList();
-
-          if (isManualRefresh) showToast("Data berhasil disinkronkan dari Spreadsheet!");
+        if (status === "Hadir") {
+          cls = "status-hadir";
+          label = "✔ Hadir";
+        } else if (status === "Absen") {
+          cls = "status-absen";
+          label = "Absen";
+        } else if (status === "Libur") {
+          cls = "status-libur";
+          label = "Libur";
         }
-      };
 
-      const oldScript = document.getElementById('jsonp-fetcher');
-      if (oldScript) oldScript.remove();
-
-      const script = document.createElement('script');
-      script.id = 'jsonp-fetcher';
-      script.src = `${SCRIPT_URL}?action=get_all&callback=onSanggarDataReceived&t=${new Date().getTime()}`;
-      script.onerror = function() {
-        hideLoading();
-        if (isManualRefresh) showToast("Gagal terhubung ke Spreadsheet.", false);
-      };
-      document.body.appendChild(script);
-    }
-
-    // 2. KIRIM DATA VIA SCRIPT JSONP MURNI (100% BEBAS DARI MASALAH CORS & IFRAME)
-    function kirimOnline(params, customMsg = "Menyimpan ke Spreadsheet...") {
-      saveToLocalStorage();
-
-      if (!SCRIPT_URL || SCRIPT_URL.includes("TEMPEL_URL")) return;
-
-      showLoading(customMsg, "Menulis ke Google Sheets...");
-
-      const cbName = "cb_" + Math.floor(Math.random() * 10000000);
-      window[cbName] = function(res) {
-        hideLoading();
-        delete window[cbName];
-        if (res && res.status === "success") {
-          showToast("Tersimpan di Google Sheets!");
-        }
-      };
-
-      const query = [`callback=${cbName}`, `t=${new Date().getTime()}`];
-      for (const k in params) {
-        query.push(`${encodeURIComponent(k)}=${encodeURIComponent(params[k])}`);
-      }
-
-      const sc = document.createElement('script');
-      sc.src = `${SCRIPT_URL}?${query.join('&')}`;
-      sc.onload = function() { sc.remove(); };
-      sc.onerror = function() {
-        sc.remove();
-        hideLoading();
-        showToast("Gagal menulis ke Google Sheets.", false);
-      };
-      document.body.appendChild(sc);
-    }
-
-    function loadFromLocalStorage() {
-      const m = localStorage.getItem('youtefa_members');
-      if (m) members = JSON.parse(m);
-      const s = localStorage.getItem('youtefa_settings');
-      if (s) appSettings = { ...appSettings, ...JSON.parse(s) };
-      const a = localStorage.getItem('youtefa_att');
-      if (a) attendanceData = JSON.parse(a);
-      const sp = localStorage.getItem('youtefa_spp');
-      if (sp) sppData = JSON.parse(sp);
-    }
-
-    function saveToLocalStorage() {
-      localStorage.setItem('youtefa_members', JSON.stringify(members));
-      localStorage.setItem('youtefa_settings', JSON.stringify(appSettings));
-      localStorage.setItem('youtefa_att', JSON.stringify(attendanceData));
-      localStorage.setItem('youtefa_spp', JSON.stringify(sppData));
-    }
-
-    function showToast(msg, isSuccess = true) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toast-msg');
-      const toastIcon = document.getElementById('toast-icon');
-
-      toastMsg.innerText = msg;
-      toastIcon.className = isSuccess ? "fa-solid fa-circle-check text-emerald-400 text-xl" : "fa-solid fa-circle-exclamation text-rose-400 text-xl";
-
-      toast.classList.remove('-translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.add('-translate-y-20', 'opacity-0');
-        toast.classList.remove('translate-y-0', 'opacity-100');
-      }, 2800);
-    }
-
-    function showView(viewId) {
-      ['home', 'attendance', 'spp', 'members', 'settings'].forEach(v => {
-        const el = document.getElementById(`view-${v}`);
-        if (el) el.classList.add('hidden');
+        bHtml += `<td class="cell-absen ${cls}" onclick="bukaModalAbsen('${m.id}', '${m.nama}', '${dateKey}', ${sIdx+1})">${label}</td>`;
       });
+      bHtml += `</tr>`;
+    });
+    body.innerHTML = bHtml;
+  }
 
-      if ((viewId === 'spp' || viewId === 'members' || viewId === 'settings') && !isAdminLoggedIn) {
-        showToast("Halaman dikunci! Login admin dahulu.", false);
-        openModal('modal-login');
-        document.getElementById('view-home').classList.remove('hidden');
-        return;
-      }
+  function bukaModalAbsen(memberId, nama, tanggalSabtu, sabtuKe) {
+    selectedContext = { memberId, nama, tanggalSabtu, sabtuKe };
+    document.getElementById("modalTitle").innerText = `Absensi: ${nama}`;
+    document.getElementById("modalSub").innerText = `Sabtu ke-${sabtuKe} (${tanggalSabtu})`;
+    document.getElementById("modalAbsen").classList.add("active");
+  }
 
-      const activeEl = document.getElementById(`view-${viewId}`);
-      if (activeEl) {
-        activeEl.classList.remove('hidden');
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }
+  function bukaModalMember() {
+    document.getElementById("modalMember").classList.add("active");
+  }
 
-      if (viewId === 'attendance') renderAttendanceTable();
-      else if (viewId === 'spp') renderSPPTable();
-      else if (viewId === 'members') renderMemberList();
-      else if (viewId === 'settings') loadSettingsToForm();
-    }
+  function tutupModal(id) {
+    document.getElementById(id).classList.remove("active");
+  }
 
-    function handleAdminBtnClick() {
-      if (isAdminLoggedIn) showView('spp');
-      else openModal('modal-login');
-    }
+  async function kirimAbsen(status) {
+    if (!selectedContext) return;
+    tutupModal("modalAbsen");
 
-    function handleLoginSubmit(e) {
-      e.preventDefault();
-      const u = document.getElementById('login-username').value.trim();
-      const p = document.getElementById('login-password').value.trim();
-      const err = document.getElementById('login-error-msg');
+    const payload = {
+      action: "submitAbsen",
+      ...selectedContext,
+      status: status
+    };
 
-      if (u === appSettings.adminUser && p === appSettings.adminPass) {
-        isAdminLoggedIn = true;
-        localStorage.setItem('youtefa_admin_session', 'true');
-        closeModal('modal-login');
-        checkAdminSessionUI();
-        showToast("Login Admin Berhasil!");
-        showView('spp');
-      } else {
-        err.innerText = "Username atau password salah!";
-        err.classList.remove('hidden');
-      }
-    }
-
-    function logoutAdmin() {
-      isAdminLoggedIn = false;
-      localStorage.removeItem('youtefa_admin_session');
-      checkAdminSessionUI();
-      showToast("Telah keluar dari akun admin");
-      showView('home');
-    }
-
-    function applySettingsToUI() {
-      document.getElementById('app-studio-name').innerText = appSettings.studioName;
-      document.getElementById('hero-studio-name').innerText = appSettings.studioName;
-      document.getElementById('att-card-title').innerText = appSettings.studioName;
-      document.getElementById('spp-card-title').innerText = appSettings.studioName;
-
-      document.getElementById('app-studio-slogan').innerText = appSettings.studioSlogan;
-      document.getElementById('hero-studio-slogan').innerText = appSettings.studioSlogan;
-      document.getElementById('coach-names-display').innerText = appSettings.coachNames;
-
-      const logos = ['top-logo-container', 'hero-logo-container', 'att-card-logo', 'spp-card-logo'];
-      logos.forEach(id => {
-        const el = document.getElementById(id);
-        if (!el) return;
-        if (appSettings.customLogo) {
-          el.innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" alt="Logo" />`;
-        } else {
-          el.innerHTML = `<i class="fa-solid fa-person-dots-from-line"></i>`;
-        }
+    try {
+      const res = await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
       });
-    }
-
-    function handleLogoUpload(e) {
-      const file = e.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = function(evt) {
-          const img = new Image();
-          img.onload = function() {
-            const canvas = document.createElement('canvas');
-            const targetDim = 80;
-            canvas.width = targetDim;
-            canvas.height = targetDim;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0, targetDim, targetDim);
-            appSettings.customLogo = canvas.toDataURL('image/jpeg', 0.6);
-            document.getElementById('setting-logo-preview').innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" />`;
-          };
-          img.src = evt.target.result;
-        };
-        reader.readAsDataURL(file);
-      }
-    }
-
-    function resetToDefaultLogo() {
-      appSettings.customLogo = "";
-      document.getElementById('setting-logo-preview').innerHTML = `<i class="fa-solid fa-image text-slate-400 text-2xl"></i>`;
-      document.getElementById('setting-logo-file').value = "";
-      showToast("Logo dikembalikan ke animasi bawaan");
-    }
-
-    function loadSettingsToForm() {
-      document.getElementById('setting-studio-name').value = appSettings.studioName;
-      document.getElementById('setting-studio-slogan').value = appSettings.studioSlogan;
-      document.getElementById('setting-coach-name').value = appSettings.coachNames;
-      document.getElementById('setting-admin-user').value = appSettings.adminUser;
-      document.getElementById('setting-admin-pass').value = "";
-      document.getElementById('setting-admin-pass-confirm').value = "";
-      if (appSettings.customLogo) {
-        document.getElementById('setting-logo-preview').innerHTML = `<img src="${appSettings.customLogo}" class="w-full h-full object-cover" />`;
-      }
-    }
-
-    function saveAllSettings() {
-      const name = document.getElementById('setting-studio-name').value.trim();
-      const slogan = document.getElementById('setting-studio-slogan').value.trim();
-      const coach = document.getElementById('setting-coach-name').value.trim();
-      const u = document.getElementById('setting-admin-user').value.trim();
-      const p = document.getElementById('setting-admin-pass').value.trim();
-      const pc = document.getElementById('setting-admin-pass-confirm').value.trim();
-
-      if (!name) return showToast("Nama sanggar tidak boleh kosong!", false);
-      if (!u) return showToast("Username admin tidak boleh kosong!", false);
-      if (p && p !== pc) return showToast("Konfirmasi password baru tidak cocok!", false);
-
-      appSettings.studioName = name;
-      appSettings.studioSlogan = slogan;
-      if (coach) appSettings.coachNames = coach;
-      appSettings.adminUser = u;
-      if (p) appSettings.adminPass = p;
-
-      applySettingsToUI();
-
-      kirimOnline({
-        action: "save_settings",
-        studioName: appSettings.studioName,
-        studioSlogan: appSettings.studioSlogan,
-        coachNames: appSettings.coachNames,
-        customLogo: appSettings.customLogo,
-        adminUser: appSettings.adminUser,
-        adminPass: appSettings.adminPass
-      }, "Menyimpan pengaturan ke Spreadsheet...");
-    }
-
-    function getSaturdaysInMonth(year, monthIndex) {
-      const saturdays = [];
-      const d = new Date(year, monthIndex, 1);
-      while (d.getMonth() === monthIndex) {
-        if (d.getDay() === 6) saturdays.push(new Date(d));
-        d.setDate(d.getDate() + 1);
-      }
-      return saturdays;
-    }
-
-    function formatShortDate(d) {
-      const day = String(d.getDate()).padStart(2, '0');
-      const m = d.toLocaleString('id-ID', { month: 'short' });
-      return `${day}-${m}`;
-    }
-
-    function changeAttendancePeriod() {
-      currentAttMonth = parseInt(document.getElementById('select-month').value);
-      currentAttYear = parseInt(document.getElementById('select-year').value);
-      renderAttendanceTable();
-    }
-
-    function renderAttendanceTable() {
-      const saturdays = getSaturdaysInMonth(currentAttYear, currentAttMonth);
-      const periodKey = `${currentAttYear}-${currentAttMonth}`;
-      const mStr = new Date(currentAttYear, currentAttMonth, 1).toLocaleString('id-ID', { month: 'short' });
-      const yStr = String(currentAttYear).slice(-2);
-      const periodLabel = `${mStr}-${yStr}`;
-
-      document.getElementById('att-period-badge').innerText = periodLabel;
-      document.getElementById('att-header-period').innerText = periodLabel;
-      document.getElementById('att-header-period').setAttribute('colspan', saturdays.length);
-
-      const subRow = document.getElementById('att-saturday-subheaders');
-      subRow.innerHTML = "";
-      saturdays.forEach((sat, idx) => {
-        const th = document.createElement('th');
-        th.className = "border border-slate-300 px-2 py-2 text-center min-w-[70px]";
-        th.innerHTML = `<div>Sabtu ${idx + 1}</div><div class="text-[10px] font-normal text-slate-500">${formatShortDate(sat)}</div>`;
-        subRow.appendChild(th);
-      });
-
-      if (!attendanceData[periodKey]) attendanceData[periodKey] = {};
-
-      const tbody = document.getElementById('att-table-body');
-      tbody.innerHTML = "";
-
-      members.forEach((memberName, idx) => {
-        if (!attendanceData[periodKey][memberName]) {
-          attendanceData[periodKey][memberName] = Array(saturdays.length).fill("-");
-        }
-
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-pink-50/40 transition";
-
-        let satCells = "";
-        saturdays.forEach((_, sIdx) => {
-          const val = attendanceData[periodKey][memberName][sIdx] || "-";
-          let color = "text-slate-400";
-          if (val === "✓") color = "text-emerald-600 font-bold text-base";
-          if (val === "libur") color = "text-purple-600 font-bold text-xs";
-
-          satCells += `
-            <td onclick="toggleAttendanceStatus('${currentAttYear}', '${currentAttMonth}', '${memberName}', ${sIdx})" class="border border-slate-300 py-2 text-center cursor-pointer select-none hover:bg-pink-100/50 transition">
-              <span class="${color}">${val}</span>
-            </td>
-          `;
-        });
-
-        tr.innerHTML = `
-          <td class="border border-slate-300 py-2 text-center font-bold text-slate-600">${idx + 1}</td>
-          <td class="border border-slate-300 px-4 py-2 font-bold text-slate-800 capitalize">${memberName}</td>
-          ${satCells}
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    // SIMPAN ABSENSI LANGSUNG KE TABEL GOOGLE SPREADSHEET
-    function toggleAttendanceStatus(tahun, bulan, memberName, satIdx) {
-      if (!isAdminLoggedIn) {
-        showToast("Absensi hanya dapat diubah oleh Admin! Silakan login admin dahulu.", false);
-        openModal('modal-login');
-        return;
-      }
-      const periodKey = `${tahun}-${bulan}`;
-      const cycle = ["✓", "-", "libur"];
-      const curr = attendanceData[periodKey][memberName][satIdx] || "-";
-      let nIdx = (cycle.indexOf(curr) + 1) % cycle.length;
-      if (nIdx === -1) nIdx = 0;
-
-      attendanceData[periodKey][memberName][satIdx] = cycle[nIdx];
-      renderAttendanceTable();
-
-      kirimOnline({
-        action: "save_absensi",
-        tahun: tahun,
-        bulan: bulan,
-        nama: memberName,
-        sabtu: JSON.stringify(attendanceData[periodKey][memberName])
-      }, "Menyimpan absensi ke Spreadsheet...");
-    }
-
-    // TABEL SPP - BADGE SOLID DENGAN WARNA TEGAS
-    function renderSPPTable() {
-      currentSPPYear = parseInt(document.getElementById('spp-year-select').value);
-      document.getElementById('spp-table-heading-text').innerText = `SPP Tahun ${currentSPPYear} (12 Bulan Penuh)`;
-      document.getElementById('spp-total-members').innerText = `${members.length} Anak`;
-      document.getElementById('spp-print-date').innerText = `Dicetak tanggal: ${new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' })}`;
-
-      const tbody = document.getElementById('spp-table-body');
-      tbody.innerHTML = "";
-
-      members.forEach((memberName, idx) => {
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-amber-50/50 transition border-b border-slate-200";
-
-        let monthCells = "";
-        for (let m = 0; m < 12; m++) {
-          const key = `${currentSPPYear}-${m}`;
-          const valS = sppData[key] ? sppData[key][memberName] : null;
-          let cellContent = `<span style="color:#cbd5e1; font-weight:600;">-</span>`;
-
-          if (valS && String(valS).trim() !== "" && String(valS).trim() !== "-") {
-            const isLunas = String(valS).includes("Lunas");
-            if (isLunas) {
-              cellContent = `
-                <div style="background-color:#d1fae5; border:1.5px solid #10b981; border-radius:6px; padding:3px 2px; line-height:1.2; text-align:center;">
-                  <span style="color:#046c4e; font-weight:800; font-size:11px; display:block;">LUNAS</span>
-                  <span style="color:#065f46; font-size:9px; font-weight:700; display:block;">(75rb)</span>
-                  ${String(valS).includes("+Daftar") ? `<span style="color:#9d174d; font-size:8px; font-weight:800; display:block;">${valS.split("+Daftar")[1] ? '+Daftar ' + valS.split("+Daftar")[1] : '+Daftar'}</span>` : ''}
-                </div>
-              `;
-            } else {
-              cellContent = `
-                <div style="background-color:#fef3c7; border:1.5px solid #f59e0b; border-radius:6px; padding:3px 2px; line-height:1.2; text-align:center;">
-                  <span style="color:#92400e; font-size:9px; font-weight:700; display:block;">${valS.split('+Daftar')[0]}</span>
-                  ${String(valS).includes("+Daftar") ? `<span style="color:#9d174d; font-size:8px; font-weight:800; display:block;">+Daftar ${valS.split('+Daftar')[1] || ''}</span>` : ''}
-                </div>
-              `;
-            }
-          }
-
-          monthCells += `
-            <td onclick="openSPPModal('${memberName}', ${m}, ${currentSPPYear})" class="border border-slate-300 p-1 text-center cursor-pointer hover:bg-amber-100/50 transition">
-              ${cellContent}
-            </td>
-          `;
-        }
-
-        tr.innerHTML = `
-          <td class="border border-slate-300 py-2.5 text-center font-bold text-slate-600" style="width: 48px;">${idx + 1}</td>
-          <td class="border border-slate-300 px-3 py-2.5 font-bold text-slate-900 text-left capitalize bg-slate-50/50" style="width: 170px; min-width: 170px;">
-            ${memberName}
-          </td>
-          ${monthCells}
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function openSPPModal(memberName, monthIndex, year) {
-      if (!isAdminLoggedIn) {
-        showToast("Hanya Admin yang dapat menginput pembayaran SPP!", false);
-        openModal('modal-login');
-        return;
-      }
-      activeSPPEdit = { memberName, monthIndex, year };
-      const key = `${year}-${monthIndex}`;
-      const rec = sppData[key] ? String(sppData[key][memberName]) : "";
-
-      document.getElementById('modal-spp-member-name').innerText = memberName;
-      document.getElementById('modal-spp-period-label').innerText = `Bulan: ${MONTH_NAMES[monthIndex]} ${year}`;
-
-      const amountInput = document.getElementById('spp-input-amount');
-      const isNewCheck = document.getElementById('spp-is-new-member');
-      const regFeeInput = document.getElementById('spp-input-reg-fee');
-
-      if (rec) {
-        if (rec.includes("Bayar:")) {
-          const match = rec.match(/Bayar:\s*(\d+)rb/);
-          amountInput.value = match ? parseInt(match[1]) * 1000 : 50000;
-        } else {
-          amountInput.value = "75000";
-        }
-
-        if (rec.includes("+Daftar")) {
-          isNewCheck.checked = true;
-          const matchReg = rec.match(/\+Daftar\s*\(?(\d+)rb\)?/);
-          regFeeInput.value = matchReg ? parseInt(matchReg[1]) * 1000 : 50000;
-        } else {
-          isNewCheck.checked = false;
-          regFeeInput.value = "";
-        }
+      const result = await res.json();
+      
+      if (result.status === "forbidden") {
+        alert(result.message);
+      } else if (result.status === "success") {
+        // Update tampilan lokal
+        const key = `${selectedContext.memberId}_${selectedContext.tanggalSabtu}`;
+        currentAttendance[key] = status;
+        renderTable();
       } else {
-        amountInput.value = "75000";
-        isNewCheck.checked = false;
-        regFeeInput.value = "";
+        alert("Gagal: " + result.message);
       }
-
-      toggleRegFeeInput();
-      calculateSPPDiff();
-      openModal('modal-spp');
+    } catch (err) {
+      alert("Error: " + err.message);
     }
+  }
 
-    function toggleRegFeeInput() {
-      const isNew = document.getElementById('spp-is-new-member').checked;
-      document.getElementById('reg-fee-field').classList.toggle('hidden', !isNew);
-    }
+  async function simpanMember() {
+    const nama = document.getElementById("memberNama").value.trim();
+    if (!nama) return alert("Nama tidak boleh kosong!");
 
-    function calculateSPPDiff() {
-      const val = parseFloat(document.getElementById('spp-input-amount').value) || 0;
-      const calc = document.getElementById('spp-calc-status');
-      if (val >= STANDARD_SPP) {
-        calc.className = "text-xs font-bold mt-1.5 text-emerald-600";
-        calc.innerText = `Status: LUNAS (${Math.round(val/1000)}rb)`;
-      } else {
-        const diff = STANDARD_SPP - val;
-        calc.className = "text-xs font-bold mt-1.5 text-rose-600";
-        calc.innerText = `Status: Bayar: ${Math.round(val/1000)}rb, kurang ${Math.round(diff/1000)}rb`;
-      }
-    }
+    const newId = "M" + String(Date.now()).slice(-4);
+    const payload = { action: "addMember", id: newId, nama: nama };
 
-    // SIMPAN SPP LANGSUNG KE TABEL GOOGLE SPREADSHEET
-    function saveSPPRecord() {
-      const { memberName, monthIndex, year } = activeSPPEdit;
-      const key = `${year}-${monthIndex}`;
-      const amount = parseFloat(document.getElementById('spp-input-amount').value) || 0;
-      const isNew = document.getElementById('spp-is-new-member').checked;
-      const regFee = isNew ? (parseFloat(document.getElementById('spp-input-reg-fee').value) || 0) : 0;
-
-      let teksHasil = "Lunas (75rb)";
-      if (amount < STANDARD_SPP) {
-        const diff = STANDARD_SPP - amount;
-        teksHasil = `Bayar: ${Math.round(amount/1000)}rb, kurang ${Math.round(diff/1000)}rb`;
-      }
-
-      if (isNew && regFee > 0) {
-        teksHasil += ` +Daftar (${Math.round(regFee/1000)}rb)`;
-      }
-
-      if (!sppData[key]) sppData[key] = {};
-      sppData[key][memberName] = teksHasil;
-
-      renderSPPTable();
-      closeModal('modal-spp');
-
-      kirimOnline({
-        action: "save_spp",
-        tahun: year,
-        nama: memberName,
-        bulanIndex: monthIndex,
-        bayar: teksHasil
-      }, "Menulis kas SPP ke Spreadsheet...");
-    }
-
-    function deleteSPPRecord() {
-      const { memberName, monthIndex, year } = activeSPPEdit;
-      const key = `${year}-${monthIndex}`;
-      if (sppData[key] && sppData[key][memberName]) {
-        delete sppData[key][memberName];
-        renderSPPTable();
-        closeModal('modal-spp');
-
-        kirimOnline({
-          action: "save_spp",
-          tahun: year,
-          nama: memberName,
-          bulanIndex: monthIndex,
-          bayar: ""
-        }, "Menghapus catatan SPP di Spreadsheet...");
-      }
-    }
-
-    function renderMemberList() {
-      const container = document.getElementById('member-cards-container');
-      container.innerHTML = "";
-      document.getElementById('member-badge-count').innerText = `${members.length} Member`;
-
-      members.forEach((name, idx) => {
-        const card = document.createElement('div');
-        card.className = "flex items-center justify-between p-3.5 bg-slate-50 border border-slate-200 rounded-2xl";
-        card.innerHTML = `
-          <div class="flex items-center gap-3">
-            <span class="w-7 h-7 rounded-xl bg-purple-100 text-purple-700 font-bold text-xs flex items-center justify-center">${idx + 1}</span>
-            <span class="font-bold text-slate-800 capitalize">${name}</span>
-          </div>
-          <div class="flex items-center gap-1">
-            <button onclick="editMemberName(${idx})" class="p-1.5 text-slate-400 hover:text-purple-600 rounded-lg hover:bg-purple-50 transition">
-              <i class="fa-solid fa-pen text-xs"></i>
-            </button>
-            <button onclick="deleteMember(${idx})" class="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 transition">
-              <i class="fa-solid fa-trash-can text-xs"></i>
-            </button>
-          </div>
-        `;
-        container.appendChild(card);
+    try {
+      await fetch(SCRIPT_URL, {
+        method: "POST",
+        body: JSON.stringify(payload)
       });
+      document.getElementById("memberNama").value = "";
+      tutupModal("modalMember");
+      loadData();
+    } catch (err) {
+      alert("Error tambah member: " + err.message);
     }
+  }
 
-    function openMemberModal(idx = null) {
-      const title = document.getElementById('modal-member-title');
-      const input = document.getElementById('member-name-input');
-      const hiddenId = document.getElementById('member-edit-id');
-
-      if (idx !== null) {
-        title.innerText = "Edit Nama Member";
-        input.value = members[idx];
-        hiddenId.value = idx;
-      } else {
-        title.innerText = "Tambah Member Baru";
-        input.value = "";
-        hiddenId.value = "";
-      }
-      openModal('modal-member');
-      setTimeout(() => input.focus(), 150);
-    }
-
-    function editMemberName(idx) { openMemberModal(idx); }
-
-    function saveMember() {
-      const input = document.getElementById('member-name-input');
-      const hiddenId = document.getElementById('member-edit-id');
-      const name = input.value.trim();
-
-      if (!name) return showToast("Nama member tidak boleh kosong!", false);
-
-      if (hiddenId.value !== "") {
-        members[hiddenId.value] = name;
-      } else {
-        members.push(name);
-      }
-
-      renderMemberList();
-      renderAttendanceTable();
-      renderSPPTable();
-      closeModal('modal-member');
-
-      kirimOnline({
-        action: "save_members",
-        members: JSON.stringify(members)
-      }, "Menyimpan member ke Spreadsheet...");
-    }
-
-    function deleteMember(idx) {
-      const target = members[idx];
-      if (confirm(`Hapus member "${target}"?`)) {
-        members.splice(idx, 1);
-        renderMemberList();
-        renderAttendanceTable();
-        renderSPPTable();
-        kirimOnline({
-          action: "save_members",
-          members: JSON.stringify(members)
-        }, "Menghapus member di Spreadsheet...");
-      }
-    }
-
-    function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
-    function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
-
-    // UNDUH GAMBAR SPP
-    async function downloadSPPImage() {
-      showToast("Memproses gambar laporan SPP...", true);
-      const target = document.getElementById('spp-export-wrapper');
-
-      try {
-        const canvas = await html2canvas(target, {
-          scale: 2.2,
-          backgroundColor: '#FFFFFF',
-          useCORS: true,
-          logging: false,
-          windowWidth: 1400,
-          scrollX: 0,
-          scrollY: 0,
-          ignoreElements: function(el) {
-            return el.classList && el.classList.contains('no-export');
-          }
-        });
-
-        const cleanStudioName = (appSettings.studioName || "Sanggar").replace(/[^a-zA-Z0-9]/g, '_');
-        const link = document.createElement('a');
-        link.download = `Laporan_SPP_${cleanStudioName}_${currentSPPYear}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast("Laporan SPP berhasil diunduh!");
-      } catch (err) {
-        showToast("Gagal mengunduh gambar SPP.", false);
-      }
-    }
-
-    async function downloadAttendanceImage() {
-      showToast("Memproses gambar absensi...", true);
-      const target = document.getElementById('attendance-export-wrapper');
-
-      try {
-        const canvas = await html2canvas(target, {
-          scale: 2.2,
-          backgroundColor: '#FFFFFF',
-          useCORS: true,
-          logging: false,
-          ignoreElements: function(el) {
-            return el.classList && el.classList.contains('no-export');
-          }
-        });
-
-        const periodBadge = document.getElementById('att-period-badge').innerText;
-        const cleanStudioName = (appSettings.studioName || "Sanggar").replace(/[^a-zA-Z0-9]/g, '_');
-        const link = document.createElement('a');
-        link.download = `Absensi_${cleanStudioName}_${periodBadge}.png`;
-        link.href = canvas.toDataURL('image/png');
-        link.click();
-        showToast("Absensi berhasil diunduh!");
-      } catch (err) {
-        showToast("Gagal mengunduh gambar absensi.", false);
-      }
-    }
-  </script>
+  // Mulai load data saat halaman dibuka
+  loadData();
+</script>
 </body>
 </html>
