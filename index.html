@@ -348,32 +348,57 @@
     }
 
     // Modal Status Handlers
-    function openStatusModal(memberIdx, saturdayIdx) {
-      const member = currentData.members[memberIdx];
-      const sat = currentData.saturdays[saturdayIdx];
-      activeModalTarget = { memberIdx, saturdayIdx, rowIndex: member.rowIndex };
+// Simpan Status Langsung ke Google Sheet via JSONP
+    function saveStatusModal() {
+      const okBtn = document.getElementById('modalOkBtn');
+      okBtn.disabled = true;
+      okBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
-      document.getElementById('modalMemberName').textContent = member.name;
-      document.getElementById('modalSaturdayLabel').textContent = `${sat.labelKey} (${sat.dateStr})`;
+      const note = document.getElementById('modalNoteInput').value.trim();
+      const statusText = note ? `${currentSelectedStatus} (${note})` : currentSelectedStatus;
 
-      // Parsing nilai sebelumnya jika ada
-      const currentVal = member.attendance[saturdayIdx] || '';
-      let initialStatus = 'Hadir';
-      let initialNote = '';
+      // Update tampilan langsung di browser
+      const m = currentData.members[activeModalTarget.memberIdx];
+      m.attendance[activeModalTarget.saturdayIdx] = statusText;
+      renderFullMonthTable();
 
-      if (currentVal.toLowerCase().startsWith('absen')) initialStatus = 'Absen';
-      if (currentVal.toLowerCase().startsWith('libur')) initialStatus = 'Libur';
+      // Hapus script kirim lama jika ada
+      const oldSaveScript = document.getElementById('jsonp-save-cell');
+      if (oldSaveScript) oldSaveScript.remove();
 
-      // Ekstrak teks keterangan di dalam kurung jika ada
-      const matchNote = currentVal.match(/\((.*?)\)/);
-      if (matchNote) initialNote = matchNote[1];
+      // Callback penampung konfirmasi simpan
+      window.handleSaveCellResponse = function(res) {
+        okBtn.disabled = false;
+        okBtn.innerHTML = 'OK';
+        closeStatusModal();
+        if (res.status === 'success') {
+          showToast('Tersimpan ke Spreadsheet!', 'success');
+        } else {
+          showToast('Gagal: ' + res.message, 'error');
+        }
+      };
 
-      document.getElementById('modalNoteInput').value = initialNote;
-      selectStatusOption(initialStatus);
+      // Kirim data langsung ke Apps Script via tag script
+      const url = `${API_URL}?action=saveSingleCell` +
+        `&sheetName=${encodeURIComponent(currentData.sheetName)}` +
+        `&rowIndex=${activeModalTarget.rowIndex}` +
+        `&saturdayIdx=${activeModalTarget.saturdayIdx}` +
+        `&status=${encodeURIComponent(currentSelectedStatus)}` +
+        `&note=${encodeURIComponent(note)}` +
+        `&callback=handleSaveCellResponse` +
+        `&_=${Date.now()}`;
 
-      document.getElementById('statusModal').classList.remove('hidden');
+      const script = document.createElement('script');
+      script.id = 'jsonp-save-cell';
+      script.src = url;
+      script.onerror = function() {
+        okBtn.disabled = false;
+        okBtn.innerHTML = 'OK';
+        showSignalPopup();
+      };
+
+      document.body.appendChild(script);
     }
-
     function selectStatusOption(status) {
       currentSelectedStatus = status;
       const btnHadir = document.getElementById('optBtnHadir');
