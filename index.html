@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanggar Tari Youtefa</title>
+  <title>Presensi Sanggar Tari Youtefa</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -19,15 +19,15 @@
         </div>
         <div>
           <h1 class="text-base md:text-lg font-bold leading-tight">Sanggar Tari Youtefa</h1>
-          <p class="text-xs text-indigo-200" id="currentSheetLabel">Absensi & SPP Sanggar Youtefa</p>
+          <p class="text-xs text-indigo-200" id="currentSheetLabel">Presensi Bulanan Hari Sabtu</p>
         </div>
       </div>
       <div class="flex items-center gap-2">
-        <button onclick="downloadMonthReportImage()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+        <button onclick="downloadMonthReportImage()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-camera"></i>
           <span>Unduh Gambar Rekap</span>
         </button>
-        <button onclick="openAddModal()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl transition border border-white/20 flex items-center gap-1.5">
+        <button onclick="openAddModal()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl transition border border-white/20 flex items-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-user-plus"></i>
           <span class="hidden sm:inline">Tambah Anggota</span>
         </button>
@@ -40,12 +40,12 @@
     <!-- Filter Bar: Tahun, Bulan & Keterangan Warna -->
     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
       <div class="flex flex-wrap items-center gap-2">
-        <select id="yearSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5">
+        <select id="yearSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
           <option value="2026" selected>2026</option>
           <option value="2027">2027</option>
         </select>
 
-        <select id="monthSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5">
+        <select id="monthSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
           <option value="0">Januari</option>
           <option value="1">Februari</option>
           <option value="2">Maret</option>
@@ -60,27 +60,27 @@
           <option value="11">Desember</option>
         </select>
 
-        <span class="text-xs text-slate-400 font-medium pl-2 hidden md:inline">
-          *Klik kotak Sabtu untuk ubah absen
+        <span class="text-xs text-indigo-600 font-medium pl-2 hidden md:inline">
+          <i class="fa-solid fa-hand-pointer mr-1"></i> Klik kotak di kolom Sabtu untuk ubah status absen
         </span>
       </div>
 
       <!-- Keterangan Simbol -->
       <div class="flex items-center gap-3 text-xs font-bold">
-        <span class="flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-1 rounded-lg">
+        <span class="flex items-center gap-1 text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg">
           <i class="fa-solid fa-check"></i> Hadir
         </span>
-        <span class="flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2 py-1 rounded-lg">
+        <span class="flex items-center gap-1 text-rose-700 bg-rose-50 border border-rose-200 px-2.5 py-1 rounded-lg">
           <i class="fa-solid fa-xmark"></i> Absen
         </span>
-        <span class="flex items-center gap-1 text-blue-700 bg-blue-50 border border-blue-200 px-2 py-1 rounded-lg">
+        <span class="flex items-center gap-1 text-blue-700 bg-blue-50 border border-blue-200 px-2.5 py-1 rounded-lg">
           <i class="fa-solid fa-minus"></i> Libur
         </span>
       </div>
     </div>
 
     <!-- Alert Toast -->
-    <div id="toast" class="hidden mb-4 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2"></div>
+    <div id="toast" class="hidden fixed bottom-5 right-5 z-50 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-xl"></div>
 
     <!-- Tabel Matriks Bulanan Semua Sabtu -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
@@ -91,7 +91,6 @@
               <th class="p-3 w-12 text-center">No</th>
               <th class="p-3 w-20 text-left">ID</th>
               <th class="p-3 text-left min-w-[160px]">Nama Lengkap</th>
-              <!-- Kolom Sabtu 1 .. 4/5 disuntik lewat JavaScript -->
             </tr>
           </thead>
           <tbody id="attendanceTableBody" class="divide-y divide-slate-100">
@@ -108,13 +107,15 @@
 
   <!-- MODAL POPUP PRESENSI (HADIR / ABSEN / LIBUR + KETERANGAN) -->
   <div id="statusModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-indigo-50">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-indigo-50 relative">
       <div class="flex justify-between items-center border-b pb-3">
         <div>
           <h3 class="font-bold text-slate-800 text-base" id="modalMemberName">Nama Member</h3>
           <p class="text-xs text-indigo-600 font-semibold" id="modalSaturdayLabel">Sabtu ke-1 (05/09/2026)</p>
         </div>
-        <button onclick="closeStatusModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark text-lg"></i></button>
+        <button type="button" onclick="closeStatusModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
+          <i class="fa-solid fa-xmark text-lg"></i>
+        </button>
       </div>
 
       <!-- Opsi Status Pilihan -->
@@ -123,19 +124,19 @@
         
         <div class="grid grid-cols-3 gap-2">
           <!-- Hadir -->
-          <button type="button" onclick="selectStatusOption('Hadir')" id="optBtnHadir" class="p-3 rounded-2xl border-2 border-slate-200 text-center font-bold text-xs transition flex flex-col items-center gap-1 text-slate-600 hover:border-emerald-500">
+          <button type="button" onclick="selectStatusOption('Hadir')" id="optBtnHadir" class="p-3 rounded-2xl border-2 border-slate-200 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer">
             <i class="fa-solid fa-check text-base text-emerald-500"></i>
             <span>Hadir</span>
           </button>
 
           <!-- Absen -->
-          <button type="button" onclick="selectStatusOption('Absen')" id="optBtnAbsen" class="p-3 rounded-2xl border-2 border-slate-200 text-center font-bold text-xs transition flex flex-col items-center gap-1 text-slate-600 hover:border-rose-500">
+          <button type="button" onclick="selectStatusOption('Absen')" id="optBtnAbsen" class="p-3 rounded-2xl border-2 border-slate-200 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer">
             <i class="fa-solid fa-xmark text-base text-rose-500"></i>
             <span>Absen</span>
           </button>
 
           <!-- Libur -->
-          <button type="button" onclick="selectStatusOption('Libur')" id="optBtnLibur" class="p-3 rounded-2xl border-2 border-slate-200 text-center font-bold text-xs transition flex flex-col items-center gap-1 text-slate-600 hover:border-blue-500">
+          <button type="button" onclick="selectStatusOption('Libur')" id="optBtnLibur" class="p-3 rounded-2xl border-2 border-slate-200 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer">
             <i class="fa-solid fa-minus text-base text-blue-500"></i>
             <span>Libur</span>
           </button>
@@ -145,13 +146,13 @@
       <!-- Input Keterangan Opsional -->
       <div>
         <label class="block text-xs font-bold text-slate-600 mb-1">Keterangan Tambahan (Opsional):</label>
-        <input type="text" id="modalNoteInput" placeholder="Contoh: Izin acara keluarga / Sakit" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+        <input type="text" id="modalNoteInput" placeholder="Contoh: Izin keluarga / Sakit" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
       </div>
 
       <!-- Tombol Aksi -->
       <div class="flex justify-end gap-2 pt-2 border-t">
-        <button onclick="closeStatusModal()" class="px-4 py-2 text-xs text-slate-500 hover:bg-slate-100 rounded-xl font-medium">Batal</button>
-        <button id="modalOkBtn" onclick="saveStatusModal()" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow">OK</button>
+        <button type="button" onclick="closeStatusModal()" class="px-4 py-2 text-xs text-slate-500 hover:bg-slate-100 rounded-xl font-medium cursor-pointer">Batal</button>
+        <button type="button" id="modalOkBtn" onclick="saveStatusModal()" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow cursor-pointer">OK</button>
       </div>
     </div>
   </div>
@@ -167,7 +168,7 @@
         <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">Gagal terhubung ke database. Periksa koneksi internet Anda lalu coba kembali.</p>
       </div>
       <div class="pt-2">
-        <button onclick="retryConnection()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+        <button onclick="retryConnection()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2 cursor-pointer">
           <i class="fa-solid fa-arrow-rotate-right"></i>
           <span>Coba Hubungkan Lagi</span>
         </button>
@@ -180,7 +181,7 @@
     <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 space-y-3">
       <div class="flex justify-between items-center border-b pb-2">
         <h3 class="font-bold text-slate-800 text-sm">Tambah Anggota</h3>
-        <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+        <button onclick="closeAddModal()" class="text-slate-400 hover:text-slate-600 cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
       </div>
       <div class="space-y-2">
         <input type="text" id="newId" placeholder="ID / NIK" class="w-full border rounded-xl p-2 text-xs bg-slate-50">
@@ -188,8 +189,8 @@
         <input type="text" id="newClass" placeholder="Kelas / Divisi" class="w-full border rounded-xl p-2 text-xs bg-slate-50">
       </div>
       <div class="flex justify-end gap-2 pt-2">
-        <button onclick="closeAddModal()" class="px-3 py-1.5 text-xs text-slate-500 hover:bg-slate-100 rounded-xl">Batal</button>
-        <button id="submitMemberBtn" onclick="submitNewMember()" class="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl">Simpan</button>
+        <button onclick="closeAddModal()" class="px-3 py-1.5 text-xs text-slate-500 hover:bg-slate-100 rounded-xl cursor-pointer">Batal</button>
+        <button id="submitMemberBtn" onclick="submitNewMember()" class="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl cursor-pointer">Simpan</button>
       </div>
     </div>
   </div>
@@ -214,13 +215,11 @@
         </div>
       </div>
 
-      <!-- Matriks Tabel Gambar -->
       <table class="w-full text-left text-[11px] border border-slate-200 rounded-lg overflow-hidden">
         <thead class="bg-indigo-900 text-white font-bold border-b border-indigo-800 uppercase text-center">
           <tr id="cardReportHeader">
             <th class="p-2 w-8">No</th>
             <th class="p-2 text-left min-w-[150px]">Nama Anggota</th>
-            <!-- Header Sabtu dimasukkan via JS -->
           </tr>
         </thead>
         <tbody id="cardReportTbody" class="divide-y divide-slate-100 text-center"></tbody>
@@ -234,10 +233,10 @@
   </div>
 
   <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycby2Si75Z3IYyM-J06KHpyCWAZuGlJqzgSDs2arOijOQwBOAGHVK-EadMRJ2vPd4ioPl/exec';
+    const API_URL = 'https://script.google.com/macros/s/tR66M1N8Q32La116LtlK3x8Vj4RvG7SJJGVOG9lwBLV/exec';
 
     let currentData = { saturdays: [], members: [], sheetName: '', monthName: '', year: 2026 };
-    let activeModalTarget = null; // Menyimpan data cell yang sedang diedit
+    let activeModalTarget = null;
     let currentSelectedStatus = 'Hadir';
 
     window.onload = function() {
@@ -246,7 +245,6 @@
       loadAttendance();
     };
 
-    // Ambil Data via JSONP
     function loadAttendance() {
       const y = document.getElementById('yearSelect').value;
       const m = document.getElementById('monthSelect').value;
@@ -280,7 +278,6 @@
       document.body.appendChild(script);
     }
 
-    // Render Tabel Lengkap dengan Seluruh Hari Sabtu di Bulan Itu
     function renderFullMonthTable() {
       const headerRow = document.getElementById('tableHeaderRow');
       headerRow.innerHTML = `
@@ -289,8 +286,7 @@
         <th class="p-3 text-left min-w-[160px]">Nama Lengkap</th>
       `;
 
-      // Buat kolom header Sabtu 1, Sabtu 2, dst.
-      currentData.saturdays.forEach(s => {
+      currentData.saturdays.forEach((s) => {
         const th = document.createElement('th');
         th.className = 'p-3 text-center min-w-[100px] border-l border-indigo-800/50';
         th.innerHTML = `<div>${s.labelKey}</div><div class="text-[10px] font-normal text-indigo-200">(${s.dateStr.slice(0,5)})</div>`;
@@ -315,9 +311,9 @@
           const badgeHtml = parseStatusBadge(rawVal);
           saturdaysColsHtml += `
             <td class="p-2 text-center border-l border-slate-100">
-              <button type="button" onclick="openStatusModal(${mIdx}, ${sIdx})" class="w-full py-1.5 px-2 rounded-xl transition hover:ring-2 hover:ring-indigo-400 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[34px]">
+              <div onclick="openStatusModal(${mIdx}, ${sIdx})" class="w-full py-1.5 px-2 rounded-xl transition hover:ring-2 hover:ring-indigo-400 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[36px] cursor-pointer">
                 ${badgeHtml}
-              </button>
+              </div>
             </td>
           `;
         });
@@ -332,41 +328,83 @@
       });
     }
 
-    // Parsing Status menjadi Simbol Ceklis Hijau / Silang Merah / Min Biru
     function parseStatusBadge(str) {
       if (!str) return `<span class="text-slate-300 font-bold">-</span>`;
-      
-      const lower = str.toLowerCase();
-      if (lower.startsWith('hadir')) {
+      const val = str.trim().toUpperCase();
+      if (val.startsWith('H')) {
         return `<span class="inline-flex items-center gap-1 text-emerald-600 font-black text-sm"><i class="fa-solid fa-check"></i></span>`;
-      } else if (lower.startsWith('absen')) {
+      } else if (val.startsWith('A')) {
         return `<span class="inline-flex items-center gap-1 text-rose-600 font-black text-sm"><i class="fa-solid fa-xmark"></i></span>`;
-      } else if (lower.startsWith('libur')) {
+      } else if (val.startsWith('L') || val.startsWith('-')) {
         return `<span class="inline-flex items-center gap-1 text-blue-600 font-black text-sm"><i class="fa-solid fa-minus"></i></span>`;
       }
       return `<span class="text-slate-400 text-xs font-semibold">${str}</span>`;
     }
 
     // Modal Status Handlers
-// Simpan Status Langsung ke Google Sheet via JSONP
+    window.openStatusModal = function(memberIdx, saturdayIdx) {
+      const member = currentData.members[memberIdx];
+      const sat = currentData.saturdays[saturdayIdx];
+      activeModalTarget = { memberIdx, saturdayIdx, rowIndex: member.rowIndex };
+
+      document.getElementById('modalMemberName').textContent = member.name;
+      document.getElementById('modalSaturdayLabel').textContent = `${sat.labelKey} (${sat.dateStr})`;
+
+      const currentVal = (member.attendance[saturdayIdx] || '').trim().toUpperCase();
+      let initialStatus = 'Hadir';
+      let initialNote = '';
+
+      if (currentVal.startsWith('A')) initialStatus = 'Absen';
+      if (currentVal.startsWith('L') || currentVal.startsWith('-')) initialStatus = 'Libur';
+
+      const matchNote = (member.attendance[saturdayIdx] || '').match(/\((.*?)\)/);
+      if (matchNote) initialNote = matchNote[1];
+
+      document.getElementById('modalNoteInput').value = initialNote;
+      selectStatusOption(initialStatus);
+
+      document.getElementById('statusModal').classList.remove('hidden');
+    };
+
+    function selectStatusOption(status) {
+      currentSelectedStatus = status;
+      const btnHadir = document.getElementById('optBtnHadir');
+      const btnAbsen = document.getElementById('optBtnAbsen');
+      const btnLibur = document.getElementById('optBtnLibur');
+
+      btnHadir.className = 'p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer ' + 
+        (status === 'Hadir' ? 'border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm' : 'border-slate-200 text-slate-500');
+
+      btnAbsen.className = 'p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer ' + 
+        (status === 'Absen' ? 'border-rose-500 bg-rose-50 text-rose-800 shadow-sm' : 'border-slate-200 text-slate-500');
+
+      btnLibur.className = 'p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer ' + 
+        (status === 'Libur' ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-sm' : 'border-slate-200 text-slate-500');
+    }
+
+    function closeStatusModal() {
+      document.getElementById('statusModal').classList.add('hidden');
+    }
+
     function saveStatusModal() {
       const okBtn = document.getElementById('modalOkBtn');
       okBtn.disabled = true;
       okBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
       const note = document.getElementById('modalNoteInput').value.trim();
-      const statusText = note ? `${currentSelectedStatus} (${note})` : currentSelectedStatus;
+      let statusSymbol = 'H';
+      if (currentSelectedStatus === 'Absen') statusSymbol = 'A';
+      else if (currentSelectedStatus === 'Libur') statusSymbol = 'L';
 
-      // Update tampilan langsung di browser
+      const statusText = note ? `${statusSymbol} (${note})` : statusSymbol;
+
       const m = currentData.members[activeModalTarget.memberIdx];
       m.attendance[activeModalTarget.saturdayIdx] = statusText;
       renderFullMonthTable();
 
-      // Hapus script kirim lama jika ada
       const oldSaveScript = document.getElementById('jsonp-save-cell');
       if (oldSaveScript) oldSaveScript.remove();
 
-      // Callback penampung konfirmasi simpan
       window.handleSaveCellResponse = function(res) {
         okBtn.disabled = false;
         okBtn.innerHTML = 'OK';
@@ -378,7 +416,6 @@
         }
       };
 
-      // Kirim data langsung ke Apps Script via tag script
       const url = `${API_URL}?action=saveSingleCell` +
         `&sheetName=${encodeURIComponent(currentData.sheetName)}` +
         `&rowIndex=${activeModalTarget.rowIndex}` +
@@ -399,67 +436,7 @@
 
       document.body.appendChild(script);
     }
-    function selectStatusOption(status) {
-      currentSelectedStatus = status;
-      const btnHadir = document.getElementById('optBtnHadir');
-      const btnAbsen = document.getElementById('optBtnAbsen');
-      const btnLibur = document.getElementById('optBtnLibur');
 
-      btnHadir.className = 'p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 ' + 
-        (status === 'Hadir' ? 'border-emerald-500 bg-emerald-50 text-emerald-800 shadow-sm' : 'border-slate-200 text-slate-500');
-
-      btnAbsen.className = 'p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 ' + 
-        (status === 'Absen' ? 'border-rose-500 bg-rose-50 text-rose-800 shadow-sm' : 'border-slate-200 text-slate-500');
-
-      btnLibur.className = 'p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 ' + 
-        (status === 'Libur' ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-sm' : 'border-slate-200 text-slate-500');
-    }
-
-    function closeStatusModal() {
-      document.getElementById('statusModal').classList.add('hidden');
-    }
-
-    // Klik OK: Simpan Perubahan ke UI & Google Sheets
-    async function saveStatusModal() {
-      const okBtn = document.getElementById('modalOkBtn');
-      okBtn.disabled = true;
-      okBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-      const note = document.getElementById('modalNoteInput').value.trim();
-      const statusText = note ? `${currentSelectedStatus} (${note})` : currentSelectedStatus;
-
-      // Update state lokal instan
-      const m = currentData.members[activeModalTarget.memberIdx];
-      m.attendance[activeModalTarget.saturdayIdx] = statusText;
-      renderFullMonthTable();
-
-      try {
-        await fetch(API_URL, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
-          body: JSON.stringify({
-            action: 'saveSingleCell',
-            sheetName: currentData.sheetName,
-            rowIndex: activeModalTarget.rowIndex,
-            saturdayIdx: activeModalTarget.saturdayIdx,
-            status: currentSelectedStatus,
-            note: note
-          })
-        });
-
-        okBtn.disabled = false;
-        okBtn.innerHTML = 'OK';
-        closeStatusModal();
-        showToast('Presensi berhasil diperbarui!', 'success');
-      } catch (err) {
-        okBtn.disabled = false;
-        okBtn.innerHTML = 'OK';
-        showSignalPopup();
-      }
-    }
-
-    // Unduh Rekap Semua Hari Sabtu Bulan Ini Menjadi Gambar
     function downloadMonthReportImage() {
       const cardHeader = document.getElementById('cardReportHeader');
       cardHeader.innerHTML = `
@@ -480,11 +457,11 @@
       currentData.members.forEach((m, idx) => {
         let cols = '';
         currentData.saturdays.forEach((s, sIdx) => {
-          const rawVal = m.attendance[sIdx] || '';
+          const rawVal = (m.attendance[sIdx] || '').trim().toUpperCase();
           let badge = '<span class="text-slate-300 font-bold">-</span>';
-          if (rawVal.toLowerCase().startsWith('hadir')) badge = '<span class="text-emerald-600 font-black text-sm">✓</span>';
-          else if (rawVal.toLowerCase().startsWith('absen')) badge = '<span class="text-rose-600 font-black text-sm">✕</span>';
-          else if (rawVal.toLowerCase().startsWith('libur')) badge = '<span class="text-blue-600 font-black text-sm">-</span>';
+          if (rawVal.startsWith('H')) badge = '<span class="text-emerald-600 font-black text-sm">✓</span>';
+          else if (rawVal.startsWith('A')) badge = '<span class="text-rose-600 font-black text-sm">✕</span>';
+          else if (rawVal.startsWith('L') || rawVal.startsWith('-')) badge = '<span class="text-blue-600 font-black text-sm">-</span>';
           cols += `<td class="p-2 border-l border-slate-100">${badge}</td>`;
         });
 
@@ -515,7 +492,6 @@
         });
     }
 
-    // Modal Tambah Anggota
     function openAddModal() { document.getElementById('addModal').classList.remove('hidden'); }
     function closeAddModal() { document.getElementById('addModal').classList.add('hidden'); }
 
