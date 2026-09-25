@@ -1,349 +1,540 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Sistem Absensi Hari Sabtu</title>
-  <style>
-    :root {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --primary: #2563eb;
-      --border: #e2e8f0;
-      --hadir-bg: #dcfce7;
-      --hadir-text: #15803d;
-      --absen-bg: #fee2e2;
-      --absen-text: #b91c1c;
-      --libur-bg: #dbeafe;
-      --libur-text: #1d4ed8;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      background: var(--bg);
-      margin: 0;
-      padding: 16px;
-      color: #1e293b;
-    }
-    .container {
-      max-width: 950px;
-      margin: auto;
-      background: var(--card);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05);
-    }
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
-    .badge-jadwal {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 6px 12px;
-      border-radius: 6px;
-      font-size: 13px;
-      font-weight: 500;
-    }
-    .actions {
-      display: flex;
-      gap: 8px;
-    }
-    button {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
-      cursor: pointer;
-      font-weight: 500;
-    }
-    button:hover { opacity: 0.9; }
-    .table-responsive {
-      overflow-x: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      text-align: left;
-    }
-    th, td {
-      border: 1px solid var(--border);
-      padding: 10px 12px;
-    }
-    th {
-      background: #f1f5f9;
-      font-size: 13px;
-    }
-    .cell-absen {
-      cursor: pointer;
-      text-align: center;
-      font-weight: 500;
-      border-radius: 4px;
-      transition: all 0.2s;
-    }
-    .cell-absen:hover { filter: brightness(0.95); }
-    .status-hadir {
-      background-color: var(--hadir-bg);
-      color: var(--hadir-text);
-    }
-    .status-absen {
-      background-color: var(--absen-bg);
-      color: var(--absen-text);
-    }
-    .status-libur {
-      background-color: var(--libur-bg);
-      color: var(--libur-text);
-    }
-    .status-kosong {
-      background: #f8fafc;
-      color: #94a3b8;
-    }
-    /* Modal Popup */
-    .modal {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.4);
-      align-items: center;
-      justify-content: center;
-    }
-    .modal.active { display: flex; }
-    .modal-box {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      width: 90%;
-      max-width: 400px;
-    }
-    .modal-buttons {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-top: 15px;
-    }
-    .btn-hadir { background: #16a34a; }
-    .btn-tidak-masuk { background: #dc2626; }
-    .btn-libur { background: #2563eb; }
-    .btn-batal { background: #64748b; }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Presensi Sanggar - Hari Sabtu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
 
-<div class="container">
-  <div class="header">
-    <div>
-      <h2 style="margin:0 0 4px 0;">Presensi Hari Sabtu</h2>
-      <div id="labelBulan" style="font-weight: 600; color: #64748b;"></div>
+  <!-- Header -->
+  <header class="bg-indigo-700 text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1.5 border border-white/20 shadow overflow-hidden shrink-0">
+          <img src="https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca" alt="Logo" class="w-full h-full object-contain">
+        </div>
+        <div>
+          <h1 class="text-base md:text-lg font-bold leading-tight">Sanggar Tari Youtefa</h1>
+          <p class="text-xs text-indigo-200" id="currentSheetLabel">Presensi Hari Sabtu</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="downloadReportImage()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5">
+          <i class="fa-solid fa-camera"></i>
+          <span class="hidden sm:inline">Unduh Gambar</span>
+        </button>
+        <button onclick="openModal()" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3 py-2 rounded-xl transition border border-white/20 flex items-center gap-1.5">
+          <i class="fa-solid fa-user-plus"></i>
+          <span class="hidden sm:inline">Tambah Anggota</span>
+        </button>
+        <button id="saveBtn" onclick="saveData()" class="bg-emerald-500 hover:bg-emerald-600 text-white font-semibold px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5 text-xs">
+          <i class="fa-solid fa-floppy-disk"></i>
+          <span>Simpan</span>
+        </button>
+      </div>
     </div>
-    <div class="badge-jadwal">
-      Jadwal: Sabtu | 09:00 - 12:00 WIB
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 py-6">
+
+    <!-- Filter Bar -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 space-y-4">
+      <div class="flex flex-wrap items-center justify-between gap-3">
+        <div class="flex flex-wrap items-center gap-2">
+          <select id="yearSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5">
+            <option value="2026" selected>2026</option>
+            <option value="2027">2027</option>
+          </select>
+
+          <select id="monthSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5">
+            <option value="0">Januari</option>
+            <option value="1">Februari</option>
+            <option value="2">Maret</option>
+            <option value="3">April</option>
+            <option value="4">Mei</option>
+            <option value="5">Juni</option>
+            <option value="6">Juli</option>
+            <option value="7">Agustus</option>
+            <option value="8" selected>September</option>
+            <option value="9">Oktober</option>
+            <option value="10">November</option>
+            <option value="11">Desember</option>
+          </select>
+
+          <div class="flex items-center gap-1 pl-2 border-l border-slate-200">
+            <span class="text-[11px] font-bold text-slate-400 uppercase">Sabtu:</span>
+            <select id="saturdaySelect" onchange="renderList()" class="bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-semibold rounded-xl p-2.5">
+            </select>
+          </div>
+        </div>
+
+        <button onclick="setAll('H')" class="text-xs bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-300 px-3 py-2 rounded-xl font-semibold transition">
+          <i class="fa-solid fa-check-double mr-1"></i> Semua Hadir (H)
+        </button>
+      </div>
+
+      <div class="relative">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-3 text-slate-400 text-xs"></i>
+        <input type="text" id="searchInput" onkeyup="filterNames()" placeholder="Cari nama anggota..." class="w-full text-xs bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+      </div>
     </div>
-    <div class="actions">
-      <button onclick="bukaModalMember()">+ Kelola Member</button>
+
+    <div id="toast" class="hidden mb-4 p-3.5 rounded-xl text-xs font-medium flex items-center gap-2"></div>
+
+    <!-- Tabel Presensi -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse">
+          <thead>
+            <tr class="bg-slate-50 text-slate-500 uppercase text-[11px] font-bold tracking-wider border-b border-slate-200">
+              <th class="p-3.5 w-12 text-center">No</th>
+              <th class="p-3.5">ID / NIK</th>
+              <th class="p-3.5">Nama Lengkap</th>
+              <th class="p-3.5 hidden sm:table-cell">Kelas</th>
+              <th class="p-3.5 text-center">Kehadiran (H/I/S/A)</th>
+              <th class="p-3.5 text-center">% Kehadiran</th>
+            </tr>
+          </thead>
+          <tbody id="memberTableBody" class="divide-y divide-slate-100 text-xs">
+            <tr>
+              <td colspan="6" class="text-center p-8 text-slate-400">
+                <i class="fa-solid fa-spinner fa-spin mr-2"></i> Menghubungkan...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- POPUP PERINGATAN SINYAL LEMAH / OFFLINE -->
+  <div id="signalModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-rose-100">
+      <div class="w-16 h-16 bg-amber-50 text-amber-500 rounded-2xl flex items-center justify-center mx-auto text-3xl shadow-inner">
+        <i class="fa-solid fa-wifi-slash"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">Sinyal Kurang Bagus</h3>
+        <p class="text-xs text-slate-500 mt-1.5 leading-relaxed">
+          Gagal terhubung ke database. Periksa koneksi internet Anda lalu coba kembali.
+        </p>
+      </div>
+      <div class="pt-2">
+        <button onclick="retryConnection()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl text-xs shadow-md transition flex items-center justify-center gap-2">
+          <i class="fa-solid fa-arrow-rotate-right"></i>
+          <span>Coba Hubungkan Lagi</span>
+        </button>
+      </div>
     </div>
   </div>
 
-  <div class="table-responsive">
-    <table id="tabelAbsen">
-      <thead>
-        <tr id="headerRow"></tr>
-      </thead>
-      <tbody id="bodyRow">
-        <tr><td colspan="6" style="text-align:center;">Memuat data...</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
+  <!-- TEMPLATE KARTU UNDUHAN GAMBAR -->
+  <div id="reportContainer" style="position: absolute; left: -9999px; top: -9999px;">
+    <div id="reportCard" class="w-[680px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg">
+      <div class="flex items-center justify-between border-b pb-4 mb-5">
+        <div class="flex items-center gap-3.5">
+          <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
+            <img src="https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca" alt="Logo" class="w-full h-full object-contain">
+          </div>
+          <div>
+            <h2 class="text-xl font-bold text-slate-800 leading-tight">Sanggar Tari Youtefa</h2>
+            <p class="text-xs text-slate-500 font-medium tracking-wide">LAPORAN KEHADIRAN LATIHAN MINGGUAN</p>
+          </div>
+        </div>
+        <div class="text-right">
+          <div id="cardDateLabel" class="inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg">
+            Sabtu, 26/09/2026
+          </div>
+        </div>
+      </div>
 
-<!-- Modal Pilihan Absensi -->
-<div class="modal" id="modalAbsen">
-  <div class="modal-box">
-    <h3 style="margin-top:0;" id="modalTitle">Pilih Kehadiran</h3>
-    <p id="modalSub" style="color:#64748b; font-size:14px; margin-bottom:12px;"></p>
-    <div class="modal-buttons">
-      <button class="btn-hadir" onclick="kirimAbsen('Hadir')">✔ Hadir</button>
-      <button class="btn-tidak-masuk" onclick="kirimAbsen('Absen')">✖ Tidak Masuk (Absen)</button>
-      <button class="btn-libur" onclick="kirimAbsen('Libur')">🏖️ Hari Libur</button>
-      <button class="btn-batal" onclick="tutupModal('modalAbsen')">Batal</button>
+      <div class="grid grid-cols-4 gap-3 mb-5">
+        <div class="bg-emerald-50 border border-emerald-200 rounded-xl p-3 text-center">
+          <span class="block text-2xl font-black text-emerald-600 leading-tight" id="statH">0</span>
+          <span class="text-[11px] font-bold text-emerald-800 uppercase tracking-wider">Hadir (H)</span>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-center">
+          <span class="block text-2xl font-black text-blue-600 leading-tight" id="statI">0</span>
+          <span class="text-[11px] font-bold text-blue-800 uppercase tracking-wider">Izin (I)</span>
+        </div>
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-center">
+          <span class="block text-2xl font-black text-amber-600 leading-tight" id="statS">0</span>
+          <span class="text-[11px] font-bold text-amber-800 uppercase tracking-wider">Sakit (S)</span>
+        </div>
+        <div class="bg-rose-50 border border-rose-200 rounded-xl p-3 text-center">
+          <span class="block text-2xl font-black text-rose-600 leading-tight" id="statA">0</span>
+          <span class="text-[11px] font-bold text-rose-800 uppercase tracking-wider">Alpa / Belum</span>
+        </div>
+      </div>
+
+      <table class="w-full text-left text-xs border border-slate-200 rounded-lg overflow-hidden">
+        <thead class="bg-slate-100 text-slate-700 font-bold border-b border-slate-200 uppercase text-[10px]">
+          <tr>
+            <th class="py-2 px-3 w-8 text-center">No</th>
+            <th class="py-2 px-3">Nama Anggota</th>
+            <th class="py-2 px-3 w-28">Divisi / Kelas</th>
+            <th class="py-2 px-3 w-20 text-center">Status</th>
+          </tr>
+        </thead>
+        <tbody id="cardReportTbody" class="divide-y divide-slate-100 text-slate-700"></tbody>
+      </table>
+
+      <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400">
+        <span>Total Anggota: <strong id="cardTotalMembers" class="text-slate-600">0</strong> Orang</span>
+        <span id="cardPrintedAt">Dicetak: -</span>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Modal Tambah/Edit Member -->
-<div class="modal" id="modalMember">
-  <div class="modal-box">
-    <h3 style="margin-top:0;">Tambah Member</h3>
-    <input type="text" id="memberNama" placeholder="Nama Lengkap" style="width:100%; padding:8px; box-sizing:border-box; margin-bottom:10px;" />
-    <div style="display:flex; gap:8px;">
-      <button onclick="simpanMember()">Simpan</button>
-      <button class="btn-batal" onclick="tutupModal('modalMember')">Tutup</button>
+  <!-- Modal Tambah Anggota -->
+  <div id="addModal" class="hidden fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl shadow-xl max-w-sm w-full p-5 space-y-3">
+      <div class="flex justify-between items-center border-b pb-2">
+        <h3 class="font-bold text-slate-800 text-sm">Tambah Anggota</h3>
+        <button onclick="closeModal()" class="text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="space-y-2">
+        <input type="text" id="newId" placeholder="ID / NIK" class="w-full border rounded-xl p-2 text-xs bg-slate-50">
+        <input type="text" id="newName" placeholder="Nama Lengkap" class="w-full border rounded-xl p-2 text-xs bg-slate-50">
+        <input type="text" id="newClass" placeholder="Kelas / Divisi" class="w-full border rounded-xl p-2 text-xs bg-slate-50">
+      </div>
+      <div class="flex justify-end gap-2 pt-2">
+        <button onclick="closeModal()" class="px-3 py-1.5 text-xs text-slate-500 hover:bg-slate-100 rounded-xl">Batal</button>
+        <button id="submitMemberBtn" onclick="submitNewMember()" class="px-3 py-1.5 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-xl">Simpan</button>
+      </div>
     </div>
   </div>
-</div>
 
-<script>
-  // GANTI DENGAN URL APPS SCRIPT ANDA
-  const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyI-FUJteppOcbaDblHwdY6-OsqQcuoSDShqXE-OijC_OiNfkFcJjSMzHi4wOA5QB3PiA/exec";
+  <script>
+    // URL Deployment Web App Apps Script Anda
+    const API_URL = 'https://script.google.com/macros/s/tR66M1N8Q32La116LtlK3x8Vj4RvG7SJJGVOG9lwBLV/exec';
 
-  let dataSaturdays = [];
-  let currentMembers = [];
-  let currentAttendance = {};
-  let selectedContext = null;
+    let currentData = { dates: [], members: [], sheetName: '' };
+    let selectedColIdx = null;
 
-  const now = new Date();
-  const currentMonth = now.getMonth();
-  const currentYear = now.getFullYear();
+    // Deteksi offline otomatis browser
+    window.addEventListener('offline', () => showSignalPopup());
+    window.addEventListener('online', () => hideSignalPopup());
 
-  // Hitung semua hari Sabtu dalam bulan aktif
-  function getSaturdaysInMonth(year, month) {
-    const dates = [];
-    const date = new Date(year, month, 1);
-    while (date.getMonth() === month) {
-      if (date.getDay() === 6) {
-        dates.push(new Date(date));
-      }
-      date.setDate(date.getDate() + 1);
-    }
-    return dates;
-  }
-
-  async function loadData() {
-    dataSaturdays = getSaturdaysInMonth(currentYear, currentMonth);
-    const namaBulan = now.toLocaleDateString("id-ID", { month: "long", year: "numeric" });
-    document.getElementById("labelBulan").innerText = namaBulan;
-
-    try {
-      const res = await fetch(`${SCRIPT_URL}?action=getData&month=${currentMonth}&year=${currentYear}`);
-      const data = await res.json();
-      if (data.status === "success") {
-        currentMembers = data.members;
-        currentAttendance = data.attendance;
-        renderTable();
-      }
-    } catch (err) {
-      alert("Gagal memuat data dari Spreadsheet: " + err.message);
-    }
-  }
-
-  function renderTable() {
-    // 1. Render Header
-    const header = document.getElementById("headerRow");
-    let hHtml = `<th style="width: 40px;">No</th><th>Nama</th>`;
-    dataSaturdays.forEach((sat, idx) => {
-      const tgl = sat.getDate();
-      hHtml += `<th style="text-align:center;">Sabtu ke-${idx+1}<br><small style="font-weight:normal;">(${tgl})</small></th>`;
-    });
-    header.innerHTML = hHtml;
-
-    // 2. Render Body
-    const body = document.getElementById("bodyRow");
-    if (!currentMembers.length) {
-      body.innerHTML = `<tr><td colspan="${2 + dataSaturdays.length}" style="text-align:center;">Belum ada member.</td></tr>`;
-      return;
-    }
-
-    let bHtml = "";
-    currentMembers.forEach((m, idx) => {
-      bHtml += `<tr><td>${idx + 1}</td><td><strong>${m.nama}</strong></td>`;
-      dataSaturdays.forEach((sat, sIdx) => {
-        const dateKey = sat.toISOString().split("T")[0];
-        const key = `${m.id}_${dateKey}`;
-        const status = currentAttendance[key] || "";
-
-        let cls = "status-kosong";
-        let label = "—";
-
-        if (status === "Hadir") {
-          cls = "status-hadir";
-          label = "✔ Hadir";
-        } else if (status === "Absen") {
-          cls = "status-absen";
-          label = "Absen";
-        } else if (status === "Libur") {
-          cls = "status-libur";
-          label = "Libur";
-        }
-
-        bHtml += `<td class="cell-absen ${cls}" onclick="bukaModalAbsen('${m.id}', '${m.nama}', '${dateKey}', ${sIdx+1})">${label}</td>`;
-      });
-      bHtml += `</tr>`;
-    });
-    body.innerHTML = bHtml;
-  }
-
-  function bukaModalAbsen(memberId, nama, tanggalSabtu, sabtuKe) {
-    selectedContext = { memberId, nama, tanggalSabtu, sabtuKe };
-    document.getElementById("modalTitle").innerText = `Absensi: ${nama}`;
-    document.getElementById("modalSub").innerText = `Sabtu ke-${sabtuKe} (${tanggalSabtu})`;
-    document.getElementById("modalAbsen").classList.add("active");
-  }
-
-  function bukaModalMember() {
-    document.getElementById("modalMember").classList.add("active");
-  }
-
-  function tutupModal(id) {
-    document.getElementById(id).classList.remove("active");
-  }
-
-  async function kirimAbsen(status) {
-    if (!selectedContext) return;
-    tutupModal("modalAbsen");
-
-    const payload = {
-      action: "submitAbsen",
-      ...selectedContext,
-      status: status
+    window.onload = function() {
+      document.getElementById('yearSelect').value = "2026";
+      document.getElementById('monthSelect').value = "8";
+      loadAttendance();
     };
 
-    try {
-      const res = await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
-      });
-      const result = await res.json();
-      
-      if (result.status === "forbidden") {
-        alert(result.message);
-      } else if (result.status === "success") {
-        // Update tampilan lokal
-        const key = `${selectedContext.memberId}_${selectedContext.tanggalSabtu}`;
-        currentAttendance[key] = status;
-        renderTable();
-      } else {
-        alert("Gagal: " + result.message);
+    function showSignalPopup() {
+      document.getElementById('signalModal').classList.remove('hidden');
+    }
+
+    function hideSignalPopup() {
+      document.getElementById('signalModal').classList.add('hidden');
+    }
+
+    function retryConnection() {
+      hideSignalPopup();
+      loadAttendance();
+    }
+
+    // Fungsi fetch dengan batasan timeout 10 detik
+    async function fetchWithTimeout(resource, options = {}) {
+      const { timeout = 10000 } = options;
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+      try {
+        const response = await fetch(resource, { ...options, credentials: 'omit', signal: controller.signal });
+        clearTimeout(id);
+        return response;
+      } catch (error) {
+        clearTimeout(id);
+        throw error;
       }
-    } catch (err) {
-      alert("Error: " + err.message);
     }
-  }
 
-  async function simpanMember() {
-    const nama = document.getElementById("memberNama").value.trim();
-    if (!nama) return alert("Nama tidak boleh kosong!");
+    async function loadAttendance() {
+      const y = parseInt(document.getElementById('yearSelect').value);
+      const m = parseInt(document.getElementById('monthSelect').value);
 
-    const newId = "M" + String(Date.now()).slice(-4);
-    const payload = { action: "addMember", id: newId, nama: nama };
+      document.getElementById('memberTableBody').innerHTML = `
+        <tr><td colspan="6" class="text-center p-8 text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data presensi...</td></tr>
+      `;
 
-    try {
-      await fetch(SCRIPT_URL, {
-        method: "POST",
-        body: JSON.stringify(payload)
+      try {
+        const res = await fetchWithTimeout(`${API_URL}?year=${y}&month=${m}`, { timeout: 12000 });
+        const data = await res.json();
+
+        if (data.status === 'success') {
+          currentData = data;
+          document.getElementById('currentSheetLabel').textContent = `Presensi: Tab ${data.sheetName}`;
+          populateSaturdays(data.dates);
+          renderList();
+        } else {
+          showToast('Database: ' + data.message, 'error');
+        }
+      } catch (err) {
+        showSignalPopup();
+      }
+    }
+
+    function populateSaturdays(dates) {
+      const select = document.getElementById('saturdaySelect');
+      select.innerHTML = '';
+      dates.forEach(d => {
+        const opt = document.createElement('option');
+        opt.value = d.index;
+        opt.textContent = `Sabtu, ${d.label}`;
+        select.appendChild(opt);
       });
-      document.getElementById("memberNama").value = "";
-      tutupModal("modalMember");
-      loadData();
-    } catch (err) {
-      alert("Error tambah member: " + err.message);
+      if (dates.length > 0) {
+        selectedColIdx = dates[0].index;
+      }
     }
-  }
 
-  // Mulai load data saat halaman dibuka
-  loadData();
-</script>
+    function renderList() {
+      const select = document.getElementById('saturdaySelect');
+      if (!select.value) return;
+      selectedColIdx = parseInt(select.value);
+
+      const tbody = document.getElementById('memberTableBody');
+      tbody.innerHTML = '';
+
+      if (!currentData.members || currentData.members.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-400">Tidak ada data anggota.</td></tr>`;
+        return;
+      }
+
+      currentData.members.forEach((m, idx) => {
+        const currentStatus = (m.attendances[selectedColIdx] || '').toUpperCase();
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50 transition member-row';
+        tr.dataset.name = (m.name + ' ' + m.id).toLowerCase();
+
+        const pctVal = parseFloat(m.percentage) || 0;
+        let pctBadgeColor = 'bg-slate-100 text-slate-700';
+        if (pctVal >= 80) pctBadgeColor = 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+        else if (pctVal >= 50) pctBadgeColor = 'bg-amber-50 text-amber-700 border border-amber-200';
+        else if (pctVal > 0) pctBadgeColor = 'bg-rose-50 text-rose-700 border border-rose-200';
+
+        tr.innerHTML = `
+          <td class="p-3.5 text-center text-slate-400 font-mono">${idx + 1}</td>
+          <td class="p-3.5 text-slate-500 font-medium">${m.id}</td>
+          <td class="p-3.5 font-bold text-slate-800">${m.name}</td>
+          <td class="p-3.5 text-slate-500 hidden sm:table-cell">${m.className}</td>
+          <td class="p-3.5 text-center">
+            <div class="inline-flex rounded-xl p-1 bg-slate-100 gap-1 border border-slate-200">
+              ${['H', 'I', 'S', 'A'].map(status => {
+                const isSelected = currentStatus === status;
+                let activeColor = '';
+                if (status === 'H') activeColor = isSelected ? 'bg-emerald-500 text-white shadow-sm' : 'hover:text-emerald-600 text-slate-600';
+                if (status === 'I') activeColor = isSelected ? 'bg-blue-500 text-white shadow-sm' : 'hover:text-blue-600 text-slate-600';
+                if (status === 'S') activeColor = isSelected ? 'bg-amber-500 text-white shadow-sm' : 'hover:text-amber-600 text-slate-600';
+                if (status === 'A') activeColor = isSelected ? 'bg-rose-500 text-white shadow-sm' : 'hover:text-rose-600 text-slate-600';
+
+                return `
+                  <button type="button" onclick="selectStatus(${m.rowIndex}, ${selectedColIdx}, '${status}')" 
+                    class="w-7 h-6 text-xs font-bold rounded-lg transition ${activeColor}">
+                    ${status}
+                  </button>
+                `;
+              }).join('')}
+            </div>
+          </td>
+          <td class="p-3.5 text-center">
+            <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${pctBadgeColor}">
+              ${m.percentage}
+            </span>
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function selectStatus(rowIndex, colIndex, status) {
+      const member = currentData.members.find(m => m.rowIndex === rowIndex);
+      if (member) member.attendances[colIndex] = status;
+      renderList();
+    }
+
+    function setAll(status) {
+      currentData.members.forEach(m => m.attendances[selectedColIdx] = status);
+      renderList();
+    }
+
+    function filterNames() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      document.querySelectorAll('.member-row').forEach(row => {
+        row.style.display = row.dataset.name.includes(q) ? '' : 'none';
+      });
+    }
+
+    async function saveData() {
+      const saveBtn = document.getElementById('saveBtn');
+      saveBtn.disabled = true;
+      saveBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Menyimpan...';
+
+      const updates = [];
+      currentData.members.forEach(m => {
+        updates.push({
+          rowIndex: m.rowIndex,
+          colIndex: selectedColIdx,
+          status: m.attendances[selectedColIdx] || ''
+        });
+      });
+
+      try {
+        const response = await fetchWithTimeout(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'saveAttendance',
+            sheetName: currentData.sheetName,
+            updates: updates
+          }),
+          timeout: 15000
+        });
+
+        const res = await response.json();
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> <span>Simpan</span>';
+
+        if (res.status === 'success') {
+          showToast(res.message, 'success');
+          loadAttendance();
+        } else {
+          showToast('Gagal: ' + res.message, 'error');
+        }
+      } catch (err) {
+        saveBtn.disabled = false;
+        saveBtn.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> <span>Simpan</span>';
+        showSignalPopup();
+      }
+    }
+
+    function downloadReportImage() {
+      const select = document.getElementById('saturdaySelect');
+      if (!select || !select.value) {
+        showToast('Pilih tanggal Sabtu terlebih dahulu!', 'error');
+        return;
+      }
+
+      const activeDateLabel = select.options[select.selectedIndex].text;
+      const targetColIdx = parseInt(select.value);
+
+      let countH = 0, countI = 0, countS = 0, countA = 0;
+      const cardTbody = document.getElementById('cardReportTbody');
+      cardTbody.innerHTML = '';
+
+      currentData.members.forEach((m, idx) => {
+        const status = (m.attendances[targetColIdx] || '-').toUpperCase();
+        if (status === 'H') countH++;
+        else if (status === 'I') countI++;
+        else if (status === 'S') countS++;
+        else countA++;
+
+        let badge = '<span class="text-slate-400 font-bold">-</span>';
+        if (status === 'H') badge = '<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">Hadir</span>';
+        if (status === 'I') badge = '<span class="px-2 py-0.5 rounded bg-blue-100 text-blue-700 font-bold">Izin</span>';
+        if (status === 'S') badge = '<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-700 font-bold">Sakit</span>';
+        if (status === 'A') badge = '<span class="px-2 py-0.5 rounded bg-rose-100 text-rose-700 font-bold">Alpa</span>';
+
+        const row = document.createElement('tr');
+        row.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
+        row.innerHTML = `
+          <td class="py-1.5 px-3 text-center text-slate-400 font-mono text-[11px]">${idx + 1}</td>
+          <td class="py-1.5 px-3 font-semibold text-slate-800">${m.name}</td>
+          <td class="py-1.5 px-3 text-slate-500 text-[11px]">${m.className}</td>
+          <td class="py-1.5 px-3 text-center text-[11px]">${badge}</td>
+        `;
+        cardTbody.appendChild(row);
+      });
+
+      document.getElementById('cardDateLabel').textContent = activeDateLabel;
+      document.getElementById('statH').textContent = countH;
+      document.getElementById('statI').textContent = countI;
+      document.getElementById('statS').textContent = countS;
+      document.getElementById('statA').textContent = countA;
+      document.getElementById('cardTotalMembers').textContent = currentData.members.length;
+
+      const now = new Date();
+      document.getElementById('cardPrintedAt').textContent = `Dibuat: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', {hour: '2-digit', minute:'2-digit'})} WIB`;
+
+      showToast('Sedang membuat gambar laporan...', 'success');
+
+      const reportCard = document.getElementById('reportCard');
+      html2canvas(reportCard, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        const cleanName = activeDateLabel.replace(/[\/\s,:]+/g, '_');
+        link.download = `Laporan_Presensi_${cleanName}.png`;
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        showToast('Gambar laporan berhasil diunduh!', 'success');
+      }).catch(err => {
+        showToast('Gagal membuat gambar: ' + err.message, 'error');
+      });
+    }
+
+    function openModal() { document.getElementById('addModal').classList.remove('hidden'); }
+    function closeModal() { document.getElementById('addModal').classList.add('hidden'); }
+
+    async function submitNewMember() {
+      const id = document.getElementById('newId').value.trim();
+      const name = document.getElementById('newName').value.trim();
+      const className = document.getElementById('newClass').value.trim();
+
+      if (!name) return showToast('Nama wajib diisi!', 'error');
+
+      const btn = document.getElementById('submitMemberBtn');
+      btn.disabled = true;
+      btn.innerHTML = 'Menyimpan...';
+
+      try {
+        const response = await fetchWithTimeout(API_URL, {
+          method: 'POST',
+          body: JSON.stringify({
+            action: 'addMember',
+            sheetName: currentData.sheetName,
+            member: { id: id, name: name, className: className }
+          }),
+          timeout: 15000
+        });
+
+        const res = await response.json();
+        btn.disabled = false;
+        btn.innerHTML = 'Simpan';
+
+        if (res.status === 'success') {
+          closeModal();
+          showToast(res.message, 'success');
+          document.getElementById('newId').value = '';
+          document.getElementById('newName').value = '';
+          document.getElementById('newClass').value = '';
+          loadAttendance();
+        } else {
+          showToast('Gagal: ' + res.message, 'error');
+        }
+      } catch (err) {
+        btn.disabled = false;
+        btn.innerHTML = 'Simpan';
+        showSignalPopup();
+      }
+    }
+
+    function showToast(msg, type) {
+      const toast = document.getElementById('toast');
+      toast.className = `p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 ${
+        type === 'success' ? 'bg-emerald-50 text-emerald-800 border border-emerald-200' : 'bg-rose-50 text-rose-800 border border-rose-200'
+      }`;
+      toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-500' : 'fa-circle-exclamation text-rose-500'}"></i> ${msg}`;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 4000);
+    }
+  </script>
 </body>
 </html>
