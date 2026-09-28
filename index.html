@@ -3,126 +3,162 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanggar Tari Youtefa - Portal Resmi</title>
+  <title>Sanggar Tari Youtefa - Tari Nusantara</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+  <style>
+    /* Corak Batik Etnik & Gradasi Emas Tembaga sesuai Poster */
+    .bg-ethnic-gold {
+      background-color: #2b1405;
+      background-image: 
+        radial-gradient(circle at 50% 35%, rgba(217, 119, 6, 0.45) 0%, rgba(69, 26, 3, 0.95) 75%, #1a0a02 100%),
+        url("data:image/svg+xml,%3Csvg width='80' height='80' viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23fbbf24' fill-opacity='0.08'%3E%3Cpath d='M40 0l40 40-40 40L0 40zM40 10L10 40l30 30 30-30z'/%3E%3Cpath d='M40 20a20 20 0 1 0 0 40 20 20 0 0 0 0-40zm0 8a12 12 0 1 1 0 24 12 12 0 0 1 0-24z'/%3E%3C/g%3E%3C/svg%3E");
+    }
+
+    .border-gold-glow {
+      border: 1px solid rgba(251, 191, 36, 0.35);
+      box-shadow: 0 0 18px rgba(217, 119, 6, 0.25);
+    }
+  </style>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
+<body class="bg-[#140802] text-amber-50 font-sans min-h-screen flex flex-col">
 
   <!-- ======================== NAVBAR ======================== -->
-  <header class="bg-indigo-800 text-white shadow-lg sticky top-0 z-30">
+  <header class="bg-[#240e04] border-b border-amber-900/60 text-amber-100 shadow-xl sticky top-0 z-30">
     <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
       <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
-        <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1 border border-white/20 shadow overflow-hidden shrink-0">
-          <img id="navLogo" src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca'" alt="Logo" class="w-full h-full object-contain">
+        <div class="w-10 h-10 rounded-xl bg-amber-950/80 flex items-center justify-center p-1 border border-amber-500/40 shadow-inner overflow-hidden shrink-0">
+          <img id="navLogo" src="logo.png" onerror="this.src='https://lh3.googleusercontent.com/d/1U49vsk0SYmYMFtjC0cyX0AQnA6i52y0V'" alt="Logo" class="w-full h-full object-contain">
         </div>
         <div>
-          <h1 class="text-base md:text-lg font-bold leading-tight">Sanggar Tari Youtefa</h1>
-          <p class="text-xs text-indigo-200">Portal Kegiatan & Administrasi</p>
+          <h1 class="text-base md:text-lg font-black tracking-wide text-amber-300 leading-tight">Sanggar Tari Youtefa</h1>
+          <p class="text-xs text-amber-200/70">Tari Nusantara • Pelatih: Kak Beno</p>
         </div>
       </div>
 
-      <!-- Tombol Kembali jika sedang di dalam sub-halaman -->
       <div id="navBackContainer" class="hidden">
-        <button onclick="navigateTo('home')" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition border border-white/20 flex items-center gap-1.5 cursor-pointer">
+        <button onclick="navigateTo('home')" class="bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 text-xs font-bold px-3.5 py-2 rounded-xl transition border border-amber-400/30 flex items-center gap-1.5 cursor-pointer">
           <i class="fa-solid fa-house"></i>
-          <span>Kembali ke Beranda</span>
+          <span>Beranda</span>
         </button>
       </div>
     </div>
   </header>
 
-  <!-- ======================== 1. HALAMAN DEPAN (HOME) ======================== -->
+  <!-- ======================== 1. HALAMAN BERANDA ======================== -->
   <section id="pageHome" class="flex-grow">
     
-    <!-- Hero Banner -->
-    <div class="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-14 px-4 text-center overflow-hidden">
-      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+    <!-- Hero Banner dengan Corak Batik & Warna Emas Poster -->
+    <div class="relative bg-ethnic-gold py-16 px-4 text-center overflow-hidden border-b border-amber-900/50">
       <div class="relative max-w-4xl mx-auto space-y-4">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold">
-          <i class="fa-solid fa-sparkles text-amber-400"></i> Latihan Rutin Setiap Hari Sabtu
+        
+        <div class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/10 border border-amber-400/40 text-amber-300 text-xs font-bold tracking-wider uppercase">
+          <i class="fa-solid fa-feather-pointed text-amber-400"></i> Jadwal Latihan Rutin: Sabtu 09.00 - 12.00 WIB
         </div>
-        <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight">Selamat Datang di Portal Resmi<br><span class="text-amber-400">Sanggar Tari Youtefa</span></h2>
-        <p class="text-sm md:text-base text-indigo-100 max-w-2xl mx-auto leading-relaxed">
-          Sistem informasi presensi latihan mingguan dan pencatatan kas iuran SPP siswa sanggar tari.
+
+        <h2 class="text-3xl md:text-5xl font-black tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-amber-100 via-amber-300 to-yellow-500 drop-shadow-sm">
+          SANGGAR TARI YOUTEFA
+        </h2>
+        <p class="text-sm md:text-lg font-medium text-amber-200/90 italic tracking-wide">
+          Pelestarian Seni Tari Tradisional Nusantara
+        </p>
+        <p class="text-xs text-amber-300/70 max-w-lg mx-auto leading-relaxed">
+          Pusat Pelatihan Seni Budaya Jakarta Timur • Jl. H. Naman 173 Pondok Kelapa
         </p>
 
-        <!-- Tombol Pilihan Menu Utama (Card Actions) -->
+        <!-- Pilihan Menu Utama -->
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto pt-6">
           
           <!-- Tombol Presensi -->
-          <div onclick="navigateTo('attendance')" class="group bg-white/10 hover:bg-white/20 border border-white/15 hover:border-amber-400 p-6 rounded-3xl backdrop-blur-md transition duration-300 shadow-xl cursor-pointer text-left flex items-center justify-between">
-            <div class="space-y-1">
-              <span class="inline-block p-3 rounded-2xl bg-amber-400 text-slate-900 font-bold mb-1 shadow-md">
+          <div onclick="navigateTo('attendance')" class="group bg-[#331505]/80 hover:bg-[#421b06] border-gold-glow p-6 rounded-3xl transition duration-300 shadow-2xl cursor-pointer text-left flex items-center justify-between">
+            <div class="space-y-1.5">
+              <span class="inline-block p-3 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-600 text-slate-950 font-black shadow-md">
                 <i class="fa-solid fa-calendar-check text-xl"></i>
               </span>
-              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Presensi Sabtu</h3>
-              <p class="text-xs text-indigo-200 leading-normal">Cek & catat daftar kehadiran anak-anak setiap latihan Sabtu.</p>
+              <h3 class="text-lg font-black text-amber-200 group-hover:text-amber-300 transition">Presensi Sabtu</h3>
+              <p class="text-xs text-amber-100/70 leading-normal">Catat & pantau daftar hadir latihan rutin anak-anak.</p>
             </div>
-            <i class="fa-solid fa-arrow-right text-indigo-300 group-hover:translate-x-1.5 transition text-lg"></i>
+            <i class="fa-solid fa-chevron-right text-amber-400 group-hover:translate-x-1.5 transition text-lg"></i>
           </div>
 
-          <!-- Tombol Iuran SPP (Password Protected) -->
-          <div onclick="openAdminAuthModal()" class="group bg-white/10 hover:bg-white/20 border border-white/15 hover:border-emerald-400 p-6 rounded-3xl backdrop-blur-md transition duration-300 shadow-xl cursor-pointer text-left flex items-center justify-between">
-            <div class="space-y-1">
+          <!-- Tombol Iuran SPP -->
+          <div onclick="openAdminAuthModal()" class="group bg-[#331505]/80 hover:bg-[#421b06] border-gold-glow p-6 rounded-3xl transition duration-300 shadow-2xl cursor-pointer text-left flex items-center justify-between">
+            <div class="space-y-1.5">
               <div class="flex items-center gap-2">
-                <span class="inline-block p-3 rounded-2xl bg-emerald-400 text-slate-900 font-bold mb-1 shadow-md">
+                <span class="inline-block p-3 rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 text-slate-950 font-black shadow-md">
                   <i class="fa-solid fa-money-bill-wave text-xl"></i>
                 </span>
-                <span class="text-[10px] bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
-                  <i class="fa-solid fa-lock mr-1"></i> Khusus Admin
+                <span class="text-[10px] bg-amber-500/20 border border-amber-400/40 text-amber-300 px-2 py-0.5 rounded-full font-bold">
+                  <i class="fa-solid fa-lock mr-1"></i> Admin
                 </span>
               </div>
-              <h3 class="text-lg font-bold text-white group-hover:text-emerald-300 transition">Iuran SPP</h3>
-              <p class="text-xs text-indigo-200 leading-normal">Rekap kas SPP bulanan & uang pendaftaran murid baru.</p>
+              <h3 class="text-lg font-black text-amber-200 group-hover:text-amber-300 transition">Iuran SPP</h3>
+              <p class="text-xs text-amber-100/70 leading-normal">Pembukuan SPP bulanan & uang pendaftaran 50rb.</p>
             </div>
-            <i class="fa-solid fa-arrow-right text-indigo-300 group-hover:translate-x-1.5 transition text-lg"></i>
+            <i class="fa-solid fa-chevron-right text-amber-400 group-hover:translate-x-1.5 transition text-lg"></i>
           </div>
 
         </div>
       </div>
     </div>
 
-    <!-- Galeri Foto Display Anak-Anak Sanggar (Blogger / Google Photos Embed) -->
+    <!-- Galeri Foto Display Anak-Anak Sanggar (Dengan Fitur Zoom In) -->
     <div class="max-w-7xl mx-auto px-4 py-12">
       <div class="text-center max-w-xl mx-auto mb-8 space-y-2">
-        <h3 class="text-xl md:text-2xl font-bold text-slate-800">Dokumentasi & Galeri Latihan</h3>
-        <p class="text-xs md:text-sm text-slate-500">Momen keceriaan dan semangat anak-anak Sanggar Tari Youtefa saat berlatih.</p>
+        <h3 class="text-xl md:text-2xl font-black text-amber-300 tracking-wide">Galeri Penampilan & Latihan</h3>
+        <p class="text-xs md:text-sm text-amber-200/70">Klik foto untuk melihat tampilan penuh yang diperbesar.</p>
       </div>
 
-      <!-- Grid Foto (Ganti URL gambar di bawah dengan foto blogspot Anda) -->
+      <!-- Grid Foto (Ganti URL foto dengan gambar dari Blogspot Anda) -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         
         <!-- Foto 1 -->
-        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigk2wX59Uv849a6566085a676b/s800/foto1.jpg" onerror="this.src='https://images.unsplash.com/photo-1547153760-18fc86324498?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
-            <span class="text-white text-xs font-semibold">Latihan Gerak Dasar</span>
+        <div onclick="openLightbox('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigk2wX59Uv849a6566085a676b/s800/foto1.jpg', 'Latihan Kostum Tradisional Papua', 'https://ceritaasikin.blogspot.com')" 
+             class="group relative overflow-hidden rounded-2xl border border-amber-900/60 aspect-square bg-[#220c02] shadow-lg cursor-pointer">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigk2wX59Uv849a6566085a676b/s800/foto1.jpg" onerror="this.src='https://images.unsplash.com/photo-1547153760-18fc86324498?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#140802] via-transparent to-transparent flex items-end p-3">
+            <span class="text-amber-200 text-xs font-bold drop-shadow">Kostum Tari Tradisional</span>
+          </div>
+          <div class="absolute top-2 right-2 bg-black/60 text-amber-300 p-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
           </div>
         </div>
 
         <!-- Foto 2 -->
-        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhq7781b0f19c962b083b48f98c/s800/foto2.jpg" onerror="this.src='https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
-            <span class="text-white text-xs font-semibold">Formasi Pentas</span>
+        <div onclick="openLightbox('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhq7781b0f19c962b083b48f98c/s800/foto2.jpg', 'Formasi Tari Nusantara', 'https://ceritaasikin.blogspot.com')" 
+             class="group relative overflow-hidden rounded-2xl border border-amber-900/60 aspect-square bg-[#220c02] shadow-lg cursor-pointer">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhq7781b0f19c962b083b48f98c/s800/foto2.jpg" onerror="this.src='https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#140802] via-transparent to-transparent flex items-end p-3">
+            <span class="text-amber-200 text-xs font-bold drop-shadow">Kekompakan Gerak</span>
+          </div>
+          <div class="absolute top-2 right-2 bg-black/60 text-amber-300 p-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
           </div>
         </div>
 
         <!-- Foto 3 -->
-        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi4e01b34a66a1a118835817d2a/s800/foto3.jpg" onerror="this.src='https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
-            <span class="text-white text-xs font-semibold">Kompak & Ceria</span>
+        <div onclick="openLightbox('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi4e01b34a66a1a118835817d2a/s800/foto3.jpg', 'Persiapan Pentas Pentas Budaya', 'https://ceritaasikin.blogspot.com')" 
+             class="group relative overflow-hidden rounded-2xl border border-amber-900/60 aspect-square bg-[#220c02] shadow-lg cursor-pointer">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi4e01b34a66a1a118835817d2a/s800/foto3.jpg" onerror="this.src='https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#140802] via-transparent to-transparent flex items-end p-3">
+            <span class="text-amber-200 text-xs font-bold drop-shadow">Persiapan Pentas Seni</span>
+          </div>
+          <div class="absolute top-2 right-2 bg-black/60 text-amber-300 p-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
           </div>
         </div>
 
         <!-- Foto 4 -->
-        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
-          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2b44988771120aa543bc9281a/s800/foto4.jpg" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
-          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
-            <span class="text-white text-xs font-semibold">Evaluasi Mingguan</span>
+        <div onclick="openLightbox('https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2b44988771120aa543bc9281a/s800/foto4.jpg', 'Dokumentasi Bersama Kak Ali Beno', 'https://ceritaasikin.blogspot.com')" 
+             class="group relative overflow-hidden rounded-2xl border border-amber-900/60 aspect-square bg-[#220c02] shadow-lg cursor-pointer">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2b44988771120aa543bc9281a/s800/foto4.jpg" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
+          <div class="absolute inset-0 bg-gradient-to-t from-[#140802] via-transparent to-transparent flex items-end p-3">
+            <span class="text-amber-200 text-xs font-bold drop-shadow">Bersama Pelatih Utama</span>
+          </div>
+          <div class="absolute top-2 right-2 bg-black/60 text-amber-300 p-1.5 rounded-lg text-xs opacity-0 group-hover:opacity-100 transition">
+            <i class="fa-solid fa-magnifying-glass-plus"></i>
           </div>
         </div>
 
@@ -131,42 +167,33 @@
   </section>
 
   <!-- ======================== 2. HALAMAN PRESENSI ======================== -->
-  <section id="pageAttendance" class="hidden max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
-    
-    <!-- Filter Bar Presensi -->
+  <section id="pageAttendance" class="hidden max-w-7xl mx-auto px-4 py-6 w-full flex-grow text-slate-800">
     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
       <div class="flex flex-wrap items-center gap-2">
         <select id="yearSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
           <option value="2026" selected>2026</option>
           <option value="2027">2027</option>
         </select>
-
         <select id="monthSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
           <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
           <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
           <option value="6">Juli</option><option value="7">Agustus</option><option value="8" selected>September</option>
           <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
         </select>
-
-        <span class="text-xs text-indigo-600 font-medium pl-2 hidden md:inline">
+        <span class="text-xs text-amber-800 font-medium pl-2 hidden md:inline">
           <i class="fa-solid fa-hand-pointer mr-1"></i> Klik kotak Sabtu untuk ubah status absen
         </span>
       </div>
-
-      <div class="flex items-center gap-2">
-        <button onclick="downloadMonthReportImage()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
-          <i class="fa-solid fa-camera"></i>
-          <span>Unduh Gambar Rekap</span>
-        </button>
-      </div>
+      <button onclick="downloadMonthReportImage()" class="bg-amber-600 hover:bg-amber-700 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
+        <i class="fa-solid fa-camera"></i> <span>Unduh Gambar Rekap</span>
+      </button>
     </div>
 
-    <!-- Tabel Matriks Presensi -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-xs">
           <thead>
-            <tr id="tableHeaderRow" class="bg-indigo-900 text-white uppercase font-bold tracking-wider text-center border-b border-indigo-800">
+            <tr id="tableHeaderRow" class="bg-[#240e04] text-amber-200 uppercase font-bold tracking-wider text-center border-b border-amber-950">
               <th class="p-3 w-12 text-center">No</th>
               <th class="p-3 w-20 text-left">ID</th>
               <th class="p-3 text-left min-w-[160px]">Nama Lengkap</th>
@@ -180,34 +207,29 @@
     </div>
   </section>
 
-  <!-- ======================== 3. HALAMAN IURAN SPP ======================== -->
-  <section id="pageSpp" class="hidden max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
-    
-    <!-- Filter Bar SPP -->
+  <!-- ======================== 3. HALAMAN SPP ======================== -->
+  <section id="pageSpp" class="hidden max-w-7xl mx-auto px-4 py-6 w-full flex-grow text-slate-800">
     <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
       <div class="flex items-center gap-2">
         <span class="text-xs font-bold text-slate-500 uppercase">Tahun Buku:</span>
-        <select id="sppYearSelect" onchange="loadSppData()" class="bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
+        <select id="sppYearSelect" onchange="loadSppData()" class="bg-amber-50 border border-amber-300 text-amber-950 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
           <option value="2026" selected>2026</option>
           <option value="2027">2027</option>
         </select>
-        <span class="text-xs text-indigo-600 font-medium pl-3 hidden md:inline">
+        <span class="text-xs text-amber-800 font-medium pl-3 hidden md:inline">
           <i class="fa-solid fa-hand-pointer mr-1"></i> Klik kotak bulan untuk catat / cicil SPP
         </span>
       </div>
-
-      <button onclick="downloadSppReportImage()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
-        <i class="fa-solid fa-file-image"></i>
-        <span>Unduh Rekap SPP Tahunan (PNG)</span>
+      <button onclick="downloadSppReportImage()" class="bg-amber-700 hover:bg-amber-800 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
+        <i class="fa-solid fa-file-image"></i> <span>Unduh Rekap SPP Tahunan (PNG)</span>
       </button>
     </div>
 
-    <!-- Tabel Matriks SPP -->
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-[11px]">
           <thead>
-            <tr class="bg-indigo-900 text-white uppercase font-bold tracking-wider text-center border-b border-indigo-800">
+            <tr class="bg-[#240e04] text-amber-200 uppercase font-bold tracking-wider text-center border-b border-amber-950">
               <th class="p-3 w-10 text-center">No</th>
               <th class="p-3 w-16 text-left">ID</th>
               <th class="p-3 text-left min-w-[140px]">Nama Lengkap</th>
@@ -227,25 +249,49 @@
     </div>
   </section>
 
+  <!-- ======================== LIGHTBOX ZOOM FOTO ======================== -->
+  <div id="lightboxModal" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4">
+    <div class="relative max-w-3xl w-full bg-[#1e0c03] border border-amber-500/30 rounded-3xl overflow-hidden shadow-2xl space-y-3">
+      <button onclick="closeLightbox()" class="absolute top-3 right-3 text-amber-300 hover:text-white bg-black/50 w-9 h-9 rounded-full flex items-center justify-center transition cursor-pointer z-10">
+        <i class="fa-solid fa-xmark text-lg"></i>
+      </button>
+
+      <div class="max-h-[70vh] overflow-hidden flex items-center justify-center bg-black/40">
+        <img id="lightboxImg" src="" alt="Zoom Foto" class="max-h-[70vh] w-auto object-contain">
+      </div>
+
+      <div class="p-4 flex flex-wrap justify-between items-center gap-3 border-t border-amber-900/40">
+        <div>
+          <h4 id="lightboxTitle" class="text-sm font-bold text-amber-200 leading-tight">Judul Foto</h4>
+          <p class="text-[11px] text-amber-300/60">Dokumentasi Sanggar Tari Youtefa</p>
+        </div>
+        <a id="lightboxBlogLink" href="#" target="_blank" class="px-3.5 py-1.5 bg-amber-500/20 hover:bg-amber-500/30 border border-amber-400/40 text-amber-300 text-xs font-semibold rounded-xl transition flex items-center gap-1.5 cursor-pointer">
+          <span>Lihat di Blog</span>
+          <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
   <!-- ======================== MODAL LOGIN ADMIN SPP ======================== -->
-  <div id="adminAuthModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-indigo-50 relative">
-      <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+  <div id="adminAuthModal" class="hidden fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white text-slate-800 rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-amber-100 relative">
+      <div class="w-14 h-14 bg-amber-50 text-amber-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
         <i class="fa-solid fa-shield-halved"></i>
       </div>
       <div>
         <h3 class="text-lg font-bold text-slate-800">Verifikasi Admin</h3>
-        <p class="text-xs text-slate-500 mt-1">Masukkan PIN / Kata Sandi Admin untuk mengelola buku kas SPP sanggar.</p>
+        <p class="text-xs text-slate-500 mt-1">Masukkan PIN Admin untuk membuka pembukuan SPP.</p>
       </div>
       <div>
-        <input type="password" id="adminPinInput" placeholder="Masukkan PIN Admin" class="w-full text-center tracking-widest text-lg font-bold border rounded-xl p-3 bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none">
-        <p id="adminAuthError" class="hidden text-xs text-rose-500 font-bold mt-2">PIN salah! Silakan coba lagi.</p>
+        <input type="password" id="adminPinInput" placeholder="Masukkan PIN" class="w-full text-center tracking-widest text-lg font-bold border rounded-xl p-3 bg-slate-50 focus:ring-2 focus:ring-amber-500 outline-none">
+        <p id="adminAuthError" class="hidden text-xs text-rose-500 font-bold mt-2">PIN salah! Coba lagi.</p>
       </div>
       <div class="flex gap-2 pt-2">
         <button onclick="closeAdminAuthModal()" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition cursor-pointer">
-          Batal / Tutup
+          Batal
         </button>
-        <button onclick="checkAdminAuth()" class="w-1/2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md transition cursor-pointer">
+        <button onclick="checkAdminAuth()" class="w-1/2 py-2.5 bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl text-xs shadow-md transition cursor-pointer">
           Masuk SPP
         </button>
       </div>
@@ -253,12 +299,12 @@
   </div>
 
   <!-- ======================== MODAL PRESENSI ======================== -->
-  <div id="statusModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-indigo-50 relative">
+  <div id="statusModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 text-slate-800">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 relative">
       <div class="flex justify-between items-center border-b pb-3">
         <div>
           <h3 class="font-bold text-slate-800 text-base" id="modalMemberName">Nama Member</h3>
-          <p class="text-xs text-indigo-600 font-semibold" id="modalSaturdayLabel">Sabtu ke-1</p>
+          <p class="text-xs text-amber-700 font-semibold" id="modalSaturdayLabel">Sabtu ke-1</p>
         </div>
         <button type="button" onclick="closeStatusModal()" class="text-slate-400 hover:text-slate-600 p-1 cursor-pointer">
           <i class="fa-solid fa-xmark text-lg"></i>
@@ -266,7 +312,7 @@
       </div>
 
       <div class="space-y-2">
-        <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Status Kehadiran:</label>
+        <label class="block text-xs font-bold text-slate-600 mb-1">Pilih Status:</label>
         <div class="grid grid-cols-3 gap-2">
           <button type="button" onclick="selectStatusOption('Hadir')" id="optBtnHadir" class="p-3 rounded-2xl border-2 text-center font-bold text-xs transition flex flex-col items-center gap-1 cursor-pointer">
             <i class="fa-solid fa-check text-base text-emerald-500"></i>
@@ -285,19 +331,19 @@
 
       <div>
         <label class="block text-xs font-bold text-slate-600 mb-1">Keterangan (Opsional):</label>
-        <input type="text" id="modalNoteInput" placeholder="Contoh: Izin / Sakit" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:ring-2 focus:ring-indigo-500 outline-none">
+        <input type="text" id="modalNoteInput" placeholder="Contoh: Izin / Sakit" class="w-full text-xs bg-slate-50 border rounded-xl p-2.5 focus:ring-2 focus:ring-amber-500 outline-none">
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t">
         <button type="button" onclick="closeStatusModal()" class="px-4 py-2 text-xs text-slate-500 hover:bg-slate-100 rounded-xl font-medium cursor-pointer">Batal</button>
-        <button type="button" id="modalOkBtn" onclick="saveStatusModal()" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow cursor-pointer">OK</button>
+        <button type="button" id="modalOkBtn" onclick="saveStatusModal()" class="px-5 py-2 text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow cursor-pointer">OK</button>
       </div>
     </div>
   </div>
 
   <!-- ======================== MODAL SPP ======================== -->
-  <div id="paymentModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-indigo-50 relative">
+  <div id="paymentModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 text-slate-800">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 relative">
       <div class="flex justify-between items-center border-b pb-3">
         <div>
           <h3 class="font-bold text-slate-800 text-base" id="sppModalMemberName">Nama Anggota</h3>
@@ -317,29 +363,29 @@
           </select>
         </div>
 
-        <label class="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl flex items-center justify-between cursor-pointer">
+        <label class="p-3 bg-amber-50/70 border border-amber-200 rounded-xl flex items-center justify-between cursor-pointer">
           <div>
-            <span class="block font-bold text-indigo-900">Murid Baru?</span>
-            <span class="text-[10px] text-indigo-600">Membayar Uang Pendaftaran Rp 50.000</span>
+            <span class="block font-bold text-amber-900">Murid Baru?</span>
+            <span class="text-[10px] text-amber-700">Membayar Uang Pendaftaran Rp 50.000</span>
           </div>
-          <input type="checkbox" id="sppModalNewMemberCheck" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 cursor-pointer">
+          <input type="checkbox" id="sppModalNewMemberCheck" class="w-5 h-5 text-amber-600 rounded focus:ring-amber-500 cursor-pointer">
         </label>
 
         <div>
           <div class="flex justify-between items-center mb-1">
-            <label class="font-bold text-slate-600">Nominal Pembayaran SPP:</label>
-            <button type="button" onclick="setQuickNominal(75000)" class="text-[10px] text-indigo-600 font-bold hover:underline cursor-pointer">Set Lunas (75rb)</button>
+            <label class="font-bold text-slate-600">Nominal SPP:</label>
+            <button type="button" onclick="setQuickNominal(75000)" class="text-[10px] text-amber-600 font-bold hover:underline cursor-pointer">Set Lunas (75rb)</button>
           </div>
           <div class="relative">
             <span class="absolute left-3 top-2.5 font-bold text-slate-400">Rp</span>
-            <input type="number" id="sppModalAmountInput" placeholder="75000" class="w-full border rounded-xl pl-9 pr-3 py-2 text-sm font-bold bg-slate-50 focus:ring-2 focus:ring-indigo-500">
+            <input type="number" id="sppModalAmountInput" placeholder="75000" class="w-full border rounded-xl pl-9 pr-3 py-2 text-sm font-bold bg-slate-50 focus:ring-2 focus:ring-amber-500">
           </div>
         </div>
       </div>
 
       <div class="flex justify-end gap-2 pt-2 border-t">
         <button onclick="closePaymentModal()" class="px-4 py-2 text-xs text-slate-500 hover:bg-slate-100 rounded-xl font-medium cursor-pointer">Batal</button>
-        <button id="savePaymentBtn" onclick="saveSppModal()" class="px-5 py-2 text-xs bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow cursor-pointer">OK</button>
+        <button id="savePaymentBtn" onclick="saveSppModal()" class="px-5 py-2 text-xs bg-amber-600 hover:bg-amber-700 text-white font-bold rounded-xl shadow cursor-pointer">OK</button>
       </div>
     </div>
   </div>
@@ -347,25 +393,25 @@
   <!-- TOAST NOTIFIKASI -->
   <div id="toast" class="hidden fixed bottom-5 right-5 z-50 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-xl"></div>
 
-  <!-- TEMPLATES KARTU GAMBAR PNG (HIDDEN) -->
+  <!-- TEMPLATE UNDUHAN GAMBAR (HIDDEN) -->
   <div id="reportContainer" style="position: absolute; left: -9999px; top: -9999px;">
-    <div id="reportCard" class="w-[820px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg">
+    <div id="reportCard" class="w-[820px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg text-slate-800">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
-            <img id="reportLogo" src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
+          <div class="w-12 h-12 rounded-xl bg-amber-950 border border-amber-600/40 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
+            <img id="reportLogo" src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%23f59e0b'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
           </div>
           <div>
-            <h2 class="text-xl font-bold text-slate-800 leading-tight">Sanggar Tari Youtefa</h2>
+            <h2 class="text-xl font-bold text-amber-950 leading-tight">Sanggar Tari Youtefa</h2>
             <p class="text-xs text-slate-500 font-medium tracking-wide">LAPORAN REKAPITULASI PRESENSI BULANAN</p>
           </div>
         </div>
         <div class="text-right">
-          <div id="cardMonthYearLabel" class="inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg">September 2026</div>
+          <div id="cardMonthYearLabel" class="inline-block bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-lg">September 2026</div>
         </div>
       </div>
       <table class="w-full text-left text-[11px] border border-slate-200 rounded-lg overflow-hidden">
-        <thead class="bg-indigo-900 text-white font-bold border-b border-indigo-800 uppercase text-center">
+        <thead class="bg-[#240e04] text-amber-200 font-bold border-b border-amber-950 uppercase text-center">
           <tr id="cardReportHeader"><th class="p-2 w-8">No</th><th class="p-2 text-left min-w-[150px]">Nama Anggota</th></tr>
         </thead>
         <tbody id="cardReportTbody" class="divide-y divide-slate-100 text-center"></tbody>
@@ -378,23 +424,23 @@
   </div>
 
   <div id="sppReportContainer" style="position: absolute; left: -9999px; top: -9999px;">
-    <div id="sppReportCard" class="w-[980px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg">
+    <div id="sppReportCard" class="w-[980px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg text-slate-800">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
-          <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
-            <img src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
+          <div class="w-12 h-12 rounded-xl bg-amber-950 border border-amber-600/40 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
+            <img src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%23f59e0b'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
           </div>
           <div>
-            <h2 class="text-xl font-bold text-slate-800 leading-tight">Sanggar Tari Youtefa</h2>
+            <h2 class="text-xl font-bold text-amber-950 leading-tight">Sanggar Tari Youtefa</h2>
             <p class="text-xs text-slate-500 font-medium tracking-wide">REKAPITULASI BUKU KAS IURAN SPP & DAFTAR TAHUNAN</p>
           </div>
         </div>
         <div class="text-right">
-          <div id="sppCardYearLabel" class="inline-block bg-indigo-50 border border-indigo-200 text-indigo-700 text-xs font-bold px-3 py-1.5 rounded-lg">Tahun 2026</div>
+          <div id="sppCardYearLabel" class="inline-block bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-lg">Tahun 2026</div>
         </div>
       </div>
       <table class="w-full text-left text-[10px] border border-slate-200 rounded-lg overflow-hidden">
-        <thead class="bg-indigo-900 text-white font-bold border-b border-indigo-800 uppercase text-center">
+        <thead class="bg-[#240e04] text-amber-200 font-bold border-b border-amber-950 uppercase text-center">
           <tr>
             <th class="p-2 w-8">No</th>
             <th class="p-2 text-left min-w-[130px]">Nama Anggota</th>
@@ -417,8 +463,6 @@
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycby2Si75Z3IYyM-J06KHpyCWAZuGlJqzgSDs2arOijOQwBOAGHVK-EadMRJ2vPd4ioPl/exec';
-    
-    // PIN / Password Masuk ke Halaman SPP (Bisa Anda ganti di sini)
     const ADMIN_PIN = 'youtefa2026';
 
     let currentPage = 'home';
@@ -429,7 +473,6 @@
     let currentSelectedStatus = 'Hadir';
     let activeSppTarget = null;
 
-    // Navigasi Antar Halaman
     function navigateTo(page) {
       currentPage = page;
       document.getElementById('pageHome').classList.add('hidden');
@@ -450,7 +493,19 @@
       }
     }
 
-    // Modal Proteksi PIN Admin untuk SPP
+    // Lightbox Foto Handler
+    function openLightbox(imgSrc, title, blogUrl) {
+      document.getElementById('lightboxImg').src = imgSrc;
+      document.getElementById('lightboxTitle').textContent = title;
+      document.getElementById('lightboxBlogLink').href = blogUrl || '#';
+      document.getElementById('lightboxModal').classList.remove('hidden');
+    }
+
+    function closeLightbox() {
+      document.getElementById('lightboxModal').classList.add('hidden');
+    }
+
+    // Admin Auth SPP
     function openAdminAuthModal() {
       document.getElementById('adminPinInput').value = '';
       document.getElementById('adminAuthError').classList.add('hidden');
@@ -472,7 +527,6 @@
       }
     }
 
-    // Enter key untuk input PIN
     document.getElementById('adminPinInput')?.addEventListener('keyup', (e) => {
       if (e.key === 'Enter') checkAdminAuth();
     });
@@ -512,8 +566,8 @@
 
       currentData.saturdays.forEach((s) => {
         const th = document.createElement('th');
-        th.className = 'p-3 text-center min-w-[100px] border-l border-indigo-800/50';
-        th.innerHTML = `<div>${s.labelKey}</div><div class="text-[10px] font-normal text-indigo-200">(${s.dateStr.slice(0,5)})</div>`;
+        th.className = 'p-3 text-center min-w-[100px] border-l border-amber-900/50';
+        th.innerHTML = `<div>${s.labelKey}</div><div class="text-[10px] font-normal text-amber-200/70">(${s.dateStr.slice(0,5)})</div>`;
         headerRow.appendChild(th);
       });
 
@@ -527,7 +581,7 @@
 
       currentData.members.forEach((m, mIdx) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50/80 transition';
+        tr.className = 'hover:bg-amber-50/50 transition';
 
         let saturdaysColsHtml = '';
         currentData.saturdays.forEach((s, sIdx) => {
@@ -535,7 +589,7 @@
           const badgeHtml = parseStatusBadge(rawVal);
           saturdaysColsHtml += `
             <td class="p-2 text-center border-l border-slate-100">
-              <div onclick="openStatusModal(${mIdx}, ${sIdx})" class="w-full py-1.5 px-2 rounded-xl transition hover:ring-2 hover:ring-indigo-400 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[36px] cursor-pointer">
+              <div onclick="openStatusModal(${mIdx}, ${sIdx})" class="w-full py-1.5 px-2 rounded-xl transition hover:ring-2 hover:ring-amber-500 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[36px] cursor-pointer">
                 ${badgeHtml}
               </div>
             </td>
@@ -616,7 +670,7 @@
         okBtn.innerHTML = 'OK';
         closeStatusModal();
         if (res.status === 'success') {
-          showToast('Presensi tersimpan ke Spreadsheet!', 'success');
+          showToast('Presensi tersimpan di Spreadsheet!', 'success');
         }
       };
 
@@ -642,7 +696,7 @@
       currentData.saturdays.forEach(s => {
         const th = document.createElement('th');
         th.className = 'p-2 text-center';
-        th.innerHTML = `<div>${s.labelKey}</div><div class="text-[9px] font-normal text-indigo-200">(${s.dateStr.slice(0,5)})</div>`;
+        th.innerHTML = `<div>${s.labelKey}</div><div class="text-[9px] font-normal text-amber-200">(${s.dateStr.slice(0,5)})</div>`;
         cardHeader.appendChild(th);
       });
 
@@ -679,7 +733,7 @@
           link.download = `Rekap_Presensi_${currentData.monthName}_${currentData.year}.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
-          showToast('Gambar rekap berhasil diunduh!', 'success');
+          showToast('Gambar rekap presensi berhasil diunduh!', 'success');
         });
     }
 
@@ -718,11 +772,11 @@
 
       currentSppData.members.forEach((m, idx) => {
         const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50/80 transition';
+        tr.className = 'hover:bg-amber-50/50 transition';
 
         const isRegPaid = m.registrationFee >= 50000;
         const regBadge = isRegPaid 
-          ? `<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">50rb</span>`
+          ? `<span class="px-2 py-0.5 rounded-md bg-amber-100 text-amber-800 font-bold border border-amber-300">50rb</span>`
           : `<span class="text-slate-300 font-bold">-</span>`;
 
         let monthColsHtml = '';
@@ -736,7 +790,7 @@
           }
           monthColsHtml += `
             <td class="p-2 text-center border-l border-slate-100">
-              <div onclick="openPaymentModal(${idx}, ${mo})" class="w-full py-1 rounded-lg hover:ring-2 hover:ring-indigo-400 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[30px] cursor-pointer">
+              <div onclick="openPaymentModal(${idx}, ${mo})" class="w-full py-1 rounded-lg hover:ring-2 hover:ring-amber-500 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[30px] cursor-pointer">
                 ${cellBadge}
               </div>
             </td>
@@ -746,10 +800,10 @@
         tr.innerHTML = `
           <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
           <td class="p-3 text-left font-medium text-slate-500">${m.id}</td>
-          <td class="p-3 text-left font-bold text-slate-800 hover:text-indigo-600 cursor-pointer" onclick="openPaymentModal(${idx}, 0)">${m.name}</td>
+          <td class="p-3 text-left font-bold text-slate-800 hover:text-amber-700 cursor-pointer" onclick="openPaymentModal(${idx}, 0)">${m.name}</td>
           <td class="p-3 text-center border-l border-slate-100" onclick="openPaymentModal(${idx}, 0)">${regBadge}</td>
           ${monthColsHtml}
-          <td class="p-3 text-center font-bold text-indigo-700 border-l border-slate-100">${m.totalPaid}</td>
+          <td class="p-3 text-center font-bold text-amber-800 border-l border-slate-100">${m.totalPaid}</td>
         `;
         tbody.appendChild(tr);
       });
@@ -835,10 +889,10 @@
           cols += `<td class="p-1">${txt}</td>`;
         }
 
-        const regTxt = m.registrationFee >= 50000 ? '<span class="text-indigo-700 font-bold">50rb</span>' : '-';
+        const regTxt = m.registrationFee >= 50000 ? '<span class="text-amber-800 font-bold">50rb</span>' : '-';
         const tr = document.createElement('tr');
         tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
-        tr.innerHTML = `<td class="p-1.5 font-mono text-slate-400">${idx + 1}</td><td class="p-1.5 text-left font-bold text-slate-800">${m.name}</td><td class="p-1.5">${regTxt}</td>${cols}<td class="p-1.5 font-bold text-indigo-700">${m.totalPaid}</td>`;
+        tr.innerHTML = `<td class="p-1.5 font-mono text-slate-400">${idx + 1}</td><td class="p-1.5 text-left font-bold text-slate-800">${m.name}</td><td class="p-1.5">${regTxt}</td>${cols}<td class="p-1.5 font-bold text-amber-800">${m.totalPaid}</td>`;
         cardTbody.appendChild(tr);
       });
 
@@ -862,7 +916,7 @@
     function showToast(msg, type) {
       const toast = document.getElementById('toast');
       toast.className = `fixed bottom-5 right-5 z-50 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-xl ${
-        type === 'success' ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'
+        type === 'success' ? 'bg-amber-600 text-white' : 'bg-rose-600 text-white'
       }`;
       toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${msg}`;
       toast.classList.remove('hidden');
