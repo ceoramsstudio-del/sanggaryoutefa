@@ -3,139 +3,256 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sanggar Tari Youtefa - Presensi & SPP</title>
+  <title>Sanggar Tari Youtefa - Portal Resmi</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans min-h-screen">
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col">
 
-  <!-- Header & Switcher Tab -->
-  <header class="bg-indigo-700 text-white shadow-lg sticky top-0 z-30">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex flex-wrap justify-between items-center gap-3">
-      <div class="flex items-center space-x-3">
+  <!-- ======================== NAVBAR ======================== -->
+  <header class="bg-indigo-800 text-white shadow-lg sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="navigateTo('home')">
         <div class="w-10 h-10 rounded-xl bg-white flex items-center justify-center p-1 border border-white/20 shadow overflow-hidden shrink-0">
-          <img id="navLogo" src="logo.png" onerror="this.src='https://lh3.googleusercontent.com/d/1U49vsk0SYmYMFtjC0cyX0AQnA6i52y0V'" alt="Logo" class="w-full h-full object-contain">
+          <img id="navLogo" src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca'" alt="Logo" class="w-full h-full object-contain">
         </div>
         <div>
           <h1 class="text-base md:text-lg font-bold leading-tight">Sanggar Tari Youtefa</h1>
-          <p class="text-xs text-indigo-200" id="currentSheetLabel">Presensi & Iuran SPP</p>
+          <p class="text-xs text-indigo-200">Portal Kegiatan & Administrasi</p>
         </div>
       </div>
 
-      <!-- Tab Switcher Navigation -->
-      <div class="flex items-center bg-indigo-900/50 p-1 rounded-2xl border border-white/10 text-xs font-bold">
-        <button id="tabBtnAtt" onclick="switchMainTab('attendance')" class="px-3.5 py-1.5 rounded-xl transition bg-white text-indigo-800 shadow cursor-pointer">
-          <i class="fa-solid fa-calendar-check mr-1.5"></i> Presensi Sabtu
-        </button>
-        <button id="tabBtnSpp" onclick="switchMainTab('spp')" class="px-3.5 py-1.5 rounded-xl transition text-white hover:bg-white/10 cursor-pointer">
-          <i class="fa-solid fa-money-bill-wave mr-1.5"></i> Iuran SPP
+      <!-- Tombol Kembali jika sedang di dalam sub-halaman -->
+      <div id="navBackContainer" class="hidden">
+        <button onclick="navigateTo('home')" class="bg-white/10 hover:bg-white/20 text-white text-xs font-semibold px-3.5 py-2 rounded-xl transition border border-white/20 flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-house"></i>
+          <span>Kembali ke Beranda</span>
         </button>
       </div>
     </div>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-6">
-
-    <!-- ======================= 1. SECTION PRESENSI ======================= -->
-    <div id="sectionAttendance">
-      <!-- Filter Bar Presensi -->
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex flex-wrap items-center gap-2">
-          <select id="yearSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
-            <option value="2026" selected>2026</option>
-            <option value="2027">2027</option>
-          </select>
-
-          <select id="monthSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
-            <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
-            <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
-            <option value="6">Juli</option><option value="7">Agustus</option><option value="8" selected>September</option>
-            <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
-          </select>
-
-          <span class="text-xs text-indigo-600 font-medium pl-2 hidden md:inline">
-            <i class="fa-solid fa-hand-pointer mr-1"></i> Klik kotak Sabtu untuk ubah status absen
-          </span>
+  <!-- ======================== 1. HALAMAN DEPAN (HOME) ======================== -->
+  <section id="pageHome" class="flex-grow">
+    
+    <!-- Hero Banner -->
+    <div class="relative bg-gradient-to-br from-indigo-900 via-indigo-800 to-slate-900 text-white py-14 px-4 text-center overflow-hidden">
+      <div class="absolute inset-0 opacity-10 bg-[radial-gradient(#ffffff_1px,transparent_1px)] [background-size:16px_16px]"></div>
+      <div class="relative max-w-4xl mx-auto space-y-4">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/20 border border-indigo-400/30 text-indigo-200 text-xs font-semibold">
+          <i class="fa-solid fa-sparkles text-amber-400"></i> Latihan Rutin Setiap Hari Sabtu
         </div>
+        <h2 class="text-2xl md:text-4xl font-extrabold tracking-tight">Selamat Datang di Portal Resmi<br><span class="text-amber-400">Sanggar Tari Youtefa</span></h2>
+        <p class="text-sm md:text-base text-indigo-100 max-w-2xl mx-auto leading-relaxed">
+          Sistem informasi presensi latihan mingguan dan pencatatan kas iuran SPP siswa sanggar tari.
+        </p>
 
-        <div class="flex items-center gap-2">
-          <button onclick="downloadMonthReportImage()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
-            <i class="fa-solid fa-camera"></i>
-            <span>Unduh Gambar Presensi</span>
-          </button>
-        </div>
-      </div>
+        <!-- Tombol Pilihan Menu Utama (Card Actions) -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl mx-auto pt-6">
+          
+          <!-- Tombol Presensi -->
+          <div onclick="navigateTo('attendance')" class="group bg-white/10 hover:bg-white/20 border border-white/15 hover:border-amber-400 p-6 rounded-3xl backdrop-blur-md transition duration-300 shadow-xl cursor-pointer text-left flex items-center justify-between">
+            <div class="space-y-1">
+              <span class="inline-block p-3 rounded-2xl bg-amber-400 text-slate-900 font-bold mb-1 shadow-md">
+                <i class="fa-solid fa-calendar-check text-xl"></i>
+              </span>
+              <h3 class="text-lg font-bold text-white group-hover:text-amber-300 transition">Presensi Sabtu</h3>
+              <p class="text-xs text-indigo-200 leading-normal">Cek & catat daftar kehadiran anak-anak setiap latihan Sabtu.</p>
+            </div>
+            <i class="fa-solid fa-arrow-right text-indigo-300 group-hover:translate-x-1.5 transition text-lg"></i>
+          </div>
 
-      <!-- Tabel Matriks Presensi -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr id="tableHeaderRow" class="bg-indigo-900 text-white uppercase font-bold tracking-wider text-center border-b border-indigo-800">
-                <th class="p-3 w-12 text-center">No</th>
-                <th class="p-3 w-20 text-left">ID</th>
-                <th class="p-3 text-left min-w-[160px]">Nama Lengkap</th>
-              </tr>
-            </thead>
-            <tbody id="attendanceTableBody" class="divide-y divide-slate-100">
-              <tr><td colspan="8" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data presensi...</td></tr>
-            </tbody>
-          </table>
+          <!-- Tombol Iuran SPP (Password Protected) -->
+          <div onclick="openAdminAuthModal()" class="group bg-white/10 hover:bg-white/20 border border-white/15 hover:border-emerald-400 p-6 rounded-3xl backdrop-blur-md transition duration-300 shadow-xl cursor-pointer text-left flex items-center justify-between">
+            <div class="space-y-1">
+              <div class="flex items-center gap-2">
+                <span class="inline-block p-3 rounded-2xl bg-emerald-400 text-slate-900 font-bold mb-1 shadow-md">
+                  <i class="fa-solid fa-money-bill-wave text-xl"></i>
+                </span>
+                <span class="text-[10px] bg-emerald-500/20 border border-emerald-400/40 text-emerald-300 px-2 py-0.5 rounded-full font-bold">
+                  <i class="fa-solid fa-lock mr-1"></i> Khusus Admin
+                </span>
+              </div>
+              <h3 class="text-lg font-bold text-white group-hover:text-emerald-300 transition">Iuran SPP</h3>
+              <p class="text-xs text-indigo-200 leading-normal">Rekap kas SPP bulanan & uang pendaftaran murid baru.</p>
+            </div>
+            <i class="fa-solid fa-arrow-right text-indigo-300 group-hover:translate-x-1.5 transition text-lg"></i>
+          </div>
+
         </div>
       </div>
     </div>
 
+    <!-- Galeri Foto Display Anak-Anak Sanggar (Blogger / Google Photos Embed) -->
+    <div class="max-w-7xl mx-auto px-4 py-12">
+      <div class="text-center max-w-xl mx-auto mb-8 space-y-2">
+        <h3 class="text-xl md:text-2xl font-bold text-slate-800">Dokumentasi & Galeri Latihan</h3>
+        <p class="text-xs md:text-sm text-slate-500">Momen keceriaan dan semangat anak-anak Sanggar Tari Youtefa saat berlatih.</p>
+      </div>
 
-    <!-- ======================= 2. SECTION IURAN SPP ======================= -->
-    <div id="sectionSpp" class="hidden">
-      <!-- Filter Bar SPP -->
-      <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
-        <div class="flex items-center gap-2">
-          <span class="text-xs font-bold text-slate-500 uppercase">Tahun Buku:</span>
-          <select id="sppYearSelect" onchange="loadSppData()" class="bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
-            <option value="2026" selected>2026</option>
-            <option value="2027">2027</option>
-          </select>
-          <span class="text-xs text-indigo-600 font-medium pl-3 hidden md:inline">
-            <i class="fa-solid fa-hand-pointer mr-1"></i> Klik nama atau kotak bulan untuk bayar / cicil SPP
-          </span>
+      <!-- Grid Foto (Ganti URL gambar di bawah dengan foto blogspot Anda) -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        
+        <!-- Foto 1 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEigk2wX59Uv849a6566085a676b/s800/foto1.jpg" onerror="this.src='https://images.unsplash.com/photo-1547153760-18fc86324498?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
+            <span class="text-white text-xs font-semibold">Latihan Gerak Dasar</span>
+          </div>
         </div>
 
-        <button onclick="downloadSppReportImage()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
-          <i class="fa-solid fa-file-image"></i>
-          <span>Unduh Rekap SPP Tahunan (PNG)</span>
+        <!-- Foto 2 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhq7781b0f19c962b083b48f98c/s800/foto2.jpg" onerror="this.src='https://images.unsplash.com/photo-1518834107812-67b0b7c58434?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
+            <span class="text-white text-xs font-semibold">Formasi Pentas</span>
+          </div>
+        </div>
+
+        <!-- Foto 3 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEi4e01b34a66a1a118835817d2a/s800/foto3.jpg" onerror="this.src='https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
+            <span class="text-white text-xs font-semibold">Kompak & Ceria</span>
+          </div>
+        </div>
+
+        <!-- Foto 4 -->
+        <div class="group relative overflow-hidden rounded-2xl shadow-sm border border-slate-200 aspect-square bg-slate-200">
+          <img src="https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEg2b44988771120aa543bc9281a/s800/foto4.jpg" onerror="this.src='https://images.unsplash.com/photo-1534447677768-be436bb09401?w=800&auto=format&fit=crop&q=60'" alt="Latihan Tari" class="w-full h-full object-cover group-hover:scale-105 transition duration-300">
+          <div class="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent flex items-end p-3">
+            <span class="text-white text-xs font-semibold">Evaluasi Mingguan</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== 2. HALAMAN PRESENSI ======================== -->
+  <section id="pageAttendance" class="hidden max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
+    
+    <!-- Filter Bar Presensi -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex flex-wrap items-center gap-2">
+        <select id="yearSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+        </select>
+
+        <select id="monthSelect" onchange="loadAttendance()" class="bg-slate-100 border border-slate-300 text-slate-800 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
+          <option value="0">Januari</option><option value="1">Februari</option><option value="2">Maret</option>
+          <option value="3">April</option><option value="4">Mei</option><option value="5">Juni</option>
+          <option value="6">Juli</option><option value="7">Agustus</option><option value="8" selected>September</option>
+          <option value="9">Oktober</option><option value="10">November</option><option value="11">Desember</option>
+        </select>
+
+        <span class="text-xs text-indigo-600 font-medium pl-2 hidden md:inline">
+          <i class="fa-solid fa-hand-pointer mr-1"></i> Klik kotak Sabtu untuk ubah status absen
+        </span>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button onclick="downloadMonthReportImage()" class="bg-amber-500 hover:bg-amber-600 text-white text-xs font-semibold px-3 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-camera"></i>
+          <span>Unduh Gambar Rekap</span>
         </button>
       </div>
-
-      <!-- Tabel Matriks SPP Tahunan (12 Bulan) -->
-      <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-[11px]">
-            <thead>
-              <tr class="bg-indigo-900 text-white uppercase font-bold tracking-wider text-center border-b border-indigo-800">
-                <th class="p-3 w-10 text-center">No</th>
-                <th class="p-3 w-16 text-left">ID</th>
-                <th class="p-3 text-left min-w-[140px]">Nama Lengkap</th>
-                <th class="p-3 min-w-[80px]">Daftar</th>
-                <th class="p-2.5">Jan</th><th class="p-2.5">Feb</th><th class="p-2.5">Mar</th>
-                <th class="p-2.5">Apr</th><th class="p-2.5">Mei</th><th class="p-2.5">Jun</th>
-                <th class="p-2.5">Jul</th><th class="p-2.5">Ags</th><th class="p-2.5">Sep</th>
-                <th class="p-2.5">Okt</th><th class="p-2.5">Nov</th><th class="p-2.5">Des</th>
-                <th class="p-3 min-w-[90px]">Total</th>
-              </tr>
-            </thead>
-            <tbody id="sppTableBody" class="divide-y divide-slate-100 text-center">
-              <tr><td colspan="17" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat buku SPP...</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
     </div>
 
-  </main>
+    <!-- Tabel Matriks Presensi -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-xs">
+          <thead>
+            <tr id="tableHeaderRow" class="bg-indigo-900 text-white uppercase font-bold tracking-wider text-center border-b border-indigo-800">
+              <th class="p-3 w-12 text-center">No</th>
+              <th class="p-3 w-20 text-left">ID</th>
+              <th class="p-3 text-left min-w-[160px]">Nama Lengkap</th>
+            </tr>
+          </thead>
+          <tbody id="attendanceTableBody" class="divide-y divide-slate-100">
+            <tr><td colspan="8" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil data presensi...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
 
-  <!-- ======================= MODAL POPUP PRESENSI ======================= -->
+  <!-- ======================== 3. HALAMAN IURAN SPP ======================== -->
+  <section id="pageSpp" class="hidden max-w-7xl mx-auto px-4 py-6 w-full flex-grow">
+    
+    <!-- Filter Bar SPP -->
+    <div class="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 mb-6 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-xs font-bold text-slate-500 uppercase">Tahun Buku:</span>
+        <select id="sppYearSelect" onchange="loadSppData()" class="bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold rounded-xl p-2.5 cursor-pointer">
+          <option value="2026" selected>2026</option>
+          <option value="2027">2027</option>
+        </select>
+        <span class="text-xs text-indigo-600 font-medium pl-3 hidden md:inline">
+          <i class="fa-solid fa-hand-pointer mr-1"></i> Klik kotak bulan untuk catat / cicil SPP
+        </span>
+      </div>
+
+      <button onclick="downloadSppReportImage()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold px-4 py-2 rounded-xl shadow transition flex items-center gap-1.5 cursor-pointer">
+        <i class="fa-solid fa-file-image"></i>
+        <span>Unduh Rekap SPP Tahunan (PNG)</span>
+      </button>
+    </div>
+
+    <!-- Tabel Matriks SPP -->
+    <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-left border-collapse text-[11px]">
+          <thead>
+            <tr class="bg-indigo-900 text-white uppercase font-bold tracking-wider text-center border-b border-indigo-800">
+              <th class="p-3 w-10 text-center">No</th>
+              <th class="p-3 w-16 text-left">ID</th>
+              <th class="p-3 text-left min-w-[140px]">Nama Lengkap</th>
+              <th class="p-3 min-w-[80px]">Daftar</th>
+              <th class="p-2.5">Jan</th><th class="p-2.5">Feb</th><th class="p-2.5">Mar</th>
+              <th class="p-2.5">Apr</th><th class="p-2.5">Mei</th><th class="p-2.5">Jun</th>
+              <th class="p-2.5">Jul</th><th class="p-2.5">Ags</th><th class="p-2.5">Sep</th>
+              <th class="p-2.5">Okt</th><th class="p-2.5">Nov</th><th class="p-2.5">Des</th>
+              <th class="p-3 min-w-[90px]">Total</th>
+            </tr>
+          </thead>
+          <tbody id="sppTableBody" class="divide-y divide-slate-100 text-center">
+            <tr><td colspan="17" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat buku SPP...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======================== MODAL LOGIN ADMIN SPP ======================== -->
+  <div id="adminAuthModal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center space-y-4 border border-indigo-50 relative">
+      <div class="w-14 h-14 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center mx-auto text-2xl shadow-inner">
+        <i class="fa-solid fa-shield-halved"></i>
+      </div>
+      <div>
+        <h3 class="text-lg font-bold text-slate-800">Verifikasi Admin</h3>
+        <p class="text-xs text-slate-500 mt-1">Masukkan PIN / Kata Sandi Admin untuk mengelola buku kas SPP sanggar.</p>
+      </div>
+      <div>
+        <input type="password" id="adminPinInput" placeholder="Masukkan PIN Admin" class="w-full text-center tracking-widest text-lg font-bold border rounded-xl p-3 bg-slate-50 focus:ring-2 focus:ring-indigo-500 outline-none">
+        <p id="adminAuthError" class="hidden text-xs text-rose-500 font-bold mt-2">PIN salah! Silakan coba lagi.</p>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="closeAdminAuthModal()" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold rounded-xl text-xs transition cursor-pointer">
+          Batal / Tutup
+        </button>
+        <button onclick="checkAdminAuth()" class="w-1/2 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md transition cursor-pointer">
+          Masuk SPP
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================== MODAL PRESENSI ======================== -->
   <div id="statusModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-indigo-50 relative">
       <div class="flex justify-between items-center border-b pb-3">
@@ -178,7 +295,7 @@
     </div>
   </div>
 
-  <!-- ======================= MODAL PEMBAYARAN SPP ======================= -->
+  <!-- ======================== MODAL SPP ======================== -->
   <div id="paymentModal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
     <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 space-y-4 border border-indigo-50 relative">
       <div class="flex justify-between items-center border-b pb-3">
@@ -200,7 +317,6 @@
           </select>
         </div>
 
-        <!-- Checkbox Murid Baru (50rb) -->
         <label class="p-3 bg-indigo-50/70 border border-indigo-100 rounded-xl flex items-center justify-between cursor-pointer">
           <div>
             <span class="block font-bold text-indigo-900">Murid Baru?</span>
@@ -209,7 +325,6 @@
           <input type="checkbox" id="sppModalNewMemberCheck" class="w-5 h-5 text-indigo-600 rounded focus:ring-indigo-500 cursor-pointer">
         </label>
 
-        <!-- Input Pembayaran SPP (Standar 75rb / Cicilan) -->
         <div>
           <div class="flex justify-between items-center mb-1">
             <label class="font-bold text-slate-600">Nominal Pembayaran SPP:</label>
@@ -219,7 +334,6 @@
             <span class="absolute left-3 top-2.5 font-bold text-slate-400">Rp</span>
             <input type="number" id="sppModalAmountInput" placeholder="75000" class="w-full border rounded-xl pl-9 pr-3 py-2 text-sm font-bold bg-slate-50 focus:ring-2 focus:ring-indigo-500">
           </div>
-          <p class="text-[10px] text-slate-400 mt-1">*Standar Rp 75.000. Masukkan nominal lain jika dicicil.</p>
         </div>
       </div>
 
@@ -233,13 +347,13 @@
   <!-- TOAST NOTIFIKASI -->
   <div id="toast" class="hidden fixed bottom-5 right-5 z-50 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-xl"></div>
 
-  <!-- ================= TEMPLATE UNDUHAN PRESENSI ================= -->
+  <!-- TEMPLATES KARTU GAMBAR PNG (HIDDEN) -->
   <div id="reportContainer" style="position: absolute; left: -9999px; top: -9999px;">
     <div id="reportCard" class="w-[820px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
-            <img id="reportLogo" src="logo.png" onerror="this.src='https://lh3.googleusercontent.com/d/1U49vsk0SYmYMFtjC0cyX0AQnA6i52y0V'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
+            <img id="reportLogo" src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
           </div>
           <div>
             <h2 class="text-xl font-bold text-slate-800 leading-tight">Sanggar Tari Youtefa</h2>
@@ -263,13 +377,12 @@
     </div>
   </div>
 
-  <!-- ================= TEMPLATE UNDUHAN SPP TAHUNAN ================= -->
   <div id="sppReportContainer" style="position: absolute; left: -9999px; top: -9999px;">
     <div id="sppReportCard" class="w-[980px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-xl bg-white border border-slate-200 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
-            <img src="logo.png" onerror="this.src='https://lh3.googleusercontent.com/d/1U49vsk0SYmYMFtjC0cyX0AQnA6i52y0V'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
+            <img src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%234338ca'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
           </div>
           <div>
             <h2 class="text-xl font-bold text-slate-800 leading-tight">Sanggar Tari Youtefa</h2>
@@ -304,8 +417,11 @@
 
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycby2Si75Z3IYyM-J06KHpyCWAZuGlJqzgSDs2arOijOQwBOAGHVK-EadMRJ2vPd4ioPl/exec';
+    
+    // PIN / Password Masuk ke Halaman SPP (Bisa Anda ganti di sini)
+    const ADMIN_PIN = 'youtefa2026';
 
-    let currentMainTab = 'attendance';
+    let currentPage = 'home';
     let currentData = { saturdays: [], members: [], sheetName: '', monthName: '', year: 2026 };
     let currentSppData = { members: [], sheetName: '', year: 2026 };
     
@@ -313,220 +429,55 @@
     let currentSelectedStatus = 'Hadir';
     let activeSppTarget = null;
 
-    window.onload = function() {
-      document.getElementById('yearSelect').value = "2026";
-      document.getElementById('monthSelect').value = "8"; // September
-      loadAttendance();
-    };
+    // Navigasi Antar Halaman
+    function navigateTo(page) {
+      currentPage = page;
+      document.getElementById('pageHome').classList.add('hidden');
+      document.getElementById('pageAttendance').classList.add('hidden');
+      document.getElementById('pageSpp').classList.add('hidden');
+      document.getElementById('navBackContainer').classList.remove('hidden');
 
-    function switchMainTab(tab) {
-      currentMainTab = tab;
-      if (tab === 'attendance') {
-        document.getElementById('sectionAttendance').classList.remove('hidden');
-        document.getElementById('sectionSpp').classList.add('hidden');
-        document.getElementById('tabBtnAtt').className = 'px-3.5 py-1.5 rounded-xl transition bg-white text-indigo-800 shadow cursor-pointer';
-        document.getElementById('tabBtnSpp').className = 'px-3.5 py-1.5 rounded-xl transition text-white hover:bg-white/10 cursor-pointer';
-      } else {
-        document.getElementById('sectionAttendance').classList.add('hidden');
-        document.getElementById('sectionSpp').classList.remove('hidden');
-        document.getElementById('tabBtnSpp').className = 'px-3.5 py-1.5 rounded-xl transition bg-white text-indigo-800 shadow cursor-pointer';
-        document.getElementById('tabBtnAtt').className = 'px-3.5 py-1.5 rounded-xl transition text-white hover:bg-white/10 cursor-pointer';
+      if (page === 'home') {
+        document.getElementById('pageHome').classList.remove('hidden');
+        document.getElementById('navBackContainer').classList.add('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else if (page === 'attendance') {
+        document.getElementById('pageAttendance').classList.remove('hidden');
+        loadAttendance();
+      } else if (page === 'spp') {
+        document.getElementById('pageSpp').classList.remove('hidden');
         loadSppData();
       }
     }
 
-    // ====================== FITUR 1: SPP TAHUNAN ======================
-    function loadSppData() {
-      const year = document.getElementById('sppYearSelect').value;
-      const tbody = document.getElementById('sppTableBody');
-      tbody.innerHTML = `<tr><td colspan="17" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil buku SPP tahun ${year}...</td></tr>`;
-
-      const old = document.getElementById('jsonp-spp');
-      if (old) old.remove();
-
-      window.handleSppResponse = function(data) {
-        if (data.status === 'success') {
-          currentSppData = data;
-          renderSppTable();
-        } else {
-          showToast('Error: ' + data.message, 'error');
-        }
-      };
-
-      const script = document.createElement('script');
-      script.id = 'jsonp-spp';
-      script.src = `${API_URL}?action=getSpp&year=${year}&callback=handleSppResponse&_=${Date.now()}`;
-      document.body.appendChild(script);
+    // Modal Proteksi PIN Admin untuk SPP
+    function openAdminAuthModal() {
+      document.getElementById('adminPinInput').value = '';
+      document.getElementById('adminAuthError').classList.add('hidden');
+      document.getElementById('adminAuthModal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('adminPinInput').focus(), 100);
     }
 
-    function renderSppTable() {
-      const tbody = document.getElementById('sppTableBody');
-      tbody.innerHTML = '';
+    function closeAdminAuthModal() {
+      document.getElementById('adminAuthModal').classList.add('hidden');
+    }
 
-      if (!currentSppData.members || currentSppData.members.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="17" class="p-6 text-center text-slate-400">Tidak ada data anggota.</td></tr>`;
-        return;
+    function checkAdminAuth() {
+      const pin = document.getElementById('adminPinInput').value.trim();
+      if (pin === ADMIN_PIN) {
+        closeAdminAuthModal();
+        navigateTo('spp');
+      } else {
+        document.getElementById('adminAuthError').classList.remove('hidden');
       }
-
-      currentSppData.members.forEach((m, idx) => {
-        const tr = document.createElement('tr');
-        tr.className = 'hover:bg-slate-50/80 transition';
-
-        // Badge Uang Pendaftaran 50rb
-        const isRegPaid = m.registrationFee >= 50000;
-        const regBadge = isRegPaid 
-          ? `<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">50rb</span>`
-          : `<span class="text-slate-300 font-bold">-</span>`;
-
-        // Kolom 12 Bulan (Jan - Des)
-        let monthColsHtml = '';
-        for (let mo = 0; mo < 12; mo++) {
-          const val = m.months[mo]?.amount || 0;
-          let cellBadge = `<span class="text-slate-300 font-bold">-</span>`;
-          if (val >= 75000) {
-            cellBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">Lunas</span>`;
-          } else if (val > 0) {
-            cellBadge = `<span class="px-1 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">${val/1000}k</span>`;
-          }
-          monthColsHtml += `
-            <td class="p-2 text-center border-l border-slate-100">
-              <div onclick="openPaymentModal(${idx}, ${mo})" class="w-full py-1 rounded-lg hover:ring-2 hover:ring-indigo-400 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[30px] cursor-pointer">
-                ${cellBadge}
-              </div>
-            </td>
-          `;
-        }
-
-        tr.innerHTML = `
-          <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
-          <td class="p-3 text-left font-medium text-slate-500">${m.id}</td>
-          <td class="p-3 text-left font-bold text-slate-800 hover:text-indigo-600 cursor-pointer" onclick="openPaymentModal(${idx}, 0)">${m.name}</td>
-          <td class="p-3 text-center border-l border-slate-100" onclick="openPaymentModal(${idx}, 0)">${regBadge}</td>
-          ${monthColsHtml}
-          <td class="p-3 text-center font-bold text-indigo-700 border-l border-slate-100">${m.totalPaid}</td>
-        `;
-        tbody.appendChild(tr);
-      });
     }
 
-    // Modal Pembayaran SPP
-    window.openPaymentModal = function(memberIdx, defaultMonth) {
-      activeSppTarget = { memberIdx, monthIdx: defaultMonth };
-      const m = currentSppData.members[memberIdx];
+    // Enter key untuk input PIN
+    document.getElementById('adminPinInput')?.addEventListener('keyup', (e) => {
+      if (e.key === 'Enter') checkAdminAuth();
+    });
 
-      document.getElementById('sppModalMemberName').textContent = m.name;
-      document.getElementById('sppModalMemberId').textContent = `ID: ${m.id} | ${m.className}`;
-      document.getElementById('sppModalMonthSelect').value = defaultMonth;
-      document.getElementById('sppModalNewMemberCheck').checked = (m.registrationFee >= 50000);
-
-      onSppMonthChange();
-      document.getElementById('paymentModal').classList.remove('hidden');
-    };
-
-    function onSppMonthChange() {
-      const mo = document.getElementById('sppModalMonthSelect').value;
-      const m = currentSppData.members[activeSppTarget.memberIdx];
-      const currentVal = m.months[mo]?.amount || 0;
-      document.getElementById('sppModalAmountInput').value = currentVal > 0 ? currentVal : 75000;
-    }
-
-    function setQuickNominal(amt) {
-      document.getElementById('sppModalAmountInput').value = amt;
-    }
-
-    function closePaymentModal() {
-      document.getElementById('paymentModal').classList.add('hidden');
-    }
-
-    function saveSppModal() {
-      const btn = document.getElementById('savePaymentBtn');
-      btn.disabled = true;
-      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-      const mo = parseInt(document.getElementById('sppModalMonthSelect').value);
-      const amount = parseFloat(document.getElementById('sppModalAmountInput').value) || 0;
-      const isNewMember = document.getElementById('sppModalNewMemberCheck').checked;
-      const m = currentSppData.members[activeSppTarget.memberIdx];
-
-      // Update langsung di memori layar
-      m.registrationFee = isNewMember ? 50000 : 0;
-      m.months[mo] = { amount: amount };
-      renderSppTable();
-
-      const old = document.getElementById('jsonp-save-spp');
-      if (old) old.remove();
-
-      window.handleSaveSppResponse = function(res) {
-        btn.disabled = false;
-        btn.innerHTML = 'OK';
-        closePaymentModal();
-        if (res.status === 'success') {
-          showToast('Pembayaran SPP tersimpan di Spreadsheet!', 'success');
-          loadSppData(); // reload agar rumus SUM total bayar terupdate
-        }
-      };
-
-      const url = `${API_URL}?action=saveSpp` +
-        `&sheetName=${encodeURIComponent(currentSppData.sheetName)}` +
-        `&rowIndex=${m.rowIndex}` +
-        `&monthIdx=${mo}` +
-        `&amount=${amount}` +
-        `&isNewMember=${isNewMember}` +
-        `&callback=handleSaveSppResponse` +
-        `&_=${Date.now()}`;
-
-      const script = document.createElement('script');
-      script.id = 'jsonp-save-spp';
-      script.src = url;
-      document.body.appendChild(script);
-    }
-
-    function downloadSppReportImage() {
-      const year = document.getElementById('sppYearSelect').value;
-      const cardTbody = document.getElementById('sppCardTbody');
-      cardTbody.innerHTML = '';
-
-      currentSppData.members.forEach((m, idx) => {
-        let cols = '';
-        for (let mo = 0; mo < 12; mo++) {
-          const val = m.months[mo]?.amount || 0;
-          let txt = '-';
-          if (val >= 75000) txt = '<span class="text-emerald-700 font-bold">Lunas</span>';
-          else if (val > 0) txt = `<span class="text-amber-700 font-bold">${val/1000}k</span>`;
-          cols += `<td class="p-1">${txt}</td>`;
-        }
-
-        const regTxt = m.registrationFee >= 50000 ? '<span class="text-indigo-700 font-bold">50rb</span>' : '-';
-        const tr = document.createElement('tr');
-        tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
-        tr.innerHTML = `
-          <td class="p-1.5 font-mono text-slate-400">${idx + 1}</td>
-          <td class="p-1.5 text-left font-bold text-slate-800">${m.name}</td>
-          <td class="p-1.5">${regTxt}</td>
-          ${cols}
-          <td class="p-1.5 font-bold text-indigo-700">${m.totalPaid}</td>
-        `;
-        cardTbody.appendChild(tr);
-      });
-
-      document.getElementById('sppCardYearLabel').textContent = `Tahun ${year}`;
-      const now = new Date();
-      document.getElementById('sppCardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB`;
-
-      showToast('Membuat gambar rekap tahunan SPP...', 'success');
-
-      const card = document.getElementById('sppReportCard');
-      html2canvas(card, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' })
-        .then(canvas => {
-          const link = document.createElement('a');
-          link.download = `Rekap_SPP_Sanggar_${year}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-          showToast('Gambar rekap SPP berhasil diunduh!', 'success');
-        });
-    }
-
-    // ====================== FITUR 2: PRESENSI SABTU ======================
+    // ================= LOGIKA PRESENSI =================
     function loadAttendance() {
       const y = document.getElementById('yearSelect').value;
       const m = document.getElementById('monthSelect').value;
@@ -539,7 +490,6 @@
       window.handleAttResponse = function(data) {
         if (data.status === 'success') {
           currentData = data;
-          document.getElementById('currentSheetLabel').textContent = `Presensi: Tab ${data.sheetName}`;
           renderFullMonthTable();
         } else {
           showToast('Error: ' + data.message, 'error');
@@ -605,9 +555,9 @@
     function parseStatusBadge(str) {
       if (!str) return `<span class="text-slate-300 font-bold">-</span>`;
       const val = str.trim().toUpperCase();
-      if (val.startsWith('H')) return `<span class="text-emerald-600 font-black text-sm"><i class="fa-solid fa-check"></i></span>`;
-      if (val.startsWith('A')) return `<span class="text-rose-600 font-black text-sm"><i class="fa-solid fa-xmark"></i></span>`;
-      if (val.startsWith('L') || val.startsWith('-')) return `<span class="text-blue-600 font-black text-sm"><i class="fa-solid fa-minus"></i></span>`;
+      if (val.startsWith('H')) return `<span class="inline-flex items-center gap-1 text-emerald-600 font-black text-sm"><i class="fa-solid fa-check"></i></span>`;
+      if (val.startsWith('A')) return `<span class="inline-flex items-center gap-1 text-rose-600 font-black text-sm"><i class="fa-solid fa-xmark"></i></span>`;
+      if (val.startsWith('L') || val.startsWith('-')) return `<span class="inline-flex items-center gap-1 text-blue-600 font-black text-sm"><i class="fa-solid fa-minus"></i></span>`;
       return `<span class="text-slate-400 text-xs font-semibold">${str}</span>`;
     }
 
@@ -641,9 +591,7 @@
         (status === 'Libur' ? 'border-blue-500 bg-blue-50 text-blue-800 shadow-sm' : 'border-slate-200 text-slate-500');
     }
 
-    function closeStatusModal() {
-      document.getElementById('statusModal').classList.add('hidden');
-    }
+    function closeStatusModal() { document.getElementById('statusModal').classList.add('hidden'); }
 
     function saveStatusModal() {
       const okBtn = document.getElementById('modalOkBtn');
@@ -668,7 +616,7 @@
         okBtn.innerHTML = 'OK';
         closeStatusModal();
         if (res.status === 'success') {
-          showToast('Presensi tersimpan di Spreadsheet!', 'success');
+          showToast('Presensi tersimpan ke Spreadsheet!', 'success');
         }
       };
 
@@ -714,11 +662,7 @@
 
         const tr = document.createElement('tr');
         tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
-        tr.innerHTML = `
-          <td class="p-2 font-mono text-slate-400">${idx + 1}</td>
-          <td class="p-2 text-left font-bold text-slate-800">${m.name}</td>
-          ${cols}
-        `;
+        tr.innerHTML = `<td class="p-2 font-mono text-slate-400">${idx + 1}</td><td class="p-2 text-left font-bold text-slate-800">${m.name}</td>${cols}`;
         cardTbody.appendChild(tr);
       });
 
@@ -735,7 +679,183 @@
           link.download = `Rekap_Presensi_${currentData.monthName}_${currentData.year}.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
-          showToast('Gambar rekap presensi berhasil diunduh!', 'success');
+          showToast('Gambar rekap berhasil diunduh!', 'success');
+        });
+    }
+
+    // ================= LOGIKA SPP =================
+    function loadSppData() {
+      const year = document.getElementById('sppYearSelect').value;
+      const tbody = document.getElementById('sppTableBody');
+      tbody.innerHTML = `<tr><td colspan="17" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Mengambil buku SPP tahun ${year}...</td></tr>`;
+
+      const old = document.getElementById('jsonp-spp');
+      if (old) old.remove();
+
+      window.handleSppResponse = function(data) {
+        if (data.status === 'success') {
+          currentSppData = data;
+          renderSppTable();
+        } else {
+          showToast('Error: ' + data.message, 'error');
+        }
+      };
+
+      const script = document.createElement('script');
+      script.id = 'jsonp-spp';
+      script.src = `${API_URL}?action=getSpp&year=${year}&callback=handleSppResponse&_=${Date.now()}`;
+      document.body.appendChild(script);
+    }
+
+    function renderSppTable() {
+      const tbody = document.getElementById('sppTableBody');
+      tbody.innerHTML = '';
+
+      if (!currentSppData.members || currentSppData.members.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="17" class="p-6 text-center text-slate-400">Tidak ada data anggota.</td></tr>`;
+        return;
+      }
+
+      currentSppData.members.forEach((m, idx) => {
+        const tr = document.createElement('tr');
+        tr.className = 'hover:bg-slate-50/80 transition';
+
+        const isRegPaid = m.registrationFee >= 50000;
+        const regBadge = isRegPaid 
+          ? `<span class="px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 font-bold border border-indigo-200">50rb</span>`
+          : `<span class="text-slate-300 font-bold">-</span>`;
+
+        let monthColsHtml = '';
+        for (let mo = 0; mo < 12; mo++) {
+          const val = m.months[mo]?.amount || 0;
+          let cellBadge = `<span class="text-slate-300 font-bold">-</span>`;
+          if (val >= 75000) {
+            cellBadge = `<span class="px-1.5 py-0.5 rounded bg-emerald-100 text-emerald-700 font-bold">Lunas</span>`;
+          } else if (val > 0) {
+            cellBadge = `<span class="px-1 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">${val/1000}k</span>`;
+          }
+          monthColsHtml += `
+            <td class="p-2 text-center border-l border-slate-100">
+              <div onclick="openPaymentModal(${idx}, ${mo})" class="w-full py-1 rounded-lg hover:ring-2 hover:ring-indigo-400 bg-white border border-slate-200/80 shadow-xs flex items-center justify-center min-h-[30px] cursor-pointer">
+                ${cellBadge}
+              </div>
+            </td>
+          `;
+        }
+
+        tr.innerHTML = `
+          <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
+          <td class="p-3 text-left font-medium text-slate-500">${m.id}</td>
+          <td class="p-3 text-left font-bold text-slate-800 hover:text-indigo-600 cursor-pointer" onclick="openPaymentModal(${idx}, 0)">${m.name}</td>
+          <td class="p-3 text-center border-l border-slate-100" onclick="openPaymentModal(${idx}, 0)">${regBadge}</td>
+          ${monthColsHtml}
+          <td class="p-3 text-center font-bold text-indigo-700 border-l border-slate-100">${m.totalPaid}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    window.openPaymentModal = function(memberIdx, defaultMonth) {
+      activeSppTarget = { memberIdx, monthIdx: defaultMonth };
+      const m = currentSppData.members[memberIdx];
+
+      document.getElementById('sppModalMemberName').textContent = m.name;
+      document.getElementById('sppModalMemberId').textContent = `ID: ${m.id} | ${m.className}`;
+      document.getElementById('sppModalMonthSelect').value = defaultMonth;
+      document.getElementById('sppModalNewMemberCheck').checked = (m.registrationFee >= 50000);
+
+      onSppMonthChange();
+      document.getElementById('paymentModal').classList.remove('hidden');
+    };
+
+    function onSppMonthChange() {
+      const mo = document.getElementById('sppModalMonthSelect').value;
+      const m = currentSppData.members[activeSppTarget.memberIdx];
+      const currentVal = m.months[mo]?.amount || 0;
+      document.getElementById('sppModalAmountInput').value = currentVal > 0 ? currentVal : 75000;
+    }
+
+    function setQuickNominal(amt) { document.getElementById('sppModalAmountInput').value = amt; }
+    function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
+
+    function saveSppModal() {
+      const btn = document.getElementById('savePaymentBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+      const mo = parseInt(document.getElementById('sppModalMonthSelect').value);
+      const amount = parseFloat(document.getElementById('sppModalAmountInput').value) || 0;
+      const isNewMember = document.getElementById('sppModalNewMemberCheck').checked;
+      const m = currentSppData.members[activeSppTarget.memberIdx];
+
+      m.registrationFee = isNewMember ? 50000 : 0;
+      m.months[mo] = { amount: amount };
+      renderSppTable();
+
+      const old = document.getElementById('jsonp-save-spp');
+      if (old) old.remove();
+
+      window.handleSaveSppResponse = function(res) {
+        btn.disabled = false;
+        btn.innerHTML = 'OK';
+        closePaymentModal();
+        if (res.status === 'success') {
+          showToast('Pembayaran SPP tersimpan ke Spreadsheet!', 'success');
+          loadSppData();
+        }
+      };
+
+      const url = `${API_URL}?action=saveSpp` +
+        `&sheetName=${encodeURIComponent(currentSppData.sheetName)}` +
+        `&rowIndex=${m.rowIndex}` +
+        `&monthIdx=${mo}` +
+        `&amount=${amount}` +
+        `&isNewMember=${isNewMember}` +
+        `&callback=handleSaveSppResponse` +
+        `&_=${Date.now()}`;
+
+      const script = document.createElement('script');
+      script.id = 'jsonp-save-spp';
+      script.src = url;
+      document.body.appendChild(script);
+    }
+
+    function downloadSppReportImage() {
+      const year = document.getElementById('sppYearSelect').value;
+      const cardTbody = document.getElementById('sppCardTbody');
+      cardTbody.innerHTML = '';
+
+      currentSppData.members.forEach((m, idx) => {
+        let cols = '';
+        for (let mo = 0; mo < 12; mo++) {
+          const val = m.months[mo]?.amount || 0;
+          let txt = '-';
+          if (val >= 75000) txt = '<span class="text-emerald-700 font-bold">Lunas</span>';
+          else if (val > 0) txt = `<span class="text-amber-700 font-bold">${val/1000}k</span>`;
+          cols += `<td class="p-1">${txt}</td>`;
+        }
+
+        const regTxt = m.registrationFee >= 50000 ? '<span class="text-indigo-700 font-bold">50rb</span>' : '-';
+        const tr = document.createElement('tr');
+        tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
+        tr.innerHTML = `<td class="p-1.5 font-mono text-slate-400">${idx + 1}</td><td class="p-1.5 text-left font-bold text-slate-800">${m.name}</td><td class="p-1.5">${regTxt}</td>${cols}<td class="p-1.5 font-bold text-indigo-700">${m.totalPaid}</td>`;
+        cardTbody.appendChild(tr);
+      });
+
+      document.getElementById('sppCardYearLabel').textContent = `Tahun ${year}`;
+      const now = new Date();
+      document.getElementById('sppCardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB`;
+
+      showToast('Membuat gambar rekap tahunan SPP...', 'success');
+
+      const card = document.getElementById('sppReportCard');
+      html2canvas(card, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' })
+        .then(canvas => {
+          const link = document.createElement('a');
+          link.download = `Rekap_SPP_Sanggar_${year}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+          showToast('Gambar rekap SPP berhasil diunduh!', 'success');
         });
     }
 
