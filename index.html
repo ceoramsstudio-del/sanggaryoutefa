@@ -218,18 +218,25 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-[11px]">
-          <thead>
-            <tr class="bg-[#240e04] text-amber-200 uppercase font-bold tracking-wider text-center border-b border-amber-950">
-              <th class="p-3 w-10 text-center">No</th>
-              <th class="p-3 w-16 text-left">ID</th>
-              <th class="p-3 text-left min-w-[140px]">Nama Lengkap</th>
-              <th class="p-3 min-w-[80px]">Daftar</th>
-              <th class="p-2.5">Jan</th><th class="p-2.5">Feb</th><th class="p-2.5">Mar</th>
-              <th class="p-2.5">Apr</th><th class="p-2.5">Mei</th><th class="p-2.5">Jun</th>
-              <th class="p-2.5">Jul</th><th class="p-2.5">Ags</th><th class="p-2.5">Sep</th>
-              <th class="p-2.5">Okt</th><th class="p-2.5">Nov</th><th class="p-2.5">Des</th>
-            </tr>
-          </thead>
+         <thead class="bg-[#240e04] text-amber-200 font-bold uppercase text-center">
+          <tr>
+            <th class="p-2 w-8 border border-amber-950/60">No</th>
+            <th class="p-2 text-left min-w-[130px] border border-amber-950/60">Nama Anggota</th>
+            <th class="p-2 border border-amber-950/60">Daftar</th>
+            <th class="p-1 border border-amber-950/60">Jan</th>
+            <th class="p-1 border border-amber-950/60">Feb</th>
+            <th class="p-1 border border-amber-950/60">Mar</th>
+            <th class="p-1 border border-amber-950/60">Apr</th>
+            <th class="p-1 border border-amber-950/60">Mei</th>
+            <th class="p-1 border border-amber-950/60">Jun</th>
+            <th class="p-1 border border-amber-950/60">Jul</th>
+            <th class="p-1 border border-amber-950/60">Ags</th>
+            <th class="p-1 border border-amber-950/60">Sep</th>
+            <th class="p-1 border border-amber-950/60">Okt</th>
+            <th class="p-1 border border-amber-950/60">Nov</th>
+            <th class="p-1 border border-amber-950/60">Des</th>
+          </tr>
+        </thead>
           <tbody id="sppTableBody" class="divide-y divide-slate-100 text-center">
             <tr><td colspan="16" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat buku SPP...</td></tr>
           </tbody>
@@ -676,51 +683,75 @@
       document.body.appendChild(script);
     }
 
-    function downloadMonthReportImage() {
-      const cardHeader = document.getElementById('cardReportHeader');
-      cardHeader.innerHTML = `<th class="p-2 w-8">No</th><th class="p-2 text-left min-w-[150px]">Nama Anggota</th>`;
-
-      currentData.saturdays.forEach(s => {
-        const th = document.createElement('th');
-        th.className = 'p-2 text-center';
-        th.innerHTML = `<div>${s.labelKey}</div><div class="text-[9px] font-normal text-amber-200">(${s.dateStr.slice(0,5)})</div>`;
-        cardHeader.appendChild(th);
-      });
-
-      const cardTbody = document.getElementById('cardReportTbody');
+function downloadSppReportImage() {
+      const year = document.getElementById('sppYearSelect').value;
+      const cardTbody = document.getElementById('sppCardTbody');
       cardTbody.innerHTML = '';
 
-      currentData.members.forEach((m, idx) => {
+      currentSppData.members.forEach((m, idx) => {
+        // Cari bulan pertama kali anggota mulai melakukan pembayaran (bulan masuk)
+        let firstPaidMonth = -1;
+        for (let mo = 0; mo < 12; mo++) {
+          if ((m.months[mo]?.amount || 0) > 0) {
+            firstPaidMonth = mo;
+            break;
+          }
+        }
+
+        // Susun kolom 12 bulan (Januari - Desember)
         let cols = '';
-        currentData.saturdays.forEach((s, sIdx) => {
-          const rawVal = (m.attendance[sIdx] || '').trim().toUpperCase();
-          let badge = '<span class="text-slate-300 font-bold">-</span>';
-          if (rawVal.startsWith('H')) badge = '<span class="text-emerald-600 font-black text-sm">✓</span>';
-          else if (rawVal.startsWith('A')) badge = '<span class="text-rose-600 font-black text-sm">✕</span>';
-          else if (rawVal.startsWith('L') || rawVal.startsWith('-')) badge = '<span class="text-blue-600 font-black text-sm">-</span>';
-          cols += `<td class="p-2 border-l border-slate-100">${badge}</td>`;
-        });
+        for (let mo = 0; mo < 12; mo++) {
+          const val = m.months[mo]?.amount || 0;
+          let cellContent = '-';
+          let cellStyle = 'background-color: #ffffff; color: #cbd5e1;'; // Standar belum bayar
+
+          if (val >= 75000) {
+            cellContent = '<span class="text-emerald-700 font-bold">Lunas</span>';
+            cellStyle = 'background-color: #ffffff;';
+          } else if (val > 0) {
+            cellContent = `<span class="text-amber-700 font-bold">${val / 1000}k</span>`;
+            cellStyle = 'background-color: #ffffff;';
+          } else if (firstPaidMonth !== -1 && mo < firstPaidMonth) {
+            // Blok Merah untuk bulan-bulan sebelum anggota mulai masuk/aktif
+            cellContent = '<span class="text-white font-bold">-</span>';
+            cellStyle = 'background-color: #dc2626; color: #ffffff;'; // Merah solid sesuai excel
+          }
+
+          cols += `<td class="p-1 border border-slate-300 font-bold" style="${cellStyle}">${cellContent}</td>`;
+        }
+
+        // Kolom Pendaftaran: Jika 50rb (putih/emas), jika member lama (-) diberi warna merah sesuai excel
+        let regTxt = '-';
+        let regStyle = 'background-color: #dc2626; color: #ffffff;';
+        if (m.registrationFee >= 50000) {
+          regTxt = '<span class="text-amber-800 font-bold">50rb</span>';
+          regStyle = 'background-color: #ffffff;';
+        }
 
         const tr = document.createElement('tr');
-        tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
-        tr.innerHTML = `<td class="p-2 font-mono text-slate-400">${idx + 1}</td><td class="p-2 text-left font-bold text-slate-800">${m.name}</td>${cols}`;
+        tr.innerHTML = `
+          <td class="p-1.5 font-mono text-slate-500 border border-slate-300 bg-white">${idx + 1}</td>
+          <td class="p-1.5 text-left font-bold text-slate-800 border border-slate-300 bg-white">${m.name}</td>
+          <td class="p-1.5 border border-slate-300 font-bold" style="${regStyle}">${regTxt}</td>
+          ${cols}
+        `;
         cardTbody.appendChild(tr);
       });
 
-      document.getElementById('cardMonthYearLabel').textContent = `${currentData.monthName} ${currentData.year}`;
+      document.getElementById('sppCardYearLabel').textContent = `Tahun ${year}`;
       const now = new Date();
-      document.getElementById('cardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB`;
+      document.getElementById('sppCardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
 
-      showToast('Membuat gambar rekap bulanan...', 'success');
+      showToast('Membuat gambar rekap tahunan SPP...', 'success');
 
-      const card = document.getElementById('reportCard');
+      const card = document.getElementById('sppReportCard');
       html2canvas(card, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' })
         .then(canvas => {
           const link = document.createElement('a');
-          link.download = `Rekap_Presensi_${currentData.monthName}_${currentData.year}.png`;
+          link.download = `Rekap_SPP_Sanggar_${year}.png`;
           link.href = canvas.toDataURL('image/png');
           link.click();
-          showToast('Gambar rekap presensi berhasil diunduh!', 'success');
+          showToast('Gambar rekap SPP berhasil diunduh!', 'success');
         });
     }
 
