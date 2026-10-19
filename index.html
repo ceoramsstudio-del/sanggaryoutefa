@@ -218,25 +218,27 @@
     <div class="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden">
       <div class="overflow-x-auto">
         <table class="w-full text-left border-collapse text-[11px]">
-         <thead class="bg-[#240e04] text-amber-200 font-bold uppercase text-center">
-          <tr>
-            <th class="p-2 w-8 border border-amber-950/60">No</th>
-            <th class="p-2 text-left min-w-[130px] border border-amber-950/60">Nama Anggota</th>
-            <th class="p-2 border border-amber-950/60">Daftar</th>
-            <th class="p-1 border border-amber-950/60">Jan</th>
-            <th class="p-1 border border-amber-950/60">Feb</th>
-            <th class="p-1 border border-amber-950/60">Mar</th>
-            <th class="p-1 border border-amber-950/60">Apr</th>
-            <th class="p-1 border border-amber-950/60">Mei</th>
-            <th class="p-1 border border-amber-950/60">Jun</th>
-            <th class="p-1 border border-amber-950/60">Jul</th>
-            <th class="p-1 border border-amber-950/60">Ags</th>
-            <th class="p-1 border border-amber-950/60">Sep</th>
-            <th class="p-1 border border-amber-950/60">Okt</th>
-            <th class="p-1 border border-amber-950/60">Nov</th>
-            <th class="p-1 border border-amber-950/60">Des</th>
-          </tr>
-        </thead>
+         <!-- KODE BARU YANG BENAR: -->
+<thead>
+  <tr class="bg-[#240e04] text-amber-200 uppercase font-bold tracking-wider text-center border-b border-amber-950">
+    <th class="p-3 w-10 text-center">No</th>
+    <th class="p-3 w-16 text-left">ID</th>
+    <th class="p-3 text-left min-w-[140px]">Nama Lengkap</th>
+    <th class="p-3 min-w-[80px]">Daftar</th>
+    <th class="p-2.5">Jan</th>
+    <th class="p-2.5">Feb</th>
+    <th class="p-2.5">Mar</th>
+    <th class="p-2.5">Apr</th>
+    <th class="p-2.5">Mei</th>
+    <th class="p-2.5">Jun</th>
+    <th class="p-2.5">Jul</th>
+    <th class="p-2.5">Ags</th>
+    <th class="p-2.5">Sep</th>
+    <th class="p-2.5">Okt</th>
+    <th class="p-2.5">Nov</th>
+    <th class="p-2.5">Des</th>
+  </tr>
+</thead>
           <tbody id="sppTableBody" class="divide-y divide-slate-100 text-center">
             <tr><td colspan="16" class="p-8 text-center text-slate-400"><i class="fa-solid fa-spinner fa-spin mr-2"></i> Memuat buku SPP...</td></tr>
           </tbody>
@@ -817,7 +819,6 @@ function downloadSppReportImage() {
 
         tr.innerHTML = `
           <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
-          <td class="p-3 text-left font-medium text-slate-500">${m.id}</td>
           <td class="p-3 text-left font-bold text-slate-800 hover:text-amber-700 cursor-pointer" onclick="openPaymentModal(${idx}, 0)">${m.name}</td>
           <td class="p-3 text-center border-l border-slate-100" onclick="openPaymentModal(${idx}, 0)">${regBadge}</td>
           ${monthColsHtml}
