@@ -391,8 +391,8 @@
   <!-- TOAST NOTIFIKASI -->
   <div id="toast" class="hidden fixed bottom-5 right-5 z-50 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-xl"></div>
 
- <!-- TEMPLATE UNDUHAN PRESENSI (Diletakkan di balik layar dengan ukuran pasti) -->
-  <div id="reportContainer" style="position: fixed; left: 0; top: 0; z-index: -9999; pointer-events: none; opacity: 1;">
+<!-- ======================== TEMPLATE UNDUHAN PRESENSI ======================== -->
+  <div id="reportContainer" style="position: fixed; left: -99999px; top: 0; z-index: -9999; pointer-events: none;">
     <div id="reportCard" class="w-[850px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg text-slate-800">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
@@ -409,11 +409,10 @@
         </div>
       </div>
       
-      <!-- Tabel dengan border kotak yang jelas -->
       <table class="w-full text-left text-[11px] border-collapse border border-slate-300 rounded-lg overflow-hidden">
         <thead class="bg-[#240e04] text-amber-200 font-bold uppercase text-center">
           <tr id="cardReportHeader">
-            <th class="p-2 w-8 border border-amber-950/60">No</th>
+            <th class="p-2 w-8 border border-amber-950/60 text-center">No</th>
             <th class="p-2 text-left min-w-[150px] border border-amber-950/60">Nama Anggota</th>
           </tr>
         </thead>
@@ -427,8 +426,8 @@
     </div>
   </div>
 
-  <!-- TEMPLATE UNDUHAN SPP TAHUNAN (TANPA KOLOM TOTAL) -->
-  <div id="sppReportContainer" style="position: absolute; left: -9999px; top: -9999px;">
+  <!-- ======================== TEMPLATE UNDUHAN SPP TAHUNAN ======================== -->
+  <div id="sppReportContainer" style="position: fixed; left: -99999px; top: 0; z-index: -9999; pointer-events: none;">
     <div id="sppReportCard" class="w-[900px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg text-slate-800">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
@@ -444,19 +443,27 @@
           <div id="sppCardYearLabel" class="inline-block bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-lg">Tahun 2026</div>
         </div>
       </div>
-      <table class="w-full text-left text-[10px] border border-slate-200 rounded-lg overflow-hidden">
-        <thead class="bg-[#240e04] text-amber-200 font-bold border-b border-amber-950 uppercase text-center">
+      <table class="w-full text-left text-[10px] border-collapse border-2 border-slate-700 rounded-lg overflow-hidden">
+        <thead class="bg-[#240e04] text-amber-200 font-bold uppercase text-center">
           <tr>
-            <th class="p-2 w-8">No</th>
-            <th class="p-2 text-left min-w-[130px]">Nama Anggota</th>
-            <th class="p-2">Daftar</th>
-            <th class="p-1">Jan</th><th class="p-1">Feb</th><th class="p-1">Mar</th>
-            <th class="p-1">Apr</th><th class="p-1">Mei</th><th class="p-1">Jun</th>
-            <th class="p-1">Jul</th><th class="p-1">Ags</th><th class="p-1">Sep</th>
-            <th class="p-1">Okt</th><th class="p-1">Nov</th><th class="p-1">Des</th>
+            <th class="p-2 w-8 border border-amber-950/60">No</th>
+            <th class="p-2 text-left min-w-[130px] border border-amber-950/60">Nama Anggota</th>
+            <th class="p-2 border border-amber-950/60">Daftar</th>
+            <th class="p-1 border border-amber-950/60">Jan</th>
+            <th class="p-1 border border-amber-950/60">Feb</th>
+            <th class="p-1 border border-amber-950/60">Mar</th>
+            <th class="p-1 border border-amber-950/60">Apr</th>
+            <th class="p-1 border border-amber-950/60">Mei</th>
+            <th class="p-1 border border-amber-950/60">Jun</th>
+            <th class="p-1 border border-amber-950/60">Jul</th>
+            <th class="p-1 border border-amber-950/60">Ags</th>
+            <th class="p-1 border border-amber-950/60">Sep</th>
+            <th class="p-1 border border-amber-950/60">Okt</th>
+            <th class="p-1 border border-amber-950/60">Nov</th>
+            <th class="p-1 border border-amber-950/60">Des</th>
           </tr>
         </thead>
-        <tbody id="sppCardTbody" class="divide-y divide-slate-100 text-center"></tbody>
+        <tbody id="sppCardTbody" class="text-center font-medium"></tbody>
       </table>
       <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400">
         <span>Resmi: Sanggar Tari Youtefa</span>
@@ -464,7 +471,6 @@
       </div>
     </div>
   </div>
-
   <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycby2Si75Z3IYyM-J06KHpyCWAZuGlJqzgSDs2arOijOQwBOAGHVK-EadMRJ2vPd4ioPl/exec';
     const ADMIN_PIN = 'youtefa2026';
