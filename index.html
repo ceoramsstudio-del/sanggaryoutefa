@@ -391,13 +391,13 @@
   <!-- TOAST NOTIFIKASI -->
   <div id="toast" class="hidden fixed bottom-5 right-5 z-50 p-3.5 rounded-xl text-xs font-semibold flex items-center gap-2 shadow-xl"></div>
 
-  <!-- TEMPLATE UNDUHAN PRESENSI (HIDDEN) -->
-  <div id="reportContainer" style="position: absolute; left: -9999px; top: -9999px;">
-    <div id="reportCard" class="w-[820px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg text-slate-800">
+ <!-- TEMPLATE UNDUHAN PRESENSI (Diletakkan di balik layar dengan ukuran pasti) -->
+  <div id="reportContainer" style="position: fixed; left: 0; top: 0; z-index: -9999; pointer-events: none; opacity: 1;">
+    <div id="reportCard" class="w-[850px] bg-white p-7 rounded-2xl border border-slate-200 font-sans shadow-lg text-slate-800">
       <div class="flex items-center justify-between border-b pb-4 mb-5">
         <div class="flex items-center gap-3.5">
           <div class="w-12 h-12 rounded-xl bg-amber-950 border border-amber-600/40 flex items-center justify-center p-1 overflow-hidden shadow-sm shrink-0">
-            <img id="reportLogo" src="logo.png" onerror="this.src='https://lh3.googleusercontent.com/d/1U49vsk0SYmYMFtjC0cyX0AQnA6i52y0V'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
+            <img id="reportLogo" src="logo.png" onerror="this.src='https://api.iconify.design/solar:users-group-rounded-bold-duotone.svg?color=%23f59e0b'" alt="Logo" class="w-full h-full object-contain" crossorigin="anonymous">
           </div>
           <div>
             <h2 class="text-xl font-bold text-amber-950 leading-tight">Sanggar Tari Youtefa</h2>
@@ -408,12 +408,18 @@
           <div id="cardMonthYearLabel" class="inline-block bg-amber-50 border border-amber-200 text-amber-800 text-xs font-bold px-3 py-1.5 rounded-lg">September 2026</div>
         </div>
       </div>
-      <table class="w-full text-left text-[11px] border border-slate-200 rounded-lg overflow-hidden">
-        <thead class="bg-[#240e04] text-amber-200 font-bold border-b border-amber-950 uppercase text-center">
-          <tr id="cardReportHeader"><th class="p-2 w-8">No</th><th class="p-2 text-left min-w-[150px]">Nama Anggota</th></tr>
+      
+      <!-- Tabel dengan border kotak yang jelas -->
+      <table class="w-full text-left text-[11px] border-collapse border border-slate-300 rounded-lg overflow-hidden">
+        <thead class="bg-[#240e04] text-amber-200 font-bold uppercase text-center">
+          <tr id="cardReportHeader">
+            <th class="p-2 w-8 border border-amber-950/60">No</th>
+            <th class="p-2 text-left min-w-[150px] border border-amber-950/60">Nama Anggota</th>
+          </tr>
         </thead>
-        <tbody id="cardReportTbody" class="divide-y divide-slate-100 text-center"></tbody>
+        <tbody id="cardReportTbody" class="divide-y divide-slate-100 text-center font-medium"></tbody>
       </table>
+
       <div class="mt-4 pt-3 border-t border-slate-100 flex justify-between items-center text-[10px] text-slate-400">
         <span>Keterangan: <strong class="text-emerald-600 font-bold">✓ Hadir</strong> | <strong class="text-rose-600 font-bold">✕ Absen</strong> | <strong class="text-blue-600 font-bold">- Libur</strong></span>
         <span id="cardPrintedAt">Dicetak: -</span>
@@ -685,79 +691,76 @@
       document.body.appendChild(script);
     }
 
-function downloadSppReportImage() {
-      const year = document.getElementById('sppYearSelect').value;
-      const cardTbody = document.getElementById('sppCardTbody');
+    // ================= FUNGSI UNDUH GAMBAR PRESENSI =================
+    function downloadMonthReportImage() {
+      if (!currentData.members || currentData.members.length === 0) {
+        showToast('Data presensi belum dimuat!', 'error');
+        return;
+      }
+
+      const cardHeader = document.getElementById('cardReportHeader');
+      cardHeader.innerHTML = `
+        <th class="p-2 w-8 border border-amber-950/60 text-center">No</th>
+        <th class="p-2 text-left min-w-[150px] border border-amber-950/60">Nama Anggota</th>
+      `;
+
+      currentData.saturdays.forEach(s => {
+        const th = document.createElement('th');
+        th.className = 'p-2 text-center border border-amber-950/60';
+        th.innerHTML = `<div>${s.labelKey}</div><div class="text-[9px] font-normal text-amber-200">(${s.dateStr.slice(0,5)})</div>`;
+        cardHeader.appendChild(th);
+      });
+
+      const cardTbody = document.getElementById('cardReportTbody');
       cardTbody.innerHTML = '';
 
-      currentSppData.members.forEach((m, idx) => {
-        // Cari bulan pertama kali anggota mulai melakukan pembayaran (bulan masuk)
-        let firstPaidMonth = -1;
-        for (let mo = 0; mo < 12; mo++) {
-          if ((m.months[mo]?.amount || 0) > 0) {
-            firstPaidMonth = mo;
-            break;
-          }
-        }
-
-        // Susun kolom 12 bulan (Januari - Desember)
+      currentData.members.forEach((m, idx) => {
         let cols = '';
-        for (let mo = 0; mo < 12; mo++) {
-          const val = m.months[mo]?.amount || 0;
-          let cellContent = '-';
-          let cellStyle = 'background-color: #ffffff; color: #cbd5e1;'; // Standar belum bayar
-
-          if (val >= 75000) {
-            cellContent = '<span class="text-emerald-700 font-bold">Lunas</span>';
-            cellStyle = 'background-color: #ffffff;';
-          } else if (val > 0) {
-            cellContent = `<span class="text-amber-700 font-bold">${val / 1000}k</span>`;
-            cellStyle = 'background-color: #ffffff;';
-          } else if (firstPaidMonth !== -1 && mo < firstPaidMonth) {
-            // Blok Merah untuk bulan-bulan sebelum anggota mulai masuk/aktif
-            cellContent = '<span class="text-white font-bold">-</span>';
-            cellStyle = 'background-color: #dc2626; color: #ffffff;'; // Merah solid sesuai excel
-          }
-
-          cols += `<td class="p-1 border border-slate-300 font-bold" style="${cellStyle}">${cellContent}</td>`;
-        }
-
-        // Kolom Pendaftaran: Jika 50rb (putih/emas), jika member lama (-) diberi warna merah sesuai excel
-        let regTxt = '-';
-        let regStyle = 'background-color: #dc2626; color: #ffffff;';
-        if (m.registrationFee >= 50000) {
-          regTxt = '<span class="text-amber-800 font-bold">50rb</span>';
-          regStyle = 'background-color: #ffffff;';
-        }
+        currentData.saturdays.forEach((s, sIdx) => {
+          const rawVal = (m.attendance[sIdx] || '').trim().toUpperCase();
+          let badge = '<span class="text-slate-300 font-bold">-</span>';
+          if (rawVal.startsWith('H')) badge = '<span class="text-emerald-600 font-black text-sm">✓</span>';
+          else if (rawVal.startsWith('A')) badge = '<span class="text-rose-600 font-black text-sm">✕</span>';
+          else if (rawVal.startsWith('L') || rawVal.startsWith('-')) badge = '<span class="text-blue-600 font-black text-sm">-</span>';
+          cols += `<td class="p-2 border border-slate-300">${badge}</td>`;
+        });
 
         const tr = document.createElement('tr');
+        tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
         tr.innerHTML = `
-          <td class="p-1.5 font-mono text-slate-500 border border-slate-300 bg-white">${idx + 1}</td>
-          <td class="p-1.5 text-left font-bold text-slate-800 border border-slate-300 bg-white">${m.name}</td>
-          <td class="p-1.5 border border-slate-300 font-bold" style="${regStyle}">${regTxt}</td>
+          <td class="p-2 font-mono text-slate-400 border border-slate-300 text-center">${idx + 1}</td>
+          <td class="p-2 text-left font-bold text-slate-800 border border-slate-300">${m.name}</td>
           ${cols}
         `;
         cardTbody.appendChild(tr);
       });
 
-      document.getElementById('sppCardYearLabel').textContent = `Tahun ${year}`;
+      document.getElementById('cardMonthYearLabel').textContent = `${currentData.monthName} ${currentData.year}`;
       const now = new Date();
-      document.getElementById('sppCardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
+      document.getElementById('cardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB`;
 
-      showToast('Membuat gambar rekap tahunan SPP...', 'success');
+      showToast('Sedang membuat gambar presensi...', 'success');
 
-      const card = document.getElementById('sppReportCard');
-      html2canvas(card, { scale: 2, useCORS: true, allowTaint: true, backgroundColor: '#ffffff' })
-        .then(canvas => {
-          const link = document.createElement('a');
-          link.download = `Rekap_SPP_Sanggar_${year}.png`;
-          link.href = canvas.toDataURL('image/png');
-          link.click();
-          showToast('Gambar rekap SPP berhasil diunduh!', 'success');
-        });
+      const card = document.getElementById('reportCard');
+      html2canvas(card, {
+        scale: 2,
+        useCORS: true,
+        allowTaint: true,
+        backgroundColor: '#ffffff'
+      }).then(canvas => {
+        const link = document.createElement('a');
+        link.download = `Rekap_Presensi_${currentData.monthName}_${currentData.year}.png`;
+        link.href = canvas.toDataURL('image/png');
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        showToast('Gambar rekap presensi berhasil diunduh!', 'success');
+      }).catch(err => {
+        showToast('Gagal mengunduh gambar: ' + err.message, 'error');
+      });
     }
 
-    // ================= LOGIKA SPP (TANPA KOLOM TOTAL) =================
+    // ================= LOGIKA SPP =================
     function loadSppData() {
       const year = document.getElementById('sppYearSelect').value;
       const tbody = document.getElementById('sppTableBody');
@@ -781,7 +784,7 @@ function downloadSppReportImage() {
       document.body.appendChild(script);
     }
 
-   function renderSppTable() {
+    function renderSppTable() {
       const tbody = document.getElementById('sppTableBody');
       tbody.innerHTML = '';
 
@@ -894,32 +897,61 @@ function downloadSppReportImage() {
       document.body.appendChild(script);
     }
 
-    // Unduh Gambar Rekap SPP (Tanpa Kolom Total)
+    // ================= FUNGSI UNDUH GAMBAR SPP (DENGAN BLOK MERAH) =================
     function downloadSppReportImage() {
       const year = document.getElementById('sppYearSelect').value;
       const cardTbody = document.getElementById('sppCardTbody');
       cardTbody.innerHTML = '';
 
       currentSppData.members.forEach((m, idx) => {
+        let firstPaidMonth = -1;
+        for (let mo = 0; mo < 12; mo++) {
+          if ((m.months[mo]?.amount || 0) > 0) {
+            firstPaidMonth = mo;
+            break;
+          }
+        }
+
         let cols = '';
         for (let mo = 0; mo < 12; mo++) {
           const val = m.months[mo]?.amount || 0;
-          let txt = '-';
-          if (val >= 75000) txt = '<span class="text-emerald-700 font-bold">Lunas</span>';
-          else if (val > 0) txt = `<span class="text-amber-700 font-bold">${val/1000}k</span>`;
-          cols += `<td class="p-1">${txt}</td>`;
+          let cellContent = '-';
+          let cellStyle = 'background-color: #ffffff; color: #cbd5e1;';
+
+          if (val >= 75000) {
+            cellContent = '<span class="text-emerald-700 font-bold">Lunas</span>';
+            cellStyle = 'background-color: #ffffff;';
+          } else if (val > 0) {
+            cellContent = `<span class="text-amber-700 font-bold">${val / 1000}k</span>`;
+            cellStyle = 'background-color: #ffffff;';
+          } else if (firstPaidMonth !== -1 && mo < firstPaidMonth) {
+            cellContent = '<span class="text-white font-bold">-</span>';
+            cellStyle = 'background-color: #dc2626; color: #ffffff;';
+          }
+
+          cols += `<td class="p-1 border border-slate-300 font-bold" style="${cellStyle}">${cellContent}</td>`;
         }
 
-        const regTxt = m.registrationFee >= 50000 ? '<span class="text-amber-800 font-bold">50rb</span>' : '-';
+        let regTxt = '-';
+        let regStyle = 'background-color: #dc2626; color: #ffffff;';
+        if (m.registrationFee >= 50000) {
+          regTxt = '<span class="text-amber-800 font-bold">50rb</span>';
+          regStyle = 'background-color: #ffffff;';
+        }
+
         const tr = document.createElement('tr');
-        tr.className = idx % 2 === 0 ? 'bg-white' : 'bg-slate-50/50';
-        tr.innerHTML = `<td class="p-1.5 font-mono text-slate-400">${idx + 1}</td><td class="p-1.5 text-left font-bold text-slate-800">${m.name}</td><td class="p-1.5">${regTxt}</td>${cols}`;
+        tr.innerHTML = `
+          <td class="p-1.5 font-mono text-slate-500 border border-slate-300 bg-white text-center">${idx + 1}</td>
+          <td class="p-1.5 text-left font-bold text-slate-800 border border-slate-300 bg-white">${m.name}</td>
+          <td class="p-1.5 border border-slate-300 font-bold text-center" style="${regStyle}">${regTxt}</td>
+          ${cols}
+        `;
         cardTbody.appendChild(tr);
       });
 
       document.getElementById('sppCardYearLabel').textContent = `Tahun ${year}`;
       const now = new Date();
-      document.getElementById('sppCardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'})} WIB`;
+      document.getElementById('sppCardPrintedAt').textContent = `Dicetak: ${now.toLocaleDateString('id-ID')} ${now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })} WIB`;
 
       showToast('Membuat gambar rekap tahunan SPP...', 'success');
 
@@ -929,8 +961,12 @@ function downloadSppReportImage() {
           const link = document.createElement('a');
           link.download = `Rekap_SPP_Sanggar_${year}.png`;
           link.href = canvas.toDataURL('image/png');
+          document.body.appendChild(link);
           link.click();
+          document.body.removeChild(link);
           showToast('Gambar rekap SPP berhasil diunduh!', 'success');
+        }).catch(err => {
+          showToast('Gagal membuat gambar: ' + err.message, 'error');
         });
     }
 
@@ -943,6 +979,6 @@ function downloadSppReportImage() {
       toast.classList.remove('hidden');
       setTimeout(() => toast.classList.add('hidden'), 3500);
     }
-  </script>
+</script>
 </body>
 </html>
