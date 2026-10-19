@@ -781,7 +781,7 @@ function downloadSppReportImage() {
       document.body.appendChild(script);
     }
 
-    function renderSppTable() {
+   function renderSppTable() {
       const tbody = document.getElementById('sppTableBody');
       tbody.innerHTML = '';
 
@@ -817,8 +817,10 @@ function downloadSppReportImage() {
           `;
         }
 
+        // Susunan kolom: No (1), ID (2), Nama (3), Daftar (4), Jan - Des (5-16)
         tr.innerHTML = `
           <td class="p-3 text-center text-slate-400 font-mono">${idx + 1}</td>
+          <td class="p-3 text-left font-medium text-slate-500">${m.id}</td>
           <td class="p-3 text-left font-bold text-slate-800 hover:text-amber-700 cursor-pointer" onclick="openPaymentModal(${idx}, 0)">${m.name}</td>
           <td class="p-3 text-center border-l border-slate-100" onclick="openPaymentModal(${idx}, 0)">${regBadge}</td>
           ${monthColsHtml}
